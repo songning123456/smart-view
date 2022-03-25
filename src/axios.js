@@ -25,7 +25,7 @@ request.interceptors.response.use(response => {
     },
     error => {
         if (error.response.data) {
-            error.massage = error.response.data.msg;
+            error.massage = error.response.data.message;
         }
         if (error.response.status === 401) {
             router.push('/login');
