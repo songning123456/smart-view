@@ -23,9 +23,9 @@
 <script>
 
 	export default {
-		name: "Login",
+		name: "UserCenter",
 		data() {
-			var validatePass = (rule, value, callback) => {
+			let validatePass = (rule, value, callback) => {
 				if (value === '') {
 					callback(new Error('请再次输入密码'));
 				} else if (value !== this.passForm.password) {
@@ -62,8 +62,7 @@
 		},
 		methods: {
 			getUserInfo() {
-				this.$axios.get("/sys/userInfo").then(res => {
-
+				this.$axios.get("/boot/sys/sysUser/userInfo").then(res => {
 					this.userInfo = res.data.data;
 				})
 			},
