@@ -2,9 +2,6 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Home from '../views/Home.vue';
 import Index from '../views/Index.vue';
-import User from '../views/sys/User.vue';
-import Role from '../views/sys/Role.vue';
-import Menu from '../views/sys/Menu.vue';
 
 import axios from '../axios';
 import store from '../store';
@@ -32,22 +29,7 @@ const routes = [
                     title: '个人中心'
                 },
                 component: () => import('@/views/UserCenter.vue')
-            },
-            {
-                path: '/sys/users',
-                name: 'SysUser',
-                component: User
-            },
-            {
-                path: '/sys/roles',
-                name: 'SysRole',
-                component: Role
-            },
-            {
-                path: '/sys/menus',
-                name: 'SysMenu',
-                component: Menu
-            },
+            }
         ]
     },
     {
@@ -57,13 +39,19 @@ const routes = [
     }
 ];
 
-const router = new VueRouter({
+const vueRouter = new VueRouter({
     mode: 'history',
     base: process.env.BASE_URL,
     routes
 });
 
-router.beforeEach((to, from, next) => {
+// 解决[vue-router] Duplicate named routes definition....
+vueRouter.$addRoutes = (params) => {
+    vueRouter.matcher = new VueRouter({mode: 'history'}).matcher;
+    vueRouter.addRoutes(params);
+};
+
+vueRouter.beforeEach((to, from, next) => {
     let hasRoute = store.state.menus.hasRoutes;
     let token = localStorage.getItem('token');
     if (to.path === '/login') {
@@ -81,22 +69,23 @@ router.beforeEach((to, from, next) => {
             // 拿到用户权限
             store.commit('setPermList', res.data.result.authorities);
             // 动态绑定路由
-            let newRoutes = router.options.routes;
+            let newRoutes = vueRouter.options.routes;
             res.data.result.navs.forEach(menu => {
                 if (menu.children) {
                     menu.children.forEach(e => {
                         // 转成路由
                         let route = menuToRoute(e);
                         // 把路由添加到路由管理中
-                        if (route) {
+                        if (route && !vueRouter.getRoutes().find(item => item.name === route.name)) {
                             newRoutes[0].children.push(route);
                         }
                     });
                 }
             });
-            router.addRoutes(newRoutes);
+            vueRouter.$addRoutes(newRoutes);
             hasRoute = true;
             store.commit('changeRouteStatus', hasRoute);
+            next({path: to.path});
         });
     }
     next();
@@ -111,12 +100,14 @@ const menuToRoute = (menu) => {
         name: menu.name,
         path: menu.path,
         meta: {
-            icon: menu.icon,
-            title: menu.title
+            icon: menu.metaIcon,
+            title: menu.metaTitle
         }
     };
     route.component = () => import('@/views/' + menu.component + '.vue');
     return route;
 };
 
-export default router;
+export default vueRouter;
+
+VueRouter.matcher = new VueRouter().matcher;

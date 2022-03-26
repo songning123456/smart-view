@@ -19,12 +19,12 @@
             </el-form-item>
         </el-form>
         <el-table ref="multipleTable"
-                :data="tableData"
-                tooltip-effect="dark"
-                style="width: 100%"
-                border
-                stripe
-                @selection-change="handleSelectionChange">
+                  :data="tableData"
+                  tooltip-effect="dark"
+                  style="width: 100%"
+                  border
+                  stripe
+                  @selection-change="handleSelectionChange">
             <el-table-column
                     type="selection"
                     width="55">
@@ -55,14 +55,6 @@
             <el-table-column
                     prop="phone"
                     label="手机号">
-            </el-table-column>
-            <el-table-column
-                    prop="statu"
-                    label="状态">
-                <template slot-scope="scope">
-                    <el-tag size="small" v-if="scope.row.statu === 1" type="success">正常</el-tag>
-                    <el-tag size="small" v-else-if="scope.row.statu === 0" type="danger">禁用</el-tag>
-                </template>
             </el-table-column>
             <el-table-column
                     prop="created"
@@ -122,14 +114,6 @@
                 <el-form-item label="手机号" prop="phone" label-width="100px">
                     <el-input v-model="editForm.phone" autocomplete="off"></el-input>
                 </el-form-item>
-
-                <el-form-item label="状态" prop="statu" label-width="100px">
-                    <el-radio-group v-model="editForm.statu">
-                        <el-radio :label="0">禁用</el-radio>
-                        <el-radio :label="1">正常</el-radio>
-                    </el-radio-group>
-                </el-form-item>
-
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="resetForm('editForm')">取 消</el-button>
@@ -180,9 +164,6 @@
                     ],
                     email: [
                         {required: true, message: '请输入邮箱', trigger: 'blur'}
-                    ],
-                    statu: [
-                        {required: true, message: '请选择状态', trigger: 'blur'}
                     ]
                 },
                 multipleSelection: [],

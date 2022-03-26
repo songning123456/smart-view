@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import baseInfo from '@/config/baseInfo.js';
 
 Vue.use(Vuex);
 
@@ -8,11 +9,8 @@ export default {
         menuList: [],
         permList: [],
         hasRoutes: false,
-        editableTabsValue: 'Index',
-        editableTabs: [{
-            title: '首页',
-            name: 'Index',
-        }]
+        editableTabId: baseInfo.defaultMenu.id,
+        editableTabs: [baseInfo.defaultMenu]
     },
     mutations: {
         setMenuList(state, menus) {
@@ -25,25 +23,18 @@ export default {
             state.hasRoutes = hasRoutes;
         },
         addTab(state, tab) {
-            let index = state.editableTabs.findIndex(e => e.name === tab.name);
+            let index = state.editableTabs.findIndex(e => e.id === tab.id);
             if (index === -1) {
-                state.editableTabs.push({
-                    title: tab.title,
-                    name: tab.name,
-                });
+                state.editableTabs.push(tab);
             }
-            state.editableTabsValue = tab.name;
+            state.editableTabId = tab.id;
         },
         resetState: (state) => {
             state.menuList = [];
             state.permList = [];
-
             state.hasRoutes = false;
-            state.editableTabsValue = 'Index';
-            state.editableTabs = [{
-                title: '首页',
-                name: 'Index',
-            }];
+            state.editableTabId = baseInfo.defaultMenu.id;
+            state.editableTabs = [baseInfo.defaultMenu];
         }
     },
     actions: {},

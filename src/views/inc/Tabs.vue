@@ -1,17 +1,18 @@
 <template>
-    <el-tabs v-model="editableTabsValue" type="card" closable @tab-remove="removeTab" @tab-click="clickTab">
-        <el-tab-pane v-for="(item, index) in editableTabs" :key="item.name" :label="item.title"
-                     :name="item.name"></el-tab-pane>
+    <el-tabs v-model="editableTabId" type="card" closable @tab-remove="tabRemoveBtn" @tab-click="tabClickBtn">
+        <el-tab-pane v-for="(item, index) in editableTabs" :key="index" :label="item.metaTitle"
+                     :name="item.id"></el-tab-pane>
     </el-tabs>
 </template>
 
 <script>
+    import baseInfo from '@/config/baseInfo';
+
     export default {
         name: 'Tabs',
         data() {
             return {
-                // editableTabsValue: this.$store.state.menus.editableTabsValue,
-                // editableTabs: this.$store.state.menus.editableTabs
+                baseInfo
             };
         },
         computed: {
@@ -23,40 +24,41 @@
                     this.$store.state.menus.editableTabs = val;
                 }
             },
-            editableTabsValue: {
+            editableTabId: {
                 get() {
-                    return this.$store.state.menus.editableTabsValue;
+                    return this.$store.state.menus.editableTabId;
                 },
                 set(val) {
-                    this.$store.state.menus.editableTabsValue = val;
+                    this.$store.state.menus.editableTabId = val;
                 }
             }
         },
         methods: {
 
-            removeTab(targetName) {
+            tabRemoveBtn(targetId) {
                 let tabs = this.editableTabs;
-                let activeName = this.editableTabsValue;
-
-                if (activeName === 'Index') {
+                let activeId = this.editableTabId;
+                if (activeId === baseInfo.defaultMenu.id) {
                     return;
                 }
-                if (activeName === targetName) {
+                if (activeId === targetId) {
                     tabs.forEach((tab, index) => {
-                        if (tab.name === targetName) {
+                        if (tab.id === targetId) {
                             let nextTab = tabs[index + 1] || tabs[index - 1];
                             if (nextTab) {
-                                activeName = nextTab.name;
+                                activeId = nextTab.id;
                             }
                         }
                     });
                 }
-                this.editableTabsValue = activeName;
-                this.editableTabs = tabs.filter(tab => tab.name !== targetName);
-                this.$router.push({name: activeName});
+                this.editableTabId = activeId;
+                this.editableTabs = tabs.filter(tab => tab.id !== targetId);
+                let index = this.editableTabs.findIndex(item => item.id === activeId);
+                this.$router.push({path: this.editableTabs[index].path});
             },
-            clickTab(target) {
-                this.$router.push({name: target.name});
+            tabClickBtn(target) {
+                let index = this.editableTabs.findIndex(item => item.id === target.name);
+                this.$router.push({path: this.editableTabs[index].path});
             }
         }
     };

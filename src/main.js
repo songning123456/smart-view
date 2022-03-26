@@ -5,7 +5,7 @@ import store from './store';
 
 import Element from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
-import './globalFun.js';
+import './config/globalFun.js';
 
 import axios from './axios';
 

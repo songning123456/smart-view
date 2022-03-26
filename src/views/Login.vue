@@ -59,11 +59,13 @@
                 captchaImg: null
             };
         },
+        created() {
+            this.getCaptcha();
+        },
         methods: {
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        debugger;
                         this.$axios.post('/boot/login?' + qs.stringify(this.loginForm))
                             .then(res => {
                                 let jwt = res.headers['authorization'];
@@ -85,9 +87,6 @@
                     this.loginForm.code = '';
                 });
             }
-        },
-        created() {
-            this.getCaptcha();
         }
     };
 </script>

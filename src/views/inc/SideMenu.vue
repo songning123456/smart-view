@@ -1,44 +1,41 @@
 <template>
-    <el-menu
-            :default-active="this.$store.state.menus.editableTabsValue"
-            class="el-menu-vertical-demo"
-            background-color="#545c64"
-            text-color="#fff"
-            active-text-color="#ffd04b">
+    <el-menu :default-active="this.$store.state.menus.editableTabId" class="el-menu-vertical-demo"
+             background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
         <router-link to="/index">
-            <el-menu-item index="Index" @click="selectMenu({name: 'Index', title: '首页'})">
+            <el-menu-item :index='baseInfo.defaultMenu.id' @click="selectMenu(baseInfo.defaultMenu)">
                 <template slot="title">
                     <i class="el-icon-s-home"></i>
                     <span slot="title">首页</span>
                 </template>
             </el-menu-item>
         </router-link>
-
-        <el-submenu :index="menu.name" v-for="menu in menuList">
+        <el-submenu :index="menu.id" v-for="(menu, index) in menuList" :key='index'>
             <template slot="title">
-                <i :class="menu.icon"></i>
-                <span>{{menu.title}}</span>
+                <i :class="menu.metaIcon"></i>
+                <span>{{menu.metaTitle}}</span>
             </template>
-
-            <router-link :to="item.path" v-for="item in menu.children">
-                <el-menu-item :index="item.name" @click="selectMenu(item)">
+            <router-link :to="item.path" v-for="(item, i) in menu.children" :key='i'>
+                <el-menu-item :index="item.id" @click="selectMenu(item)">
                     <template slot="title">
-                        <i :class="item.icon"></i>
-                        <span slot="title">{{item.title}}</span>
+                        <i :class="item.metaIcon"></i>
+                        <span slot="title">{{item.metaTitle}}</span>
                     </template>
                 </el-menu-item>
             </router-link>
-
         </el-submenu>
-
     </el-menu>
 </template>
 
 <script>
+
+    import baseInfo from "@/config/baseInfo";
+
     export default {
         name: 'SideMenu',
         data() {
-            return {};
+            return {
+                baseInfo
+            };
         },
         computed: {
             menuList: {
