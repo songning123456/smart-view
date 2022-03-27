@@ -3,12 +3,13 @@
         <div class='crud-container-frame-ud-form' v-for='(searchFormOption, index) in searchFormOptions' :key='index'>
             <custom-form :form='searchForm' :form-options='searchFormOption' @crud='crudBtn'></custom-form>
         </div>
-        <div class='crud-container-frame-ud-table' :style="'height: calc((100% - ' + (searchFormOptions.length + 1) * 60 + 'px))'">
+        <div class='crud-container-frame-ud-table'
+             :style="'height: calc((100% - ' + (searchFormOptions.length + (Object.keys(page).length > 0 ? 1 : 0)) * 60 + 'px))'">
             <custom-table ref='customTable' :result='searchResult' :column-options='columnOptions'
                           :operation-options='operationOptions' :table-style='tableStyle'
                           @crud='crudBtn' @selection-change='selectionChangeBtn'></custom-table>
         </div>
-        <div class='crud-container-frame-ud-pagination'>
+        <div class='crud-container-frame-ud-pagination' v-if='Object.keys(page).length > 0'>
             <el-pagination background layout='total,prev,pager,next' :current-page.sync='page.currentPage'
                            :page-size="page.pageSize" :total='page.total'
                            @current-change="currentChangeBtn"></el-pagination>
