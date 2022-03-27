@@ -2,7 +2,7 @@
     <el-menu :default-active="this.$store.state.menus.editableTabId" class="el-menu-vertical-demo"
              background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
         <router-link to="/index">
-            <el-menu-item :index='baseInfo.defaultMenu.id' @click="selectMenu(baseInfo.defaultMenu)">
+            <el-menu-item :index='globalMenu.indexMenu.id' @click="selectMenu(globalMenu.indexMenu)">
                 <template slot="title">
                     <i class="el-icon-s-home"></i>
                     <span slot="title">首页</span>
@@ -28,13 +28,13 @@
 
 <script>
 
-    import baseInfo from "@/config/baseInfo";
+    import globalMenu from '@/config/globalMenu';
 
     export default {
         name: 'SideMenu',
         data() {
             return {
-                baseInfo
+                globalMenu
             };
         },
         computed: {

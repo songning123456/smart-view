@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import baseInfo from '@/config/baseInfo.js';
+import globalMenu from '@/config/globalMenu.js';
 
 Vue.use(Vuex);
 
@@ -9,8 +9,8 @@ export default {
         menuList: [],
         permList: [],
         hasRoutes: false,
-        editableTabId: baseInfo.defaultMenu.id,
-        editableTabs: [baseInfo.defaultMenu]
+        editableTabId: globalMenu.indexMenu.id,
+        editableTabs: [globalMenu.indexMenu]
     },
     mutations: {
         setMenuList(state, menus) {
@@ -33,8 +33,8 @@ export default {
             state.menuList = [];
             state.permList = [];
             state.hasRoutes = false;
-            state.editableTabId = baseInfo.defaultMenu.id;
-            state.editableTabs = [baseInfo.defaultMenu];
+            state.editableTabId = globalMenu.indexMenu.id;
+            state.editableTabs = [globalMenu.indexMenu];
         }
     },
     actions: {},

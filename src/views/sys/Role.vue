@@ -139,7 +139,7 @@
             this.getRoleList();
 
             this.$axios.get('/boot/sys/sysMenu/list').then(res => {
-                this.permTreeData = res.data.data;
+                this.permTreeData = res.data.result.records;
             });
         },
         methods: {
@@ -184,10 +184,10 @@
                         size: this.size
                     }
                 }).then(res => {
-                    this.tableData = res.data.data.records;
-                    this.size = res.data.data.size;
-                    this.current = res.data.data.current;
-                    this.total = res.data.data.total;
+                    this.tableData = res.data.result.records;
+                    this.size = res.data.result.size;
+                    this.current = res.data.result.current;
+                    this.total = res.data.result.total;
                 });
             },
             submitForm(formName) {
@@ -241,9 +241,9 @@
             },
             permHandle(id) {
                 this.permDialogVisible = true;
-                this.$axios.get('/sys/role/info/' + id).then(res => {
-                    this.$refs.permTree.setCheckedKeys(res.data.data.menuIds);
-                    this.permForm = res.data.data;
+                this.$axios.get('/boot/sys/sysRole/info/' + id).then(res => {
+                    this.$refs.permTree.setCheckedKeys(res.data.result.menuIds);
+                    this.permForm = res.data.result;
                 });
             },
             submitPermFormHandle(formName) {

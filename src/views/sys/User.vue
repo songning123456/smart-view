@@ -236,7 +236,7 @@
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        this.$axios.post('/sys/user/' + (this.editForm.id ? 'update' : 'save'), this.editForm)
+                        this.$axios.post('/boot/sys/sysUser/' + (this.editForm.id ? 'update' : 'save'), this.editForm)
                             .then(res => {
                                 this.$message({
                                     showClose: true,
@@ -283,7 +283,7 @@
 
             roleHandle(id) {
                 this.roleDialogFormVisible = true;
-                this.$axios.get('/sys/user/info/' + id).then(res => {
+                this.$axios.get('/boot/sys/sysUser/rolesOfUser/' + id).then(res => {
                     this.roleForm = res.data.data;
                     let roleIds = [];
                     res.data.data.sysRoles.forEach(row => {
@@ -293,7 +293,7 @@
                 });
             },
             submitRoleHandle(formName) {
-                var roleIds = this.$refs.roleTree.getCheckedKeys();
+                let roleIds = this.$refs.roleTree.getCheckedKeys();
                 this.$axios.post('/sys/user/role/' + this.roleForm.id, roleIds).then(res => {
                     this.$message({
                         showClose: true,

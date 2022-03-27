@@ -6,13 +6,13 @@
 </template>
 
 <script>
-    import baseInfo from '@/config/baseInfo';
+    import globalMenu from '@/config/globalMenu';
 
     export default {
         name: 'Tabs',
         data() {
             return {
-                baseInfo
+                globalMenu
             };
         },
         computed: {
@@ -38,7 +38,7 @@
             tabRemoveBtn(targetId) {
                 let tabs = this.editableTabs;
                 let activeId = this.editableTabId;
-                if (activeId === baseInfo.defaultMenu.id) {
+                if (activeId === globalMenu.indexMenu.id) {
                     return;
                 }
                 if (activeId === targetId) {

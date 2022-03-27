@@ -13,9 +13,7 @@
 						{{userInfo.username}}<i class="el-icon-arrow-down el-icon--right"></i>
 						</span>
                         <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item>
-                                <router-link :to="{name: 'UserCenter'}">个人中心</router-link>
-                            </el-dropdown-item>
+                            <el-dropdown-item @click.native='userCenterBtn'>个人中心</el-dropdown-item>
                             <el-dropdown-item @click.native="logout">退出</el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
@@ -37,6 +35,7 @@
 <script>
     import SideMenu from './inc/SideMenu';
     import Tabs from './inc/Tabs';
+    import globalMenu from '@/config/globalMenu';
 
     export default {
         name: 'Home',
@@ -45,6 +44,7 @@
         },
         data() {
             return {
+                globalMenu,
                 userInfo: {
                     id: '',
                     username: '',
@@ -56,6 +56,10 @@
             this.getUserInfo();
         },
         methods: {
+            userCenterBtn() {
+                this.$store.commit('addTab', globalMenu.userCenterMenu);
+                this.$router.push({path: globalMenu.userCenterMenu.path});
+            },
             getUserInfo() {
                 this.$axios.get('/boot/sys/sysUser/userInfo').then(res => {
                     this.userInfo = res.data.result;
