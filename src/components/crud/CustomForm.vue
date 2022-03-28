@@ -1,12 +1,16 @@
 <template>
-    <el-form :inline='true' :model='form' size='small'>
-        <el-form-item v-for='(item, index) in formOptions' :key='index'
+    <el-form :inline='formStyleOptions.inline' :model='form' :size='formStyleOptions.size'
+             :label-width='formStyleOptions.labelWidth' :rules='ruleOptions' ref='customForm'>
+        <el-form-item v-for='(item, index) in formOptions' :key='index' :prop='item.enName'
                       :label='item.elType !== "el-button" ? item.zhName : ""'>
             <el-input v-if='item.elType === "el-input"' v-model='form[item.enName]' :placeholder='item.placeholder'
                       :clearable='item.clearable'></el-input>
             <el-select v-if='item.elType === "el-select"' v-model='form[item.enName]' :placeholder='item.placeholder'
-                       :clearable='item.clearable'>
-                <el-option v-for='(it, i) in item.options' :key='i' :label='it.label' :value='it.value'></el-option>
+                       :clearable='item.clearable'
+                       @change='selectChangeBtn(form[item.enName], form[item.enName])'>
+                <el-option v-for='(it, i) in item.options' :key='i' :label='it.label' :value='it.value'>
+                    <span v-if='it.alias'>{{it.alias}}</span>
+                </el-option>
             </el-select>
             <el-date-picker v-if='item.elType === "el-date-picker"' v-model="form[item.enName]" :type='item.dateType'
                             :picker-options="item.pickerOptions" range-separator="至" start-placeholder="开始日期"
@@ -14,6 +18,12 @@
             <el-button v-if='item.elType === "el-button"' :type='item.btnType' :icon='item.icon'
                        @click='crudBtn(item.zhName)'>{{item.zhName}}
             </el-button>
+            <el-radio-group v-if='item.elType === "el-radio-group"' v-model='form[item.enName]'>
+                <el-radio v-for='(it, i) in item.options' :key='i' :label='it.value'>{{it.label}}</el-radio>
+            </el-radio-group>
+            <el-input-number v-if='item.elType === "el-input-number"' v-model='form[item.enName]' :label='item.zhName'
+                             :min='typeof item.min === "number" ? item.min : -Infinity'
+                             :max='typeof item.max === "number" ? item.max : Infinity'></el-input-number>
         </el-form-item>
     </el-form>
 </template>
@@ -33,11 +43,40 @@
                 default() {
                     return [];
                 }
+            },
+            formStyleOptions: {
+                type: Object,
+                default() {
+                    return {
+                        inline: true,
+                        size: 'small',
+                        labelWidth: '80px'
+                    };
+                }
+            },
+            ruleOptions: {
+                type: Object,
+                default() {
+                    return {};
+                }
             }
         },
         methods: {
             crudBtn(zhName) {
-                this.$emit('crud', zhName);
+                if (Object.keys(this.ruleOptions)) {
+                    this.$refs['customForm'].validate((valid) => {
+                        if (valid) {
+                            this.$emit('crud', zhName);
+                        } else {
+                            return false;
+                        }
+                    });
+                } else {
+                    this.$emit('crud', zhName);
+                }
+            },
+            selectChangeBtn(key, val) {
+                this.$emit('select-change', key, val);
             }
         }
     };

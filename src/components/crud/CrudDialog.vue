@@ -2,8 +2,8 @@
     <el-dialog :title='dialog.zhName' :visible.sync='dialog.show' :close-on-click-modal='false'
                class='crud-dialog' :width='dialogStyle.width' :top='dialogStyle.top'>
         <template v-if='["新增", "编辑", "查看"].includes(dialog.zhName)'>
-            <crud-dialog-form :form-style='{labelWidth: "120px", height: "600px"}' :form='form'
-                              :form-options='formOptions' @select-change='selectChangeBtn'></crud-dialog-form>
+            <custom-form :form='form' :form-options='formOptions' :form-style-options='formStyleOptions'
+                         @select-change='selectChangeBtn'></custom-form>
         </template>
         <template v-else-if='["删除", "批量删除"].includes(dialog.zhName)'>
             <i class="el-icon-info crud-warning"></i>确定将选择数据删除?
@@ -21,11 +21,11 @@
 </template>
 
 <script>
-    import CrudDialogForm from '@/components/crud/CrudDialogForm';
+    import CustomForm from '@/components/crud/CustomForm';
 
     export default {
         name: 'CrudDialog',
-        components: {CrudDialogForm},
+        components: {CustomForm},
         props: {
             dialog: {
                 type: Object,
@@ -49,11 +49,20 @@
                 }
             }
         },
+        data() {
+            return {
+                formStyleOptions: {
+                    inline: false,
+                    size: 'small',
+                    labelWidth: '100px'
+                }
+            };
+        },
         computed: {
             dialogStyle() {
                 if (['新增', '编辑', '查看'].includes(this.dialog.zhName)) {
                     return {
-                        width: '60%',
+                        width: '30%',
                         top: '15vh'
                     };
                 } else if (['删除', '批量删除'].includes(this.dialog.zhName)) {

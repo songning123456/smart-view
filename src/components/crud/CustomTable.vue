@@ -1,8 +1,9 @@
 <template>
     <el-table ref='elTable' :data='result' border :header-cell-style='headerCellStyle'
-              @selection-change="selectionChangeBtn">
-        <el-table-column v-if='tableStyle.selection' type="selection" width="55"></el-table-column>
-        <el-table-column label='序号' width='70' align='center'>
+              @selection-change="selectionChangeBtn" :row-key='tableStyleOptions.rowKey'
+              :default-expand-all='tableStyleOptions.defaultExpandAll'>
+        <el-table-column v-if='tableStyleOptions.selection' type="selection" width="55"></el-table-column>
+        <el-table-column v-if='tableStyleOptions.indexFlag' label='序号' width='70' align='center'>
             <span slot-scope='scope'>{{scope.$index + 1}}</span>
         </el-table-column>
         <el-table-column v-for='(item, index) in columnOptions' :key='index' :width='item.width'
@@ -31,12 +32,10 @@
                     return [];
                 }
             },
-            tableStyle: {
+            tableStyleOptions: {
                 type: Object,
                 default() {
-                    return {
-                        selection: true
-                    };
+                    return {};
                 }
             },
             columnOptions: {

@@ -1,15 +1,16 @@
 <template>
     <div class='crud-container' v-loading='loading.show'>
         <div class='crud-container-frame-ud-form' v-for='(searchFormOption, index) in searchFormOptions' :key='index'>
-            <custom-form :form='searchForm' :form-options='searchFormOption' @crud='crudBtn'></custom-form>
+            <custom-form :rule-options='ruleOptions' :form='searchForm' :form-options='searchFormOption' :form-style-options='formStyleOptions'
+                         @crud='crudBtn'></custom-form>
         </div>
         <div class='crud-container-frame-ud-table'
-             :style="'height: calc((100% - ' + (searchFormOptions.length + (Object.keys(page).length > 0 ? 1 : 0)) * 60 + 'px))'">
+             :style="'height: calc((100% - ' + (searchFormOptions.length + (Object.keys(page).length ? 1 : 0)) * 60 + 'px))'">
             <custom-table ref='customTable' :result='searchResult' :column-options='columnOptions'
-                          :operation-options='operationOptions' :table-style='tableStyle'
+                          :operation-options='operationOptions' :table-style-options='tableStyleOptions'
                           @crud='crudBtn' @selection-change='selectionChangeBtn'></custom-table>
         </div>
-        <div class='crud-container-frame-ud-pagination' v-if='Object.keys(page).length > 0'>
+        <div class='crud-container-frame-ud-pagination' v-if='Object.keys(page).length'>
             <el-pagination background layout='total,prev,pager,next' :current-page.sync='page.currentPage'
                            :page-size="page.pageSize" :total='page.total'
                            @current-change="currentChangeBtn"></el-pagination>
@@ -32,6 +33,12 @@
                 type: Object,
                 default() {
                     return {show: false};
+                }
+            },
+            ruleOptions: {
+                type: Object,
+                default() {
+                    return {};
                 }
             },
             searchForm: {
@@ -76,6 +83,16 @@
                     return [];
                 }
             },
+            tableStyleOptions: {
+                type: Object,
+                default() {
+                    return {
+                        defaultExpandAll: false,
+                        indexFlag: true,
+                        selection: true
+                    };
+                }
+            },
             columnOptions: {
                 type: Array,
                 default() {
@@ -102,15 +119,15 @@
                         show: false
                     };
                 }
-            },
-            tableStyle: {
-                type: Object,
-                default() {
-                    return {
-                        selection: true
-                    };
-                }
             }
+        },
+        data() {
+            return {
+                formStyleOptions: {
+                    inline: true,
+                    size: 'small'
+                }
+            };
         },
         computed: {
             dialogForm() {

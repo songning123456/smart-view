@@ -93,18 +93,19 @@ vueRouter.beforeEach((to, from, next) => {
 
 // 导航转成路由
 const menuToRoute = (menu) => {
-    if (!menu.component) {
+    if (!menu.path) {
         return null;
     }
+    let pathArr = menu.path.split('/');
     let route = {
-        name: menu.name,
+        name: pathArr[pathArr.length - 1],
         path: menu.path,
         meta: {
             icon: menu.metaIcon,
             title: menu.metaTitle
         }
     };
-    route.component = () => import('@/views/' + menu.component + '.vue');
+    route.component = () => import('@/views' + menu.path + '.vue');
     return route;
 };
 
