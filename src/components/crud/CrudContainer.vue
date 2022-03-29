@@ -1,12 +1,12 @@
 <template>
     <div class='crud-container' v-loading='loading.show'>
         <div class='crud-container-frame-ud-form' v-for='(searchFormOption, index) in searchFormOptions' :key='index'>
-            <custom-form :rule-options='ruleOptions' :form='searchForm' :form-options='searchFormOption' :form-style-options='formStyleOptions'
+            <custom-form :form='searchForm' :form-options='searchFormOption' :form-style-options='formStyleOptions'
                          @crud='crudBtn'></custom-form>
         </div>
         <div class='crud-container-frame-ud-table'
-             :style="'height: calc((100% - ' + (searchFormOptions.length + (Object.keys(page).length ? 1 : 0)) * 60 + 'px))'">
-            <custom-table ref='customTable' :result='searchResult' :column-options='columnOptions'
+             :style="'height: calc((100% - ' + (searchFormOptions.length + (Object.keys(page).length ? 1 : 0)) * 50 + 'px))'">
+            <custom-table ref='customTable' :table-data='tableData' :column-options='columnOptions'
                           :operation-options='operationOptions' :table-style-options='tableStyleOptions'
                           @crud='crudBtn' @selection-change='selectionChangeBtn'></custom-table>
         </div>
@@ -15,7 +15,8 @@
                            :page-size="page.pageSize" :total='page.total'
                            @current-change="currentChangeBtn"></el-pagination>
         </div>
-        <crud-dialog :dialog='dialog' :form='dialogForm' :form-options='dialogFormOptions'
+        <crud-dialog :dialog='dialog' :rule-options='ruleOptions' :form='crudForm'
+                     :form-options='crudFormOptions[dialog.zhName]'
                      @dialog='dialogBtn' @select-change='selectChangeBtn'></crud-dialog>
     </div>
 </template>
@@ -47,37 +48,25 @@
                     return {};
                 }
             },
+            crudForm: {
+                type: Object,
+                default() {
+                    return {};
+                }
+            },
             searchFormOptions: {
                 type: Array,
                 default() {
                     return [];
                 }
             },
-            addForm: {
+            crudFormOptions: {
                 type: Object,
                 default() {
                     return {};
                 }
             },
-            addFormOptions: {
-                type: Array,
-                default() {
-                    return [];
-                }
-            },
-            editForm: {
-                type: Object,
-                default() {
-                    return {};
-                }
-            },
-            editFormOptions: {
-                type: Array,
-                default() {
-                    return [];
-                }
-            },
-            searchResult: {
+            tableData: {
                 type: Array,
                 default() {
                     return [];
@@ -129,22 +118,6 @@
                 }
             };
         },
-        computed: {
-            dialogForm() {
-                if (this.dialog.zhName === '新增') {
-                    return this.addForm;
-                } else if (this.dialog.zhName === '编辑') {
-                    return this.editForm;
-                }
-            },
-            dialogFormOptions() {
-                if (this.dialog.zhName === '新增') {
-                    return this.addFormOptions;
-                } else if (this.dialog.zhName === '编辑') {
-                    return this.editFormOptions;
-                }
-            }
-        },
         methods: {
             crudBtn(zhName, row) {
                 this.$emit('crud', zhName, row);
@@ -175,7 +148,7 @@
 
         .crud-container-frame-ud-form {
             width: 100%;
-            height: 60px;
+            height: 50px;
             display: flex;
             align-items: center;
         }
@@ -186,7 +159,7 @@
 
         .crud-container-frame-ud-pagination {
             width: 100%;
-            height: 60px;
+            height: 50px;
             display: flex;
             justify-content: flex-end;
             align-items: center;

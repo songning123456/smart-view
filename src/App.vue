@@ -14,7 +14,9 @@
 <style>
     html, body, #app {
         font-family: 'Helvetica Neue', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', 'Microsoft Yahei', sans-serif;
+        width: 100%;
         height: 100%;
+        overflow: hidden;
         padding: 0;
         margin: 0;
         font-size: 15px;

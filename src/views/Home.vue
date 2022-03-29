@@ -1,10 +1,10 @@
 <template>
     <el-container>
-        <el-aside width="200px">
+        <el-aside width='200px'>
             <SideMenu></SideMenu>
         </el-aside>
-        <el-container>
-            <el-header>
+        <el-container width='calc(100% - 200px)'>
+            <el-header style='height: 60px'>
                 <strong>VueAdmin后台管理系统</strong>
                 <div class="header-avatar">
                     <el-avatar size="medium" :src="userInfo.avatar"></el-avatar>
@@ -20,11 +20,10 @@
                     <el-link href="https://markerhub.com" target="_blank">网站</el-link>
                     <el-link href="https://space.bilibili.com/13491144" target="_blank">B站</el-link>
                 </div>
-
             </el-header>
-            <el-main>
-                <Tabs></Tabs>
-                <div style="margin: 0 15px;">
+            <el-main style='height: calc(100% - 60px)'>
+                <Tabs style='height: 41px'></Tabs>
+                <div style='height: calc(100% - 41px); width: 100%; box-sizing: border-box; padding: 10px'>
                     <router-view/>
                 </div>
             </el-main>
@@ -82,6 +81,7 @@
         padding: 0;
         margin: 0;
         height: 100%;
+        width: 100%;
     }
 
     .header-avatar {

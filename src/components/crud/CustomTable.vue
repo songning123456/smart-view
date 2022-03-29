@@ -1,5 +1,5 @@
 <template>
-    <el-table ref='elTable' :data='result' border :header-cell-style='headerCellStyle'
+    <el-table ref='elTable' :data='tableData' border :header-cell-style='headerCellStyle'
               @selection-change="selectionChangeBtn" :row-key='tableStyleOptions.rowKey'
               :default-expand-all='tableStyleOptions.defaultExpandAll'>
         <el-table-column v-if='tableStyleOptions.selection' type="selection" width="55"></el-table-column>
@@ -26,7 +26,7 @@
     export default {
         name: 'CustomTable',
         props: {
-            result: {
+            tableData: {
                 type: Array,
                 default() {
                     return [];
@@ -61,7 +61,7 @@
         },
         methods: {
             crudBtn(zhName, row) {
-                this.$emit('crud', zhName, row);
+                this.$emit('crud', zhName, JSON.parse(JSON.stringify(row)));
             },
             selectionChangeBtn(val) {
                 this.$emit('selection-change', val);

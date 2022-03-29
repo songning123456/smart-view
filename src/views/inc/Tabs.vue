@@ -64,6 +64,12 @@
     };
 </script>
 
-<style scoped>
+<style lang='scss' scoped>
+
+    .el-tabs {
+        /deep/ .el-tabs__header {
+            margin-bottom: unset;
+        }
+    }
 
 </style>
