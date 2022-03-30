@@ -3,18 +3,16 @@
               @selection-change="selectionChangeBtn" :row-key='tableStyleOptions.rowKey'
               :default-expand-all='tableStyleOptions.defaultExpandAll'>
         <el-table-column v-if='tableStyleOptions.selection' type="selection" width="55"></el-table-column>
-        <el-table-column v-if='tableStyleOptions.indexFlag' label='序号' width='70' align='center'>
-            <span slot-scope='scope'>{{scope.$index + 1}}</span>
-        </el-table-column>
-        <el-table-column v-for='(item, index) in columnOptions' :key='index' :width='item.width'
-                         :show-overflow-tooltip='item.showOverflowTooltip' align='center' :label='item.label'>
-            <template slot-scope="scope">
-                <span :style='typeof item.style === "function" ? item.style(scope.row[item.prop]) : ""'>{{typeof item.text === 'function' ? item.text(scope.row[item.prop]) : scope.row[item.prop]}}</span>
+        <el-table-column v-for='(item, index) in columnOptions[0]' :key='index' :width='item.width'
+                         :show-overflow-tooltip='item.showOverflowTooltip' :align='item.align ? item.align : "center"'
+                         :label='item.zhName'>
+            <template slot-scope='scope'>
+                <span :style='typeof item.style === "function" ? item.style(scope.row[item.enName]) : ""'>{{typeof item.text === 'function' ? item.text(scope.row[item.enName]) : (item.enName === 'index' ? (scope.$index + 1) : scope.row[item.enName])}}</span>
             </template>
         </el-table-column>
-        <el-table-column label="操作" width="200" v-if='operationOptions.length'>
-            <template slot-scope="scope">
-                <el-button v-for='(item, index) in operationOptions' :key='index'
+        <el-table-column v-if='Array.isArray(columnOptions[1])' label="操作" width="200" align='center'>
+            <template slot-scope='scope'>
+                <el-button v-for='(item, index) in columnOptions[1]' :key='index'
                            @click="crudBtn(item.zhName, scope.row)" type="text" size="small">{{item.zhName}}
                 </el-button>
             </template>
@@ -39,12 +37,6 @@
                 }
             },
             columnOptions: {
-                type: Array,
-                default() {
-                    return [];
-                }
-            },
-            operationOptions: {
                 type: Array,
                 default() {
                     return [];

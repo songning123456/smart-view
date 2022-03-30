@@ -45,6 +45,11 @@ const vueRouter = new VueRouter({
     routes
 });
 
+const vueRouterPush = VueRouter.prototype.push;
+VueRouter.prototype.push = function push(to) {
+    return vueRouterPush.call(this, to).catch(err => err);
+};
+
 // 解决[vue-router] Duplicate named routes definition....
 vueRouter.$addRoutes = (params) => {
     vueRouter.matcher = new VueRouter({mode: 'history'}).matcher;

@@ -3,11 +3,10 @@
                     :rule-options='ruleOptions'
                     :search-form='searchForm'
                     :search-form-options='searchFormOptions'
-                    :table-data='searchResult'
+                    :table-data='tableData'
                     :crud-form='crudForm'
                     :crud-form-options='crudFormOptions'
                     :column-options='columnOptions'
-                    :operation-options='operationOptions'
                     :table-style-options='tableStyleOptions'
                     :dialog='dialog'
                     @crud='crudBtn'
@@ -34,7 +33,7 @@
                     ]
                 },
                 searchForm: {},
-                searchResult: [],
+                tableData: [],
                 crudForm: {},
                 crudFormOptions: {
                     '详情': [
@@ -234,65 +233,66 @@
                     ]
                 ],
                 columnOptions: [
-                    {
-                        label: '名称',
-                        prop: 'metaTitle'
-                    },
-                    {
-                        label: '权限',
-                        prop: 'permission'
-                    },
-                    {
-                        label: '图标',
-                        prop: 'metaIcon'
-                    },
-                    {
-                        label: '类型',
-                        prop: 'type',
-                        style(val) {
-                            let prefix = 'color: ';
-                            let colorVal = '#000000';
-                            if (val === 0) {
-                                colorVal = '#409eff';
-                            } else if (val === 1) {
-                                colorVal = '#67c23a';
-                            } else if (val === 2) {
-                                colorVal = '#909399';
-                            }
-                            return prefix + colorVal;
+                    [
+                        {
+                            zhName: '名称',
+                            enName: 'metaTitle'
                         },
-                        text(val) {
-                            if (val === 0) {
-                                return '目录';
-                            } else if (val === 1) {
-                                return '菜单';
-                            } else if (val === 2) {
-                                return '按钮';
-                            } else {
-                                return val;
+                        {
+                            zhName: '权限',
+                            enName: 'permission'
+                        },
+                        {
+                            zhName: '图标',
+                            enName: 'metaIcon'
+                        },
+                        {
+                            zhName: '类型',
+                            enName: 'type',
+                            style(val) {
+                                let prefix = 'color: ';
+                                let colorVal = '#000000';
+                                if (val === 0) {
+                                    colorVal = '#409eff';
+                                } else if (val === 1) {
+                                    colorVal = '#67c23a';
+                                } else if (val === 2) {
+                                    colorVal = '#909399';
+                                }
+                                return prefix + colorVal;
+                            },
+                            text(val) {
+                                if (val === 0) {
+                                    return '目录';
+                                } else if (val === 1) {
+                                    return '菜单';
+                                } else if (val === 2) {
+                                    return '按钮';
+                                } else {
+                                    return val;
+                                }
                             }
+                        },
+                        {
+                            zhName: '菜单URL',
+                            enName: 'path'
                         }
-                    },
-                    {
-                        label: '菜单URL',
-                        prop: 'path'
-                    }
-                ],
-                operationOptions: [
-                    {
-                        zhName: '详情'
-                    },
-                    {
-                        zhName: '编辑'
-                    },
-                    {
-                        zhName: '删除'
-                    }
+                    ],
+                    [
+                        {
+                            zhName: '详情'
+                        },
+                        {
+                            zhName: '编辑'
+                        },
+                        {
+                            zhName: '删除'
+                        }
+                    ]
                 ],
                 tableStyleOptions: {
                     rowKey: 'id',
                     defaultExpandAll: true,
-                    indexFlag: false,
                     selection: false
                 },
                 dialog: {
@@ -316,8 +316,7 @@
                     } else {
                         this.crudForm = row;
                     }
-                    this.dialog.show = true;
-                    this.dialog.zhName = zhName;
+                    (this.dialog.show = true) && (this.dialog.zhName = zhName);
                 }
             },
             dialogBtn(zhName) {
@@ -330,13 +329,14 @@
                 }
             },
             searchFunc() {
-                this.loading.show = true;
-                this.$axios.get('/boot/sys/sysMenu/list', this.searchForm).then(res => {
+                !this.loading.show && (this.loading.show = true);
+                let params = Object.assign({}, this.searchForm);
+                this.$axios.get('/boot/sys/sysMenu/list', params).then(res => {
                     if (res.data.success) {
-                        this.searchResult = res.data.result;
+                        this.tableData = res.data.result;
                         let optionArr = [];
                         let childDepth = 0;
-                        this.forEachTree(this.searchResult, optionArr, childDepth);
+                        this.forEachTree(this.tableData, optionArr, childDepth);
                         Object.values(this.crudFormOptions).forEach(val => {
                             if (val[0] && val[0].options) {
                                 val[0].options = optionArr;
@@ -345,10 +345,10 @@
                     } else {
                         this.$message.error(res.data.message);
                     }
-                    this.loading.show = false;
                 }).catch(e => {
-                    this.loading.show = false;
                     this.$message.error(e);
+                }).finally(() => {
+                    this.loading.show && (this.loading.show = false);
                 });
             },
             addFunc() {
@@ -359,10 +359,10 @@
                         this.$message.success('添加成功');
                         this.searchFunc();
                     } else {
+                        this.loading.show = false;
                         this.$message.error(res.data.message);
                     }
                 }).catch(e => {
-                    this.dialog.show = false;
                     this.loading.show = false;
                     this.$message.error(e);
                 });
@@ -375,10 +375,10 @@
                         this.$message.success('修改成功');
                         this.searchFunc();
                     } else {
+                        this.loading.show = false;
                         this.$message.error(res.data.message);
                     }
                 }).catch(e => {
-                    this.dialog.show = false;
                     this.loading.show = false;
                     this.$message.error(e);
                 });
@@ -391,21 +391,21 @@
                         this.$message.success('删除成功');
                         this.searchFunc();
                     } else {
+                        this.loading.show = false;
                         this.$message.error(res.data.message);
                     }
                 }).catch(e => {
-                    this.dialog.show = false;
                     this.loading.show = false;
                     this.$message.error(e);
                 });
             },
-            forEachTree(searchResult, optionArr, childDepth) {
+            forEachTree(tableData, optionArr, childDepth) {
                 let line = '';
                 for (let i = 0; i < childDepth; i++) {
                     line += '-';
                 }
                 line += ' ';
-                for (let item of searchResult) {
+                for (let item of tableData) {
                     if (item.type !== 2) {
                         let obj = {
                             alias: line + item.metaTitle,

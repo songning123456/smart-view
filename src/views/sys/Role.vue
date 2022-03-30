@@ -1,275 +1,318 @@
 <template>
     <div>
-        <el-form :inline="true">
-            <el-form-item>
-                <el-input v-model="searchForm.name" placeholder="名称" clearable></el-input>
-            </el-form-item>
-            <el-form-item>
-                <el-button @click="getRoleList">搜索</el-button>
-            </el-form-item>
-            <el-form-item>
-                <el-button type="primary" @click="dialogVisible = true">新增</el-button>
-            </el-form-item>
-            <el-form-item>
-                <el-popconfirm title="这是确定批量删除吗？" @confirm="delHandle(null)">
-                    <el-button type="danger" slot="reference" :disabled="delBtlStatu">批量删除</el-button>
-                </el-popconfirm>
-            </el-form-item>
-        </el-form>
-
-        <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%" border stripe
-                  @selection-change="handleSelectionChange">
-            <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="name" label="名称" width="120"></el-table-column>
-            <el-table-column prop="code" label="唯一编码" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="remark" label="描述" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="statu" label="状态">
-                <template slot-scope="scope">
-                    <el-tag size="small" v-if="scope.row.statu === 1" type="success">正常</el-tag>
-                    <el-tag size="small" v-else-if="scope.row.statu === 0" type="danger">禁用</el-tag>
-                </template>
-            </el-table-column>
-            <el-table-column prop="icon" label="操作">
-                <template slot-scope="scope">
-                    <el-button type="text" @click="permHandle(scope.row.id)">分配权限</el-button>
-                    <el-divider direction="vertical"></el-divider>
-                    <el-button type="text" @click="editHandle(scope.row.id)">编辑</el-button>
-                    <el-divider direction="vertical"></el-divider>
-                    <template>
-                        <el-popconfirm title="这是一段内容确定删除吗？" @confirm="delHandle(scope.row.id)">
-                            <el-button type="text" slot="reference">删除</el-button>
-                        </el-popconfirm>
-                    </template>
-                </template>
-            </el-table-column>
-        </el-table>
-        <el-pagination
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-                layout="total, sizes, prev, pager, next, jumper"
-                :page-sizes="[10, 20, 50, 100]"
-                :current-page="current"
-                :page-size="size"
-                :total="total">
-        </el-pagination>
-        <!--新增对话框-->
-        <el-dialog title="提示" :visible.sync="dialogVisible" width="600px" :before-close="handleClose">
-            <el-form :model="editForm" :rules="editFormRules" ref="editForm" label-width="100px" class="demo-editForm">
-                <el-form-item label="角色名称" prop="name" label-width="100px">
-                    <el-input v-model="editForm.name" autocomplete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="唯一编码" prop="code" label-width="100px">
-                    <el-input v-model="editForm.code" autocomplete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="描述" prop="remark" label-width="100px">
-                    <el-input v-model="editForm.remark" autocomplete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="状态" prop="statu" label-width="100px">
-                    <el-radio-group v-model="editForm.statu">
-                        <el-radio :label=0>禁用</el-radio>
-                        <el-radio :label=1>正常</el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item>
-                    <el-button type="primary" @click="submitForm('editForm')">立即创建</el-button>
-                    <el-button @click="resetForm('editForm')">重置</el-button>
-                </el-form-item>
-            </el-form>
-        </el-dialog>
-        <el-dialog title="分配权限" :visible.sync="permDialogVisible" width="600px">
-            <el-form :model="permForm">
-                <el-tree :data="permTreeData"
-                         show-checkbox
-                         ref="permTree"
-                         :default-expand-all=true
-                         node-key="id"
-                         :check-strictly=true
-                         :props="defaultProps">
+        <crud-container :loading='loading'
+                        :rule-options='ruleOptions'
+                        :search-form='searchForm'
+                        :search-form-options='searchFormOptions'
+                        :table-data='tableData'
+                        :crud-form='crudForm'
+                        :crud-form-options='crudFormOptions'
+                        :column-options='columnOptions'
+                        :table-style-options='tableStyleOptions'
+                        :dialog='dialog'
+                        :page='page'
+                        @crud='crudBtn'
+                        @dialog='dialogBtn'
+                        @selection-change='selectionChangeBtn'>
+            <template v-slot:containerSlot>
+                <div>123</div>
+            </template>
+        </crud-container>
+        <!--<el-dialog :title='permissionDialog.zhName' :visible.sync='permissionDialog.show' width='600px'>
+            <el-form :model='crudForm'>
+                <el-tree :data='menuData' show-checkbox ref='elTree' :default-expand-all=true node-key='id'
+                         :check-strictly=true :props="{children: 'children', label: 'metaTitle'}">
                 </el-tree>
             </el-form>
             <span slot="footer" class="dialog-footer">
-			    <el-button @click="permDialogVisible = false">取 消</el-button>
-			    <el-button type="primary" @click="submitPermFormHandle('permForm')">确 定</el-button>
+			    <el-button @click='permissionDialog.show = false'>取消</el-button>
+			    <el-button type="primary" @click=''>确定</el-button>
 			</span>
-        </el-dialog>
+        </el-dialog>-->
     </div>
 </template>
 
 <script>
+
+    import CrudContainer from '@/components/crud/CrudContainer';
+
     export default {
         name: 'Role',
+        components: {CrudContainer},
         data() {
             return {
-                searchForm: {},
-                delBtlStatu: true,
-
-                total: 0,
-                size: 10,
-                current: 1,
-
-                dialogVisible: false,
-                editForm: {},
-
-                tableData: [],
-
-                editFormRules: {
+                loading: {
+                    show: false
+                },
+                ruleOptions: {
                     name: [
                         {required: true, message: '请输入角色名称', trigger: 'blur'}
                     ],
                     code: [
-                        {required: true, message: '请输入唯一编码', trigger: 'blur'}
-                    ],
-                    statu: [
-                        {required: true, message: '请选择状态', trigger: 'blur'}
+                        {required: true, message: '请填入唯一编码', trigger: 'blur'}
                     ]
                 },
-
-                multipleSelection: [],
-
-                permDialogVisible: false,
-                permForm: {},
-                defaultProps: {
-                    children: 'children',
-                    label: 'name'
+                page: {
+                    pageSize: 20,
+                    currentPage: 1,
+                    total: 0
                 },
-                permTreeData: []
+                searchForm: {},
+                tableData: [],
+                menuData: [],
+                selectionTableData: [],
+                crudForm: {},
+                crudFormOptions: {
+                    '详情': [
+                        {
+                            elType: 'el-input',
+                            zhName: '名称',
+                            enName: 'name',
+                            disabled: true
+                        },
+                        {
+                            elType: 'el-input',
+                            zhName: '唯一编码',
+                            enName: 'code',
+                            disabled: true
+                        },
+                        {
+                            elType: 'el-input',
+                            zhName: '备注',
+                            enName: 'remark',
+                            disabled: true
+                        }
+                    ],
+                    '新增': [
+                        {
+                            elType: 'el-input',
+                            zhName: '名称',
+                            enName: 'name',
+                            clearable: true
+                        },
+                        {
+                            elType: 'el-input',
+                            zhName: '唯一编码',
+                            enName: 'code',
+                            clearable: true
+                        },
+                        {
+                            elType: 'el-input',
+                            zhName: '备注',
+                            enName: 'remark',
+                            clearable: true
+                        }
+                    ],
+                    '编辑': [
+                        {
+                            elType: 'el-input',
+                            zhName: '名称',
+                            enName: 'name',
+                            clearable: true
+                        },
+                        {
+                            elType: 'el-input',
+                            zhName: '唯一编码',
+                            enName: 'code',
+                            clearable: true
+                        },
+                        {
+                            elType: 'el-input',
+                            zhName: '备注',
+                            enName: 'remark',
+                            clearable: true
+                        }
+                    ]
+                },
+                searchFormOptions: [
+                    [
+                        {
+                            elType: 'el-input',
+                            zhName: '名称',
+                            enName: 'name',
+                            placeholder: '请输入名称',
+                            clearable: true
+                        },
+                        {
+                            elType: 'el-button',
+                            zhName: '查询',
+                            btnType: 'primary'
+                        },
+                        {
+                            elType: 'el-button',
+                            zhName: '新增',
+                            btnType: 'primary'
+                        },
+                        {
+                            elType: 'el-button',
+                            zhName: '批量删除',
+                            btnType: 'danger'
+                        }
+                    ]
+                ],
+                columnOptions: [
+                    [
+                        {
+                            zhName: '序号',
+                            enName: 'index'
+                        },
+                        {
+                            zhName: '名称',
+                            enName: 'name'
+                        },
+                        {
+                            zhName: '编码',
+                            enName: 'code'
+                        },
+                        {
+                            zhName: '备注',
+                            enName: 'remark'
+                        }
+                    ],
+                    [
+                        {
+                            zhName: '详情'
+                        },
+                        {
+                            zhName: '编辑'
+                        },
+                        {
+                            zhName: '删除'
+                        },
+                        {
+                            zhName: '分配权限'
+                        }
+                    ]
+                ],
+                tableStyleOptions: {
+                    selection: true
+                },
+                dialog: {
+                    zhName: '',
+                    slot: false,
+                    show: false
+                }
             };
         },
         created() {
-            this.getRoleList();
-
-            this.$axios.get('/boot/sys/sysMenu/list').then(res => {
-                this.permTreeData = res.data.result.records;
-            });
+            this.searchFunc();
+            this.getMenuFunc();
         },
         methods: {
-            toggleSelection(rows) {
-                if (rows) {
-                    rows.forEach(row => {
-                        this.$refs.multipleTable.toggleRowSelection(row);
-                    });
+            crudBtn(zhName, row) {
+                if (zhName === '查询') {
+                    this.searchFunc();
                 } else {
-                    this.$refs.multipleTable.clearSelection();
-                }
-            },
-            handleSelectionChange(val) {
-                console.log('勾选');
-                console.log(val);
-                this.multipleSelection = val;
-                this.delBtlStatu = val.length === 0;
-            },
-            handleSizeChange(val) {
-                console.log(`每页 ${val} 条`);
-                this.size = val;
-                this.getRoleList();
-            },
-            handleCurrentChange(val) {
-                console.log(`当前页: ${val}`);
-                this.current = val;
-                this.getRoleList();
-            },
-            resetForm(formName) {
-                this.$refs[formName].resetFields();
-                this.dialogVisible = false;
-                this.editForm = {};
-            },
-            handleClose() {
-                this.resetForm('editForm');
-            },
-            getRoleList() {
-                this.$axios.get('/boot/sys/sysRole/list', {
-                    params: {
-                        name: this.searchForm.name,
-                        current: this.current,
-                        size: this.size
-                    }
-                }).then(res => {
-                    this.tableData = res.data.result.records;
-                    this.size = res.data.result.size;
-                    this.current = res.data.result.current;
-                    this.total = res.data.result.total;
-                });
-            },
-            submitForm(formName) {
-                this.$refs[formName].validate((valid) => {
-                    if (valid) {
-                        this.$axios.post('/sys/role/' + (this.editForm.id ? 'update' : 'save'), this.editForm)
-                            .then(res => {
-                                this.$message({
-                                    showClose: true,
-                                    message: '恭喜你，操作成功',
-                                    type: 'success',
-                                    onClose: () => {
-                                        this.getRoleList();
-                                    }
-                                });
-                                this.dialogVisible = false;
-                                this.resetForm(formName);
-                            });
+                    if (zhName === '新增') {
+                        this.crudForm = {};
+                    } else if (zhName === '分配权限') {
+                        this.crudForm = {};
+                        this.dialog.slot = true;
+                    } else if (zhName === '批量删除') {
+                        if (!this.selectionTableData.length) {
+                            this.$message.warning('请先选择数据');
+                            return;
+                        }
                     } else {
-                        return false;
+                        this.crudForm = row;
                     }
-                });
-            },
-            editHandle(id) {
-                this.$axios.get('/sys/role/info/' + id).then(res => {
-                    this.editForm = res.data.data;
-                    this.dialogVisible = true;
-                });
-            },
-            delHandle(id) {
-
-                var ids = [];
-
-                if (id) {
-                    ids.push(id);
-                } else {
-                    this.multipleSelection.forEach(row => {
-                        ids.push(row.id);
-                    });
+                    this.dialog.show = true;
+                    this.dialog.zhName = zhName;
                 }
-                this.$axios.post('/sys/role/delete', ids).then(res => {
-                    this.$message({
-                        showClose: true,
-                        message: '恭喜你，操作成功',
-                        type: 'success',
-                        onClose: () => {
-                            this.getRoleList();
-                        }
-                    });
+            },
+            dialogBtn(zhName) {
+                if (zhName === '新增') {
+                    this.addFunc();
+                } else if (zhName === '编辑') {
+                    this.editFunc();
+                } else if (zhName === '删除') {
+                    this.deleteFunc(this.crudForm.id);
+                } else if (zhName === '批量删除') {
+                    this.deleteFunc(this.selectionTableData.map(item => item.id).join(','));
+                }
+            },
+            selectionChangeBtn(val) {
+                this.selectionTableData = val;
+            },
+            searchFunc() {
+                !this.loading.show && (this.loading.show = true);
+                let params = Object.assign({}, this.searchForm);
+                params.current = this.page.currentPage;
+                params.size = this.page.pageSize;
+                this.$axios.get('/boot/sys/sysRole/list', {params: params}).then(res => {
+                    if (res.data.success) {
+                        this.tableData = res.data.result.records;
+                        this.page.total = res.data.result.total;
+                    } else {
+                        this.$message.error(res.data.message);
+                    }
+                }).catch(e => {
+                    this.$message.error(e);
+                }).finally(() => {
+                    this.loading.show && (this.loading.show = false);
                 });
             },
-            permHandle(id) {
-                this.permDialogVisible = true;
-                this.$axios.get('/boot/sys/sysRole/info/' + id).then(res => {
-                    this.$refs.permTree.setCheckedKeys(res.data.result.menuIds);
-                    this.permForm = res.data.result;
+            addFunc() {
+                this.dialog.show = false;
+                this.loading.show = true;
+                this.$axios.post('/boot/sys/sysRole/save', this.crudForm).then(res => {
+                    if (res.data.success) {
+                        this.$message.success('添加成功');
+                        this.searchFunc();
+                    } else {
+                        this.loading.show = false;
+                        this.$message.error(res.data.message);
+                    }
+                }).catch(e => {
+                    this.loading.show = false;
+                    this.$message.error(e);
                 });
             },
-            submitPermFormHandle(formName) {
-                var menuIds = this.$refs.permTree.getCheckedKeys();
-                this.$axios.post('/sys/role/perm/' + this.permForm.id, menuIds).then(res => {
-                    this.$message({
-                        showClose: true,
-                        message: '恭喜你，操作成功',
-                        type: 'success',
-                        onClose: () => {
-                            this.getRoleList();
-                        }
-                    });
-                    this.permDialogVisible = false;
-                    this.resetForm(formName);
+            editFunc() {
+                this.dialog.show = false;
+                this.loading.show = true;
+                this.$axios.put('/boot/sys/sysRole/update', this.crudForm).then(res => {
+                    if (res.data.success) {
+                        this.$message.success('修改成功');
+                        this.searchFunc();
+                    } else {
+                        this.loading.show = false;
+                        this.$message.error(res.data.message);
+                    }
+                }).catch(e => {
+                    this.loading.show = false;
+                    this.$message.error(e);
+                });
+            },
+            deleteFunc(param) {
+                this.dialog.show = false;
+                this.loading.show = true;
+                this.$axios.delete('/boot/sys/sysRole/delete', {params: {roleIds: param}}).then(res => {
+                    if (res.data.success) {
+                        this.$message.success('删除成功');
+                        this.searchFunc();
+                    } else {
+                        this.loading.show = false;
+                        this.$message.error(res.data.message);
+                    }
+                }).catch(e => {
+                    this.loading.show = false;
+                    this.$message.error(e);
+                });
+            },
+            getMenuFunc() {
+                this.$axios.get('/boot/sys/sysMenu/list', {}).then(res => {
+                    if (res.data.success) {
+                        this.menuData = res.data.result;
+                    } else {
+                        this.$message.error(res.data.message);
+                    }
+                }).catch(e => {
+                    this.$message.error(e);
                 });
             }
         }
     };
 </script>
 
-<style scoped>
-
-    .el-pagination {
-        float: right;
-        margin-top: 22px;
-    }
-
-</style>
+<style lang='scss' scoped></style>

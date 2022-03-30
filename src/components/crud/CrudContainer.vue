@@ -1,13 +1,14 @@
-<template>
+<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
     <div class='crud-container' v-loading='loading.show'>
         <div class='crud-container-frame-ud-form' v-for='(searchFormOption, index) in searchFormOptions' :key='index'>
-            <custom-form :form='searchForm' :form-options='searchFormOption' :form-style-options='formStyleOptions'
+            <custom-form :form='searchForm' :form-options='searchFormOption'
+                         :form-style-options='customFormStyleOptions[true]'
                          @crud='crudBtn'></custom-form>
         </div>
         <div class='crud-container-frame-ud-table'
              :style="'height: calc((100% - ' + (searchFormOptions.length + (Object.keys(page).length ? 1 : 0)) * 50 + 'px))'">
             <custom-table ref='customTable' :table-data='tableData' :column-options='columnOptions'
-                          :operation-options='operationOptions' :table-style-options='tableStyleOptions'
+                          :table-style-options='tableStyleOptions'
                           @crud='crudBtn' @selection-change='selectionChangeBtn'></custom-table>
         </div>
         <div class='crud-container-frame-ud-pagination' v-if='Object.keys(page).length'>
@@ -16,8 +17,12 @@
                            @current-change="currentChangeBtn"></el-pagination>
         </div>
         <crud-dialog :dialog='dialog' :rule-options='ruleOptions' :form='crudForm'
-                     :form-options='crudFormOptions[dialog.zhName]'
-                     @dialog='dialogBtn' @select-change='selectChangeBtn'></crud-dialog>
+                     :form-options='crudFormOptions[dialog.zhName]' :form-style-options='customFormStyleOptions[false]'
+                     @dialog='dialogBtn'>
+            <slot name='containerSlot'>
+                <template v-slot:dialogSlot></template>
+            </slot>
+        </crud-dialog>
     </div>
 </template>
 
@@ -54,6 +59,12 @@
                     return {};
                 }
             },
+            tableData: {
+                type: Array,
+                default() {
+                    return [];
+                }
+            },
             searchFormOptions: {
                 type: Array,
                 default() {
@@ -66,10 +77,20 @@
                     return {};
                 }
             },
-            tableData: {
-                type: Array,
+            formStyleOptions: {
+                type: Object,
                 default() {
-                    return [];
+                    return {
+                        true: {
+                            inline: true,
+                            size: 'small'
+                        },
+                        false: {
+                            inline: false,
+                            size: 'small',
+                            labelWidth: '100px'
+                        }
+                    };
                 }
             },
             tableStyleOptions: {
@@ -77,18 +98,11 @@
                 default() {
                     return {
                         defaultExpandAll: false,
-                        indexFlag: true,
                         selection: true
                     };
                 }
             },
             columnOptions: {
-                type: Array,
-                default() {
-                    return [];
-                }
-            },
-            operationOptions: {
                 type: Array,
                 default() {
                     return [];
@@ -110,13 +124,27 @@
                 }
             }
         },
-        data() {
-            return {
-                formStyleOptions: {
-                    inline: true,
-                    size: 'small'
+        computed: {
+            customFormStyleOptions() {
+                let resOptions = {
+                    true: {
+                        inline: true,
+                        size: 'small'
+                    },
+                    false: {
+                        inline: false,
+                        size: 'small',
+                        labelWidth: '100px'
+                    }
+                };
+                if (this.formStyleOptions[true]) {
+                    resOptions[true] = this.formStyleOptions[true];
                 }
-            };
+                if (this.formStyleOptions[false]) {
+                    resOptions[false] = this.formStyleOptions[false];
+                }
+                return resOptions;
+            }
         },
         methods: {
             crudBtn(zhName, row) {
@@ -127,9 +155,6 @@
             },
             dialogBtn(zhName) {
                 this.$emit('dialog', zhName);
-            },
-            selectChangeBtn(key, val) {
-                this.$emit('select-change', key, val);
             },
             selectionChangeBtn(val) {
                 this.$emit('selection-change', val);
