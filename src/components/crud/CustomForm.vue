@@ -2,7 +2,7 @@
     <el-form :inline='formStyleOptions.inline' :model='form' :size='formStyleOptions.size'
              :label-width='formStyleOptions.labelWidth' :rules='ruleOptions' ref='elForm'>
         <el-form-item v-for='(item, index) in formOptions' :key='index' :prop='item.enName'
-                      :label='item.elType !== "el-button" ? item.zhName : ""'>
+                      :label='item.elType !== "el-button" ? item.zhName : ""' :class='{"custom-form-item": !formStyleOptions.inline}'>
             <el-input v-if='item.elType === "el-input"' v-model='form[item.enName]' :placeholder='item.placeholder'
                       :clearable='item.clearable' :disabled='item.disabled'></el-input>
             <el-select v-if='item.elType === "el-select"' v-model='form[item.enName]' :placeholder='item.placeholder'
@@ -80,6 +80,10 @@
     .el-form {
         /deep/ .el-form-item {
             margin-bottom: unset;
+        }
+
+        .custom-form-item {
+            margin-bottom: 10px;
         }
     }
 

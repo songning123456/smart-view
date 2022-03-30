@@ -1,16 +1,13 @@
 <template>
     <el-dialog :title='dialog.zhName' :visible.sync='dialog.show' :close-on-click-modal='false'
                class='crud-dialog' :width='dialogStyle.width' :top='dialogStyle.top'>
-        <template v-if='["新增", "编辑", "详情"].includes(dialog.zhName)'>
+        <template v-if='Array.isArray(formOptions) && formOptions.length'>
             <custom-form :form='form' :form-options='formOptions' :rule-options='ruleOptions'
                          :form-style-options='formStyleOptions' ref='customForm'
                          @select-change='selectChangeBtn'></custom-form>
         </template>
-        <template v-else-if='["删除", "批量删除"].includes(dialog.zhName)'>
-            <i class="el-icon-info crud-warning"></i>确定将选择数据删除?
-        </template>
         <template v-else>
-            <i class="el-icon-info crud-warning"></i>确定要<span style='font-weight: bold'>{{dialog.zhName}}</span>?
+            <i class="el-icon-info crud-warning"></i>确定要<span style='font-weight: bold'>{{dialog.zhName}}</span>吗?
         </template>
         <div slot='footer'>
             <el-button @click='dialog.show = false'>取消</el-button>
@@ -117,6 +114,10 @@
                 margin-right: 10px;
                 color: #e6a23c;
             }
+        }
+
+        /deep/ .el-dialog__footer {
+            padding: 0 20px 10px 20px;
         }
     }
 
