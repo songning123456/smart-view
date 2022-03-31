@@ -49,7 +49,7 @@
                 },
                 searchForm: {},
                 tableData: [],
-                selectedMenuIds: [],
+                selectedMenuDataIds: [],
                 menuData: [],
                 selectionTableData: [],
                 crudForm: {},
@@ -152,7 +152,8 @@
                     [
                         {
                             zhName: '序号',
-                            enName: 'index'
+                            enName: 'index',
+                            width: '70px'
                         },
                         {
                             zhName: '名称',
@@ -194,7 +195,7 @@
         },
         created() {
             this.searchFunc();
-            this.getMenuFunc();
+            this.getAllMenuFunc();
         },
         methods: {
             crudBtn(zhName, row) {
@@ -214,7 +215,7 @@
                     } else if (zhName === '分配权限') {
                         this.crudForm = row;
                         this.dialog.slot = true;
-                        this.getRoleInfoFunc(row.id);
+                        this.getMenuOfRoleFunc(row.id);
                     } else if (zhName === '批量删除') {
                         if (!this.selectionTableData.length) {
                             this.$message.warning('请先选择数据');
@@ -252,7 +253,7 @@
                 let params = Object.assign({}, this.searchForm);
                 params.currentPage = this.page.currentPage;
                 params.pageSize = this.page.pageSize;
-                this.$axios.get('/boot/sys/sysRole/list', {params: params}).then(res => {
+                this.$axios.get('/boot/sys/sysRole/page', {params: params}).then(res => {
                     if (res.data.success) {
                         this.tableData = res.data.result.records;
                         this.page.total = res.data.result.total;
@@ -300,7 +301,7 @@
             deleteFunc(param) {
                 this.dialog.show = false;
                 this.loading.show = true;
-                this.$axios.delete('/boot/sys/sysRole/delete', {params: {roleIds: param}}).then(res => {
+                this.$axios.delete('/boot/sys/sysRole/delete', {params: {ids: param}}).then(res => {
                     if (res.data.success) {
                         this.$message.success('删除成功');
                         this.searchFunc();
@@ -313,7 +314,7 @@
                     this.$message.error(e);
                 });
             },
-            getMenuFunc() {
+            getAllMenuFunc() {
                 this.$axios.get('/boot/sys/sysMenu/list', {}).then(res => {
                     if (res.data.success) {
                         this.menuData = res.data.result;
@@ -324,11 +325,13 @@
                     this.$message.error(e);
                 });
             },
-            getRoleInfoFunc(roleId) {
-                this.$axios.get('/boot/sys/sysRole/info/' + roleId).then(res => {
+            getMenuOfRoleFunc(id) {
+                this.$axios.get('/boot/sys/sysRole/info/' + id).then(res => {
                     if (res.data.success) {
-                        this.selectedMenuIds = res.data.result.menuIds;
-                        this.$refs['elTree'].setCheckedKeys(this.selectedMenuIds);
+                        if (Array.isArray(res.data.result.menuIds)) {
+                            this.selectedMenuDataIds = res.data.result.menuIds;
+                            this.$refs['elTree'].setCheckedKeys(this.selectedMenuDataIds);
+                        }
                     } else {
                         this.$message.error(res.data.message);
                     }

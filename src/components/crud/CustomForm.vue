@@ -5,7 +5,7 @@
                       :label='item.elType !== "el-button" ? item.zhName : ""'
                       :class='{"custom-form-item": !formStyleOptions.inline}'>
             <el-input v-if='item.elType === "el-input"' v-model='form[item.enName]' :placeholder='item.placeholder'
-                      :clearable='item.clearable' :disabled='item.disabled'></el-input>
+                      :clearable='item.clearable' :disabled='item.disabled' :show-password='item.showPassword'></el-input>
             <el-select v-if='item.elType === "el-select"' v-model='form[item.enName]' :placeholder='item.placeholder'
                        :clearable='item.clearable' :disabled='item.disabled'
                        @change='selectChangeBtn(form[item.enName], form[item.enName])'>
@@ -28,6 +28,7 @@
                              :disabled='item.disabled'
                              :min='typeof item.min === "number" ? item.min : -Infinity'
                              :max='typeof item.max === "number" ? item.max : Infinity'></el-input-number>
+            <el-avatar v-if='item.elType === "el-avatar"' size='small' :src='form[item.enName]'></el-avatar>
         </el-form-item>
     </el-form>
 </template>

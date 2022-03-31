@@ -1,338 +1,420 @@
 <template>
-    <div>
-        <el-form :inline="true">
-            <el-form-item>
-                <el-input v-model="searchForm.username" placeholder="用户名" clearable></el-input>
-            </el-form-item>
-            <el-form-item>
-                <el-button @click="getUserList">搜索</el-button>
-            </el-form-item>
-            <el-form-item>
-                <el-button type="primary" @click="dialogVisible = true" v-if="hasAuth('sys:user:save')">新增</el-button>
-            </el-form-item>
-            <el-form-item>
-                <el-popconfirm title="这是确定批量删除吗？" @confirm="delHandle(null)">
-                    <el-button type="danger" slot="reference" :disabled="delBtlStatu" v-if="hasAuth('sys:user:delete')">
-                        批量删除
-                    </el-button>
-                </el-popconfirm>
-            </el-form-item>
-        </el-form>
-        <el-table ref="multipleTable"
-                  :data="tableData"
-                  tooltip-effect="dark"
-                  style="width: 100%"
-                  border
-                  stripe
-                  @selection-change="handleSelectionChange">
-            <el-table-column
-                    type="selection"
-                    width="55">
-            </el-table-column>
-            <el-table-column
-                    label="头像"
-                    width="50">
-                <template slot-scope="scope">
-                    <el-avatar size="small" :src="scope.row.avatar"></el-avatar>
-                </template>
-            </el-table-column>
-            <el-table-column
-                    prop="username"
-                    label="用户名"
-                    width="120">
-            </el-table-column>
-            <el-table-column
-                    prop="code"
-                    label="角色名称">
-                <template slot-scope="scope">
-                    <el-tag size="small" type="info" v-for="item in scope.row.sysRoles">{{item.name}}</el-tag>
-                </template>
-            </el-table-column>
-            <el-table-column
-                    prop="email"
-                    label="邮箱">
-            </el-table-column>
-            <el-table-column
-                    prop="phone"
-                    label="手机号">
-            </el-table-column>
-            <el-table-column
-                    prop="created"
-                    width="200"
-                    label="创建时间">
-            </el-table-column>
-            <el-table-column
-                    prop="icon"
-                    width="260px"
-                    label="操作">
-                <template slot-scope="scope">
-                    <el-button type="text" @click="roleHandle(scope.row.id)">分配角色</el-button>
-                    <el-divider direction="vertical"></el-divider>
-                    <el-button type="text" @click="repassHandle(scope.row.id, scope.row.username)">重置密码</el-button>
-                    <el-divider direction="vertical"></el-divider>
-                    <el-button type="text" @click="editHandle(scope.row.id)">编辑</el-button>
-                    <el-divider direction="vertical"></el-divider>
-                    <template>
-                        <el-popconfirm title="这是一段内容确定删除吗？" @confirm="delHandle(scope.row.id)">
-                            <el-button type="text" slot="reference">删除</el-button>
-                        </el-popconfirm>
-                    </template>
-                </template>
-            </el-table-column>
-        </el-table>
-        <el-pagination
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-                layout="total, sizes, prev, pager, next, jumper"
-                :page-sizes="[10, 20, 50, 100]"
-                :current-page="current"
-                :page-size="size"
-                :total="total">
-        </el-pagination>
-
-        <!--新增对话框-->
-        <el-dialog
-                title="提示"
-                :visible.sync="dialogVisible"
-                width="600px"
-                :before-close="handleClose">
-
-            <el-form :model="editForm" :rules="editFormRules" ref="editForm">
-                <el-form-item label="用户名" prop="username" label-width="100px">
-                    <el-input v-model="editForm.username" autocomplete="off"></el-input>
-                    <el-alert
-                            title="初始密码为888888"
-                            :closable="false"
-                            type="info"
-                            style="line-height: 12px;"
-                    ></el-alert>
-                </el-form-item>
-
-                <el-form-item label="邮箱" prop="email" label-width="100px">
-                    <el-input v-model="editForm.email" autocomplete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="手机号" prop="phone" label-width="100px">
-                    <el-input v-model="editForm.phone" autocomplete="off"></el-input>
-                </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="resetForm('editForm')">取 消</el-button>
-                <el-button type="primary" @click="submitForm('editForm')">确 定</el-button>
-            </div>
-        </el-dialog>
-
-        <!-- 分配权限对话框 -->
-        <el-dialog title="分配角色" :visible.sync="roleDialogFormVisible" width="600px">
-
-            <el-form :model="roleForm">
-                <el-tree
-                        :data="roleTreeData"
-                        show-checkbox
-                        ref="roleTree"
-                        :check-strictly=checkStrictly
-                        node-key="id"
-                        :default-expand-all=true
-                        :props="defaultProps">
-                </el-tree>
-            </el-form>
-
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="roleDialogFormVisible=false">取 消</el-button>
-                <el-button type="primary" @click="submitRoleHandle('roleForm')">确 定</el-button>
-            </div>
-        </el-dialog>
-
-    </div>
+    <crud-container :loading='loading'
+                    :rule-options='ruleOptions'
+                    :search-form='searchForm'
+                    :search-form-options='searchFormOptions'
+                    :table-data='tableData'
+                    :crud-form='crudForm'
+                    :crud-form-options='crudFormOptions'
+                    :column-options='columnOptions'
+                    :table-style-options='tableStyleOptions'
+                    :dialog='dialog'
+                    :page='page'
+                    @crud='crudBtn'
+                    @dialog='dialogBtn'
+                    @current-change='currentChangeBtn'
+                    @selection-change='selectionChangeBtn'>
+        <template v-slot>
+            <el-tree ref='elTree' :data='roleData' show-checkbox :default-expand-all=true
+                     node-key='id' :check-strictly=true :props="{children: 'children', label: 'name'}">
+            </el-tree>
+        </template>
+    </crud-container>
 </template>
 
 <script>
+
+    import CrudContainer from '@/components/crud/CrudContainer';
+
     export default {
         name: 'User',
+        components: {CrudContainer},
         data() {
             return {
-                searchForm: {},
-                delBtlStatu: true,
-                total: 0,
-                size: 10,
-                current: 1,
-                dialogVisible: false,
-                editForm: {},
-                tableData: [],
-                editFormRules: {
+                loading: {
+                    show: false
+                },
+                ruleOptions: {
                     username: [
-                        {required: true, message: '请输入用户名称', trigger: 'blur'}
+                        {required: true, message: '请输入用户名', trigger: 'blur'}
                     ],
-                    email: [
-                        {required: true, message: '请输入邮箱', trigger: 'blur'}
+                    password: [
+                        {required: true, message: '请输入密码', trigger: 'blur'}
                     ]
                 },
-                multipleSelection: [],
-                roleDialogFormVisible: false,
-                defaultProps: {
-                    children: 'children',
-                    label: 'name'
+                page: {
+                    pageSize: 10,
+                    currentPage: 1,
+                    total: 0
                 },
-                roleForm: {},
-                roleTreeData: [],
-                treeCheckedKeys: [],
-                checkStrictly: true
-
+                searchForm: {},
+                tableData: [],
+                roleData: [],
+                selectedRoleDataIds: [],
+                selectionTableData: [],
+                crudForm: {},
+                crudFormOptions: {
+                    '详情': [
+                        {
+                            elType: 'el-input',
+                            zhName: '用户名',
+                            enName: 'username',
+                            disabled: true
+                        },
+                        {
+                            elType: 'el-input',
+                            zhName: '密码',
+                            enName: 'password',
+                            disabled: true
+                        },
+                        {
+                            elType: 'el-avatar',
+                            zhName: '头像',
+                            enName: 'avatar',
+                            disabled: true
+                        },
+                        {
+                            elType: 'el-input',
+                            zhName: '电子邮箱',
+                            enName: 'email',
+                            disabled: true
+                        },
+                        {
+                            elType: 'el-input',
+                            zhName: '住址',
+                            enName: 'address',
+                            disabled: true
+                        },
+                        {
+                            elType: 'el-input',
+                            zhName: '联系方式',
+                            enName: 'telephone',
+                            disabled: true
+                        }
+                    ],
+                    '新增': [
+                        {
+                            elType: 'el-input',
+                            zhName: '用户名',
+                            enName: 'username',
+                            clearable: true
+                        },
+                        {
+                            elType: 'el-input',
+                            zhName: '密码',
+                            enName: 'password',
+                            clearable: true
+                        },
+                        {
+                            elType: 'el-input',
+                            zhName: '头像',
+                            enName: 'avatar',
+                            clearable: true
+                        },
+                        {
+                            elType: 'el-input',
+                            zhName: '电子邮箱',
+                            enName: 'email',
+                            clearable: true
+                        },
+                        {
+                            elType: 'el-input',
+                            zhName: '住址',
+                            enName: 'address',
+                            clearable: true
+                        },
+                        {
+                            elType: 'el-input',
+                            zhName: '联系方式',
+                            enName: 'telephone',
+                            clearable: true
+                        }
+                    ],
+                    '编辑': [
+                        {
+                            elType: 'el-input',
+                            zhName: '用户名',
+                            enName: 'username',
+                            clearable: true
+                        },
+                        {
+                            elType: 'el-input',
+                            zhName: '头像',
+                            enName: 'avatar',
+                            clearable: true
+                        },
+                        {
+                            elType: 'el-input',
+                            zhName: '电子邮箱',
+                            enName: 'email',
+                            clearable: true
+                        },
+                        {
+                            elType: 'el-input',
+                            zhName: '住址',
+                            enName: 'address',
+                            clearable: true
+                        },
+                        {
+                            elType: 'el-input',
+                            zhName: '联系方式',
+                            enName: 'telephone',
+                            clearable: true
+                        }
+                    ]
+                },
+                searchFormOptions: [
+                    [
+                        {
+                            elType: 'el-input',
+                            zhName: '用户名',
+                            enName: 'username',
+                            placeholder: '请输入名称',
+                            clearable: true
+                        },
+                        {
+                            elType: 'el-button',
+                            zhName: '查询',
+                            btnType: 'primary'
+                        },
+                        {
+                            elType: 'el-button',
+                            zhName: '重置',
+                            btnType: ''
+                        },
+                        {
+                            elType: 'el-button',
+                            zhName: '新增',
+                            btnType: 'primary',
+                            plain: true
+                        },
+                        {
+                            elType: 'el-button',
+                            zhName: '批量删除',
+                            btnType: 'danger',
+                            plain: true
+                        }
+                    ]
+                ],
+                columnOptions: [
+                    [
+                        {
+                            zhName: '序号',
+                            enName: 'index',
+                            width: '70px'
+                        },
+                        {
+                            zhName: '用户名',
+                            enName: 'username'
+                        },
+                        {
+                            elType: 'el-avatar',
+                            zhName: '头像',
+                            enName: 'avatar'
+                        },
+                        {
+                            zhName: '电子邮箱',
+                            enName: 'email'
+                        },
+                        {
+                            zhName: '住址',
+                            enName: 'address'
+                        },
+                        {
+                            zhName: '联系方式',
+                            enName: 'telephone'
+                        }
+                    ],
+                    [
+                        {
+                            zhName: '详情'
+                        },
+                        {
+                            zhName: '编辑'
+                        },
+                        {
+                            zhName: '删除'
+                        },
+                        {
+                            zhName: '分配角色'
+                        }
+                    ]
+                ],
+                tableStyleOptions: {
+                    selection: true
+                },
+                dialog: {
+                    zhName: '',
+                    slot: true,
+                    show: false
+                }
             };
         },
         created() {
-            this.getUserList();
-            this.$axios.get('/boot/sys/sysRole/list').then(res => {
-                this.roleTreeData = res.data.result.records;
-            });
+            this.searchFunc();
+            this.getAllRoleFunc();
         },
         methods: {
-            toggleSelection(rows) {
-                if (rows) {
-                    rows.forEach(row => {
-                        this.$refs.multipleTable.toggleRowSelection(row);
-                    });
+            crudBtn(zhName, row) {
+                if (zhName === '查询') {
+                    this.searchFunc();
+                } else if (zhName === '重置') {
+                    this.searchForm = {};
+                    this.page = {
+                        pageSize: 10,
+                        currentPage: 1,
+                        total: 0
+                    };
+                    this.searchFunc();
                 } else {
-                    this.$refs.multipleTable.clearSelection();
-                }
-            },
-            handleSelectionChange(val) {
-                console.log('勾选');
-                console.log(val);
-                this.multipleSelection = val;
-
-                this.delBtlStatu = val.length === 0;
-            },
-            handleSizeChange(val) {
-                console.log(`每页 ${val} 条`);
-                this.size = val;
-                this.getUserList();
-            },
-            handleCurrentChange(val) {
-                this.current = val;
-                this.getUserList();
-            },
-            resetForm(formName) {
-                this.$refs[formName].resetFields();
-                this.dialogVisible = false;
-                this.editForm = {};
-            },
-            handleClose() {
-                this.resetForm('editForm');
-            },
-            getUserList() {
-                this.$axios.get('/boot/sys/sysUser/list', {
-                    params: {
-                        username: this.searchForm.username,
-                        pageNo: this.current,
-                        pageSize: this.size
-                    }
-                }).then(res => {
-                    this.tableData = res.data.result.records;
-                    this.size = res.data.result.size;
-                    this.current = res.data.result.current;
-                    this.total = res.data.result.total;
-                });
-            },
-            submitForm(formName) {
-                this.$refs[formName].validate((valid) => {
-                    if (valid) {
-                        this.$axios.post('/boot/sys/sysUser/' + (this.editForm.id ? 'update' : 'save'), this.editForm)
-                            .then(res => {
-                                this.$message({
-                                    showClose: true,
-                                    message: '恭喜你，操作成功',
-                                    type: 'success',
-                                    onClose: () => {
-                                        this.getUserList();
-                                    }
-                                });
-                                this.dialogVisible = false;
-                            });
+                    if (zhName === '新增') {
+                        this.crudForm = {};
+                    } else if (zhName === '分配角色') {
+                        this.crudForm = row;
+                        this.dialog.slot = true;
+                        this.getRoleOfUserFunc(row.id);
+                    } else if (zhName === '批量删除') {
+                        if (!this.selectionTableData.length) {
+                            this.$message.warning('请先选择数据');
+                            return;
+                        }
                     } else {
-                        return false;
+                        this.crudForm = row;
                     }
-                });
-            },
-            editHandle(id) {
-                this.$axios.get('/sys/user/info/' + id).then(res => {
-                    this.editForm = res.data.data;
-
-                    this.dialogVisible = true;
-                });
-            },
-            delHandle(id) {
-                var ids = [];
-                if (id) {
-                    ids.push(id);
-                } else {
-                    this.multipleSelection.forEach(row => {
-                        ids.push(row.id);
-                    });
+                    this.dialog.show = true;
+                    this.dialog.zhName = zhName;
                 }
-                this.$axios.post('/sys/user/delete', ids).then(res => {
-                    this.$message({
-                        showClose: true,
-                        message: '恭喜你，操作成功',
-                        type: 'success',
-                        onClose: () => {
-                            this.getUserList();
+            },
+            dialogBtn(zhName) {
+                if (zhName === '新增') {
+                    this.addFunc();
+                } else if (zhName === '编辑') {
+                    this.editFunc();
+                } else if (zhName === '删除') {
+                    this.deleteFunc(this.crudForm.id);
+                } else if (zhName === '批量删除') {
+                    this.deleteFunc(this.selectionTableData.map(item => item.id).join(','));
+                } else if (zhName === '分配角色') {
+                    this.addRoleFunc(this.crudForm.id);
+                }
+            },
+            currentChangeBtn(currentPage) {
+                this.page.currentPage = currentPage;
+                this.searchFunc();
+            },
+            selectionChangeBtn(val) {
+                this.selectionTableData = val;
+            },
+            searchFunc() {
+                !this.loading.show && (this.loading.show = true);
+                let params = Object.assign({}, this.searchForm);
+                params.currentPage = this.page.currentPage;
+                params.pageSize = this.page.pageSize;
+                this.$axios.get('/boot/sys/sysUser/page', {params: params}).then(res => {
+                    if (res.data.success) {
+                        this.tableData = res.data.result.records;
+                        this.page.total = res.data.result.total;
+                    } else {
+                        this.$message.error(res.data.message);
+                    }
+                }).catch(e => {
+                    this.$message.error(e);
+                }).finally(() => {
+                    this.loading.show && (this.loading.show = false);
+                });
+            },
+            addFunc() {
+                this.dialog.show = false;
+                this.loading.show = true;
+                this.$axios.post('/boot/sys/sysUser/save', this.crudForm).then(res => {
+                    if (res.data.success) {
+                        this.$message.success('添加成功');
+                        this.searchFunc();
+                    } else {
+                        this.loading.show = false;
+                        this.$message.error(res.data.message);
+                    }
+                }).catch(e => {
+                    this.loading.show = false;
+                    this.$message.error(e);
+                });
+            },
+            editFunc() {
+                this.dialog.show = false;
+                this.loading.show = true;
+                this.$axios.put('/boot/sys/sysUser/update', this.crudForm).then(res => {
+                    if (res.data.success) {
+                        this.$message.success('修改成功');
+                        this.searchFunc();
+                    } else {
+                        this.loading.show = false;
+                        this.$message.error(res.data.message);
+                    }
+                }).catch(e => {
+                    this.loading.show = false;
+                    this.$message.error(e);
+                });
+            },
+            deleteFunc(param) {
+                this.dialog.show = false;
+                this.loading.show = true;
+                this.$axios.delete('/boot/sys/sysUser/delete', {params: {ids: param}}).then(res => {
+                    if (res.data.success) {
+                        this.$message.success('删除成功');
+                        this.searchFunc();
+                    } else {
+                        this.loading.show = false;
+                        this.$message.error(res.data.message);
+                    }
+                }).catch(e => {
+                    this.loading.show = false;
+                    this.$message.error(e);
+                });
+            },
+            getAllRoleFunc() {
+                this.$axios.get('/boot/sys/sysRole/list', {}).then(res => {
+                    if (res.data.success) {
+                        this.roleData = res.data.result;
+                    } else {
+                        this.$message.error(res.data.message);
+                    }
+                }).catch(e => {
+                    this.$message.error(e);
+                });
+            },
+            getRoleOfUserFunc(id) {
+                this.$axios.get('/boot/sys/sysUser/info/' + id).then(res => {
+                    if (res.data.success) {
+                        if (Array.isArray(res.data.result.roleIds)) {
+                            this.selectedRoleDataIds = res.data.result.roleIds;
+                            this.$refs['elTree'].setCheckedKeys(this.selectedRoleDataIds);
                         }
-                    });
+                    } else {
+                        this.$message.error(res.data.message);
+                    }
+                }).catch(e => {
+                    this.$message.error(e);
                 });
             },
-
-            roleHandle(id) {
-                this.roleDialogFormVisible = true;
-                this.$axios.get('/boot/sys/sysUser/rolesOfUser/' + id).then(res => {
-                    this.roleForm = res.data.data;
-                    let roleIds = [];
-                    res.data.data.sysRoles.forEach(row => {
-                        roleIds.push(row.id);
-                    });
-                    this.$refs.roleTree.setCheckedKeys(roleIds);
+            addRoleFunc() {
+                this.dialog.show = false;
+                this.loading.show = true;
+                let roleIds = this.$refs['elTree'].getCheckedKeys();
+                this.$axios.post('/boot/sys/sysUser/role/' + this.crudForm.id, roleIds).then(res => {
+                    if (res.data.success) {
+                        this.$message.success('添加成功');
+                        this.searchFunc();
+                    } else {
+                        this.loading.show = false;
+                        this.$message.error(res.data.message);
+                    }
+                }).catch(e => {
+                    this.loading.show = false;
+                    this.$message.error(e);
                 });
             },
-            submitRoleHandle(formName) {
-                let roleIds = this.$refs.roleTree.getCheckedKeys();
-                this.$axios.post('/sys/user/role/' + this.roleForm.id, roleIds).then(res => {
-                    this.$message({
-                        showClose: true,
-                        message: '恭喜你，操作成功',
-                        type: 'success',
-                        onClose: () => {
-                            this.getUserList();
-                        }
-                    });
-
-                    this.roleDialogFormVisible = false;
-                });
-            },
-            repassHandle(id, username) {
-                this.$confirm('将重置用户【' + username + '】的密码, 是否继续?', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
-                    this.$axios.post('/sys/user/repass', id).then(res => {
-                        this.$message({
-                            showClose: true,
-                            message: '恭喜你，操作成功',
-                            type: 'success',
-                            onClose: () => {
-                            }
-                        });
-                    });
-                });
-            }
         }
     };
 </script>
 
-<style scoped>
-
-    .el-pagination {
-        float: right;
-        margin-top: 22px;
-    }
-
-</style>
+<style lang='scss' scoped></style>

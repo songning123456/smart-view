@@ -8,7 +8,12 @@
                          :show-overflow-tooltip='item.showOverflowTooltip' :align='item.align ? item.align : "center"'
                          :label='item.zhName'>
             <template slot-scope='scope'>
-                <span :style='typeof item.style === "function" ? item.style(scope.row[item.enName]) : ""'>{{typeof item.text === 'function' ? item.text(scope.row[item.enName]) : (item.enName === 'index' ? (scope.$index + 1) : scope.row[item.enName])}}</span>
+                <template v-if='item.elType === "el-avatar"'>
+                    <el-avatar size='small' :src='scope.row[item.enName]'></el-avatar>
+                </template>
+                <template v-else>
+                    <span :style='typeof item.style === "function" ? item.style(scope.row[item.enName]) : ""'>{{typeof item.text === 'function' ? item.text(scope.row[item.enName]) : (item.enName === 'index' ? (scope.$index + 1) : scope.row[item.enName])}}</span>
+                </template>
             </template>
         </el-table-column>
         <el-table-column v-if='Array.isArray(columnOptions[1])' label="操作" width="200" align='center'>
