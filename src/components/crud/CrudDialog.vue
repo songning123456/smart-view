@@ -1,15 +1,15 @@
 <template>
     <el-dialog class='crud-dialog' :title='dialog.zhName' :visible.sync='dialog.show' :close-on-click-modal='false'
                :width='dialogStyle.width' :top='dialogStyle.top'>
-        <template v-if='!dialog.slot && Array.isArray(formOptions) && formOptions.length'>
+        <template v-if='dialog.slot'>
+            <slot></slot>
+        </template>
+        <template v-else-if='Array.isArray(formOptions) && formOptions.length'>
             <custom-form :form='form' :form-options='formOptions' :rule-options='ruleOptions'
                          :form-style-options='formStyleOptions' ref='customForm'></custom-form>
         </template>
-        <template v-else-if='!dialog.slot'>
-            <i class="el-icon-info crud-warning"></i>确定要<strong>{{dialog.zhName}}</strong>吗?
-        </template>
         <template v-else>
-            <slot name='dialogSlot'></slot>
+            <i class="el-icon-info crud-warning"></i>确定要<strong>{{dialog.zhName}}</strong>吗?
         </template>
         <div slot='footer'>
             <el-button @click='dialog.show = false'>取消</el-button>
@@ -65,7 +65,11 @@
         watch: {
             'dialog.show'(newVal, oldVal) {
                 if (!newVal && oldVal) {
-                    this.dialog.slot = false;
+                    if (this.dialog.slot) {
+                        setTimeout(() => {
+                            this.dialog.slot = false;
+                        }, 200);
+                    }
                     if (this.$refs['customForm'] && this.$refs['customForm'].$refs['elForm']) {
                         this.$refs['customForm'].$refs['elForm'].resetFields();
                     }
@@ -74,22 +78,18 @@
         },
         computed: {
             dialogStyle() {
-                if (['新增', '编辑', '详情'].includes(this.dialog.zhName)) {
-                    return {
-                        width: '30%',
-                        top: '15vh'
-                    };
-                } else if (['删除', '批量删除'].includes(this.dialog.zhName)) {
-                    return {
-                        width: '30%',
-                        top: '35vh'
-                    };
+                let baseStyle = {
+                    width: '30%',
+                    top: '15vh'
+                };
+                if (this.dialog.slot) {
+                    // ...
+                } else if (Array.isArray(this.formOptions) && !this.formOptions.length) {
+                    baseStyle.top = '35vh';
                 } else {
-                    return {
-                        width: '30%',
-                        top: '35vh'
-                    };
+                    // ...
                 }
+                return baseStyle;
             }
         },
         methods: {

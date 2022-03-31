@@ -1,4 +1,4 @@
-<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
+<template>
     <div class='crud-container' v-loading='loading.show'>
         <div class='crud-container-frame-ud-form' v-for='(searchFormOption, index) in searchFormOptions' :key='index'>
             <custom-form :form='searchForm' :form-options='searchFormOption'
@@ -19,9 +19,9 @@
         <crud-dialog :dialog='dialog' :rule-options='ruleOptions' :form='crudForm'
                      :form-options='crudFormOptions[dialog.zhName]' :form-style-options='customFormStyleOptions[false]'
                      @dialog='dialogBtn'>
-            <slot name='containerSlot'>
-                <template v-slot:dialogSlot></template>
-            </slot>
+            <template v-slot>
+                <slot></slot>
+            </template>
         </crud-dialog>
     </div>
 </template>
@@ -158,9 +158,6 @@
             },
             selectionChangeBtn(val) {
                 this.$emit('selection-change', val);
-            },
-            clearSelection() {
-                this.$refs.customTable.clearSelection();
             }
         }
     };

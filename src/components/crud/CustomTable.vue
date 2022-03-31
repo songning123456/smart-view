@@ -1,5 +1,6 @@
 <template>
-    <el-table ref='elTable' :data='tableData' border :header-cell-style='headerCellStyle'
+    <el-table ref='elTable' :data='tableData' border
+              :header-cell-style="{background: '#fafafa',color: 'rgba(0, 0, 0, .85)'}"
               @selection-change="selectionChangeBtn" :row-key='tableStyleOptions.rowKey'
               :default-expand-all='tableStyleOptions.defaultExpandAll'>
         <el-table-column v-if='tableStyleOptions.selection' type="selection" width="55"></el-table-column>
@@ -43,23 +44,12 @@
                 }
             }
         },
-        data() {
-            return {
-                headerCellStyle: {
-                    background: '#fafafa',
-                    color: 'rgba(0, 0, 0, .85)'
-                },
-            };
-        },
         methods: {
             crudBtn(zhName, row) {
                 this.$emit('crud', zhName, JSON.parse(JSON.stringify(row)));
             },
             selectionChangeBtn(val) {
                 this.$emit('selection-change', val);
-            },
-            clearSelection() {
-                this.$refs.elTable.clearSelection();
             }
         }
     };

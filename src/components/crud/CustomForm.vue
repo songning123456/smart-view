@@ -17,7 +17,7 @@
                             :picker-options="item.pickerOptions" range-separator="至" start-placeholder="开始日期"
                             end-placeholder="结束日期" align="right" :clearable='item.clearable'
                             :disabled='item.disabled'></el-date-picker>
-            <el-button v-if='item.elType === "el-button"' :type='item.btnType' :icon='item.icon'
+            <el-button v-if='item.elType === "el-button"' :type='item.btnType' :icon='item.icon' :plain='item.plain'
                        @click='crudBtn(item.zhName)'>{{item.zhName}}
             </el-button>
             <el-radio-group v-if='item.elType === "el-radio-group"' :disabled='item.disabled'

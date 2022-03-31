@@ -1,35 +1,25 @@
 <template>
-    <div>
-        <crud-container :loading='loading'
-                        :rule-options='ruleOptions'
-                        :search-form='searchForm'
-                        :search-form-options='searchFormOptions'
-                        :table-data='tableData'
-                        :crud-form='crudForm'
-                        :crud-form-options='crudFormOptions'
-                        :column-options='columnOptions'
-                        :table-style-options='tableStyleOptions'
-                        :dialog='dialog'
-                        :page='page'
-                        @crud='crudBtn'
-                        @dialog='dialogBtn'
-                        @selection-change='selectionChangeBtn'>
-            <template v-slot:containerSlot>
-                <div>123</div>
-            </template>
-        </crud-container>
-        <!--<el-dialog :title='permissionDialog.zhName' :visible.sync='permissionDialog.show' width='600px'>
-            <el-form :model='crudForm'>
-                <el-tree :data='menuData' show-checkbox ref='elTree' :default-expand-all=true node-key='id'
-                         :check-strictly=true :props="{children: 'children', label: 'metaTitle'}">
-                </el-tree>
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-			    <el-button @click='permissionDialog.show = false'>取消</el-button>
-			    <el-button type="primary" @click=''>确定</el-button>
-			</span>
-        </el-dialog>-->
-    </div>
+    <crud-container :loading='loading'
+                    :rule-options='ruleOptions'
+                    :search-form='searchForm'
+                    :search-form-options='searchFormOptions'
+                    :table-data='tableData'
+                    :crud-form='crudForm'
+                    :crud-form-options='crudFormOptions'
+                    :column-options='columnOptions'
+                    :table-style-options='tableStyleOptions'
+                    :dialog='dialog'
+                    :page='page'
+                    @crud='crudBtn'
+                    @dialog='dialogBtn'
+                    @current-change='currentChangeBtn'
+                    @selection-change='selectionChangeBtn'>
+        <template v-slot>
+            <el-tree ref='elTree' :data='menuData' show-checkbox :default-expand-all=true
+                     node-key='id' :check-strictly=true :props="{children: 'children', label: 'metaTitle'}">
+            </el-tree>
+        </template>
+    </crud-container>
 </template>
 
 <script>
@@ -53,12 +43,13 @@
                     ]
                 },
                 page: {
-                    pageSize: 20,
+                    pageSize: 10,
                     currentPage: 1,
                     total: 0
                 },
                 searchForm: {},
                 tableData: [],
+                selectedMenuIds: [],
                 menuData: [],
                 selectionTableData: [],
                 crudForm: {},
@@ -140,13 +131,20 @@
                         },
                         {
                             elType: 'el-button',
+                            zhName: '重置',
+                            btnType: ''
+                        },
+                        {
+                            elType: 'el-button',
                             zhName: '新增',
-                            btnType: 'primary'
+                            btnType: 'primary',
+                            plain: true
                         },
                         {
                             elType: 'el-button',
                             zhName: '批量删除',
-                            btnType: 'danger'
+                            btnType: 'danger',
+                            plain: true
                         }
                     ]
                 ],
@@ -202,12 +200,21 @@
             crudBtn(zhName, row) {
                 if (zhName === '查询') {
                     this.searchFunc();
+                } else if (zhName === '重置') {
+                    this.searchForm = {};
+                    this.page = {
+                        pageSize: 10,
+                        currentPage: 1,
+                        total: 0
+                    };
+                    this.searchFunc();
                 } else {
                     if (zhName === '新增') {
                         this.crudForm = {};
                     } else if (zhName === '分配权限') {
-                        this.crudForm = {};
+                        this.crudForm = row;
                         this.dialog.slot = true;
+                        this.getRoleInfoFunc(row.id);
                     } else if (zhName === '批量删除') {
                         if (!this.selectionTableData.length) {
                             this.$message.warning('请先选择数据');
@@ -229,7 +236,13 @@
                     this.deleteFunc(this.crudForm.id);
                 } else if (zhName === '批量删除') {
                     this.deleteFunc(this.selectionTableData.map(item => item.id).join(','));
+                } else if (zhName === '分配权限') {
+                    this.addPermissionFunc(this.crudForm.id);
                 }
+            },
+            currentChangeBtn(currentPage) {
+                this.page.currentPage = currentPage;
+                this.searchFunc();
             },
             selectionChangeBtn(val) {
                 this.selectionTableData = val;
@@ -237,8 +250,8 @@
             searchFunc() {
                 !this.loading.show && (this.loading.show = true);
                 let params = Object.assign({}, this.searchForm);
-                params.current = this.page.currentPage;
-                params.size = this.page.pageSize;
+                params.currentPage = this.page.currentPage;
+                params.pageSize = this.page.pageSize;
                 this.$axios.get('/boot/sys/sysRole/list', {params: params}).then(res => {
                     if (res.data.success) {
                         this.tableData = res.data.result.records;
@@ -308,6 +321,35 @@
                         this.$message.error(res.data.message);
                     }
                 }).catch(e => {
+                    this.$message.error(e);
+                });
+            },
+            getRoleInfoFunc(roleId) {
+                this.$axios.get('/boot/sys/sysRole/info/' + roleId).then(res => {
+                    if (res.data.success) {
+                        this.selectedMenuIds = res.data.result.menuIds;
+                        this.$refs['elTree'].setCheckedKeys(this.selectedMenuIds);
+                    } else {
+                        this.$message.error(res.data.message);
+                    }
+                }).catch(e => {
+                    this.$message.error(e);
+                });
+            },
+            addPermissionFunc() {
+                this.dialog.show = false;
+                this.loading.show = true;
+                let menuIds = this.$refs['elTree'].getCheckedKeys();
+                this.$axios.post('/boot/sys/sysRole/permission/' + this.crudForm.id, menuIds).then(res => {
+                    if (res.data.success) {
+                        this.$message.success('添加成功');
+                        this.searchFunc();
+                    } else {
+                        this.loading.show = false;
+                        this.$message.error(res.data.message);
+                    }
+                }).catch(e => {
+                    this.loading.show = false;
                     this.$message.error(e);
                 });
             }

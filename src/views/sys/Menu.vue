@@ -228,7 +228,8 @@
                         {
                             elType: 'el-button',
                             zhName: '新增',
-                            btnType: 'primary'
+                            btnType: 'primary',
+                            plain: true
                         }
                     ]
                 ],
