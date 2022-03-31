@@ -66,12 +66,11 @@
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        this.$axios.post('/boot/login?' + qs.stringify(this.loginForm))
-                            .then(res => {
-                                let jwt = res.headers['authorization'];
-                                this.$store.commit('SET_TOKEN', jwt);
-                                this.$router.push('/index');
-                            });
+                        this.$axios.post('/boot/login?' + qs.stringify(this.loginForm)).then(res => {
+                            let jwt = res.headers['authorization'];
+                            this.$store.commit('setToken', jwt);
+                            this.$router.push('/index');
+                        });
                     } else {
                         return false;
                     }

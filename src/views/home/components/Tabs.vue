@@ -1,12 +1,13 @@
 <template>
-    <el-tabs v-model="editableTabId" type="card" closable @tab-remove="tabRemoveBtn" @tab-click="tabClickBtn">
-        <el-tab-pane v-for="(item, index) in editableTabs" :key="index" :label="item.metaTitle"
+    <el-tabs v-model='editableTabId' type='card' closable @tab-remove='tabRemoveBtn' @tab-click='tabClickBtn'>
+        <el-tab-pane v-for="(item, index) in editableTabs" :key="item.id + index" :label="item.metaTitle"
                      :name="item.id"></el-tab-pane>
     </el-tabs>
 </template>
 
 <script>
     import globalMenu from '@/config/globalMenu';
+    import {setStore} from '@/utils/store';
 
     export default {
         name: 'Tabs',
@@ -15,6 +16,9 @@
                 globalMenu
             };
         },
+        created() {
+            this.$store.commit('addTab', globalMenu.indexMenu);
+        },
         computed: {
             editableTabs: {
                 get() {
@@ -22,6 +26,7 @@
                 },
                 set(val) {
                     this.$store.state.menus.editableTabs = val;
+                    setStore({type: 'session', key: 'editableTabs', val: val});
                 }
             },
             editableTabId: {
@@ -30,11 +35,11 @@
                 },
                 set(val) {
                     this.$store.state.menus.editableTabId = val;
+                    setStore({type: 'session', key: 'editableTabId', val: val});
                 }
             }
         },
         methods: {
-
             tabRemoveBtn(targetId) {
                 let tabs = this.editableTabs;
                 let activeId = this.editableTabId;

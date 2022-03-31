@@ -1,10 +1,11 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Home from '../views/Home.vue';
-import Index from '../views/Index.vue';
+import Home from '../views/home/Home.vue';
+import Index from '../views/index/Index.vue';
 
 import axios from '../axios';
 import store from '../store';
+import {getStore} from '@/utils/store';
 
 Vue.use(VueRouter);
 
@@ -15,7 +16,7 @@ const routes = [
         component: Home,
         children: [
             {
-                path: '/index',
+                path: '/Index',
                 name: 'Index',
                 meta: {
                     title: '首页'
@@ -23,19 +24,19 @@ const routes = [
                 component: Index
             },
             {
-                path: '/userCenter',
+                path: '/UserCenter',
                 name: 'UserCenter',
                 meta: {
                     title: '个人中心'
                 },
-                component: () => import('@/views/UserCenter.vue')
+                component: () => import('@/views/usercenter/UserCenter.vue')
             }
         ]
     },
     {
         path: '/login',
         name: 'Login',
-        component: () => import('@/views/Login.vue')
+        component: () => import('@/views/login/Login.vue')
     }
 ];
 
@@ -58,7 +59,7 @@ vueRouter.$addRoutes = (params) => {
 
 vueRouter.beforeEach((to, from, next) => {
     let hasRoute = store.state.menus.hasRoutes;
-    let token = localStorage.getItem('token');
+    let token = getStore({type: 'local', key: 'token'});
     if (to.path === '/login') {
         next();
     } else if (!token) {
@@ -66,7 +67,7 @@ vueRouter.beforeEach((to, from, next) => {
     } else if (token && !hasRoute) {
         axios.get('/boot/sys/sysMenu/nav', {
             headers: {
-                Authorization: localStorage.getItem('token')
+                Authorization: getStore({type: 'local', key: 'token'})
             }
         }).then(res => {
             // 拿到menuList

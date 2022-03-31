@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import globalMenu from '@/config/globalMenu.js';
+import {getStore, setStore, clearStore} from '@/utils/store';
 
 Vue.use(Vuex);
 
@@ -9,8 +9,8 @@ export default {
         menuList: [],
         permList: [],
         hasRoutes: false,
-        editableTabId: globalMenu.indexMenu.id,
-        editableTabs: [globalMenu.indexMenu]
+        editableTabId: '',
+        editableTabs: []
     },
     mutations: {
         setMenuList(state, menus) {
@@ -23,18 +23,30 @@ export default {
             state.hasRoutes = hasRoutes;
         },
         addTab(state, tab) {
-            let index = state.editableTabs.findIndex(e => e.id === tab.id);
-            if (index === -1) {
-                state.editableTabs.push(tab);
+            let editableTabs = [], editableTabId = tab.id;
+            if (state.editableTabs.length) {
+                editableTabs = state.editableTabs;
+            } else if (getStore({type: 'session', key: 'editableTabs'})) {
+                editableTabs = getStore({type: 'session', key: 'editableTabs'});
+                if (getStore({type: 'session', key: 'editableTabId'})) {
+                    editableTabId = getStore({type: 'session', key: 'editableTabId'});
+                }
             }
-            state.editableTabId = tab.id;
+            let index = editableTabs.findIndex(e => e.id === tab.id);
+            if (index === -1) {
+                editableTabs.push(tab);
+                setStore({type: 'session', key: 'editableTabs', val: editableTabs});
+            }
+            state.editableTabId = editableTabId;
+            state.editableTabs = editableTabs;
         },
         resetState: (state) => {
             state.menuList = [];
             state.permList = [];
             state.hasRoutes = false;
-            state.editableTabId = globalMenu.indexMenu.id;
-            state.editableTabs = [globalMenu.indexMenu];
+            state.editableTabId = '';
+            state.editableTabs = [];
+            clearStore();
         }
     },
     actions: {},

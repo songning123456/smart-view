@@ -1,6 +1,7 @@
 import axios from 'axios';
 import router from './router';
 import Element from 'element-ui';
+import {getStore} from '@/utils/store';
 
 const request = axios.create({
     timeout: 5000,
@@ -10,7 +11,7 @@ const request = axios.create({
 });
 
 request.interceptors.request.use(config => {
-    config.headers['Authorization'] = localStorage.getItem('token');
+    config.headers['Authorization'] = getStore({type: 'local', key: 'token'});
     return config;
 });
 

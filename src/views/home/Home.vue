@@ -32,8 +32,8 @@
 </template>
 
 <script>
-    import SideMenu from './inc/SideMenu';
-    import Tabs from './inc/Tabs';
+    import SideMenu from './components/SideMenu';
+    import Tabs from './components/Tabs';
     import globalMenu from '@/config/globalMenu';
 
     export default {
@@ -66,10 +66,10 @@
             },
             logout() {
                 this.$axios.post('/boot/logout').then(res => {
-                    localStorage.clear();
-                    sessionStorage.clear();
-                    this.$store.commit('resetState');
-                    this.$router.push('/login');
+                    if (res.data.success) {
+                        this.$store.commit('resetState');
+                        this.$router.push('/login');
+                    }
                 });
             }
         }
