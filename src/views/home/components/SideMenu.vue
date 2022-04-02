@@ -7,27 +7,18 @@
                 <span slot='title'>{{globalRoute.indexRoute.metaTitle}}</span>
             </template>
         </el-menu-item>
-        <el-submenu :index="menu.id" v-for="(menu, index) in menuList" :key='index'>
-            <template slot="title">
-                <i :class="menu.metaIcon"></i>
-                <span>{{menu.metaTitle}}</span>
-            </template>
-            <el-menu-item v-for="(item, i) in menu.children" :key='i' :index="item.id" @click="selectMenu(item)">
-                <template slot='title'>
-                    <i :class='item.metaIcon'></i>
-                    <span slot="title">{{item.metaTitle}}</span>
-                </template>
-            </el-menu-item>
-        </el-submenu>
+        <sub-side-menu :sub-menu-list='menuList'></sub-side-menu>
     </el-menu>
 </template>
 
 <script>
 
     import globalRoute from '@/config/globalRoute';
+    import SubSideMenu from '@/views/home/components/SubSideMenu';
 
     export default {
         name: 'SideMenu',
+        components: {SubSideMenu},
         data() {
             return {
                 globalRoute

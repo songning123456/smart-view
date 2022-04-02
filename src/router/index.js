@@ -56,8 +56,10 @@ const vueRouter = new VueRouter({
 const vueRouterPush = VueRouter.prototype.push;
 VueRouter.prototype.push = function push(to) {
     return vueRouterPush.call(this, to).catch(e => {
-        if (('' + e).search('Cannot find module') > -1) {
+        if (('' + e).search('Cannot find module') > -1 || ('' + e).search('/404') > -1) {
             return vueRouterPush.call(this, err404Route);
+        } else {
+            console.error(e);
         }
     });
 };

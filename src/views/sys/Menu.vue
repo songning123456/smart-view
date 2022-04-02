@@ -67,26 +67,6 @@
                             disabled: true
                         },
                         {
-                            elType: 'el-radio-group',
-                            zhName: '类型',
-                            enName: 'type',
-                            disabled: true,
-                            options: [
-                                {
-                                    label: '目录',
-                                    value: 0
-                                },
-                                {
-                                    label: '菜单',
-                                    value: 1
-                                },
-                                {
-                                    label: '按钮',
-                                    value: 2
-                                }
-                            ]
-                        },
-                        {
                             elType: 'el-input-number',
                             zhName: '排序号',
                             enName: 'orderNum',
@@ -119,25 +99,6 @@
                             zhName: '菜单URL',
                             enName: 'path',
                             clearable: true
-                        },
-                        {
-                            elType: 'el-radio-group',
-                            zhName: '类型',
-                            enName: 'type',
-                            options: [
-                                {
-                                    label: '目录',
-                                    value: 0
-                                },
-                                {
-                                    label: '菜单',
-                                    value: 1
-                                },
-                                {
-                                    label: '按钮',
-                                    value: 2
-                                }
-                            ]
                         },
                         {
                             elType: 'el-input-number',
@@ -173,25 +134,6 @@
                             clearable: true
                         },
                         {
-                            elType: 'el-radio-group',
-                            zhName: '类型',
-                            enName: 'type',
-                            options: [
-                                {
-                                    label: '目录',
-                                    value: 0
-                                },
-                                {
-                                    label: '菜单',
-                                    value: 1
-                                },
-                                {
-                                    label: '按钮',
-                                    value: 2
-                                }
-                            ]
-                        },
-                        {
                             elType: 'el-input-number',
                             zhName: '排序号',
                             enName: 'orderNum',
@@ -223,29 +165,6 @@
                         {
                             zhName: '图标',
                             enName: 'metaIcon'
-                        },
-                        {
-                            zhName: '类型',
-                            enName: 'type',
-                            style(val) {
-                                let prefix = 'color: ';
-                                let colorVal = '#000000';
-                                if (val === 0) {
-                                    colorVal = '#409eff';
-                                } else if (val === 1) {
-                                    colorVal = '#67c23a';
-                                }
-                                return prefix + colorVal;
-                            },
-                            text(val) {
-                                if (val === 0) {
-                                    return '目录';
-                                } else if (val === 1) {
-                                    return '菜单';
-                                } else {
-                                    return val;
-                                }
-                            }
                         },
                         {
                             zhName: '菜单URL',
