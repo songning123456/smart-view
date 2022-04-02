@@ -71,13 +71,13 @@ vueRouter.$addRoutes = (params) => {
 };
 
 vueRouter.beforeEach((to, from, next) => {
-    let hasRoute = store.state.menus.hasRoutes;
+    let routeFlag = store.state.menus.routeFlag;
     let token = getStore({type: 'local', key: 'token'});
     if (to.path === '/login') {
         next();
     } else if (!token) {
         next({path: '/login'});
-    } else if (token && !hasRoute) {
+    } else if (token && !routeFlag) {
         axios.get('/boot/sys/sysMenu/myMenu', {
             headers: {
                 Authorization: getStore({type: 'local', key: 'token'})
@@ -86,23 +86,17 @@ vueRouter.beforeEach((to, from, next) => {
             // 拿到menuList
             store.commit('setMenuList', res.data.result);
             // 动态绑定路由
-            let newRoutes = vueRouter.options.routes;
-            res.data.result.forEach(menu => {
-                if (menu.children) {
-                    menu.children.forEach(e => {
-                        // 转成路由
-                        let route = menuToRoute(e);
-                        // 把路由添加到路由管理中
-                        if (route && !vueRouter.getRoutes().find(item => item.name === route.name)) {
-                            newRoutes[0].children.push(route);
-                        }
-                    });
-                }
-            });
-            vueRouter.$addRoutes(newRoutes);
-            hasRoute = true;
-            store.commit('changeRouteStatus', hasRoute);
-            next({path: to.path});
+            let optionRoutes = vueRouter.options.routes;
+            let pathArr = [];
+            forEachMenu(res.data.result, optionRoutes, pathArr);
+            vueRouter.$addRoutes(optionRoutes);
+            routeFlag = true;
+            store.commit('changeRouteStatus', routeFlag);
+            if (pathArr.indexOf(to.path) > -1) {
+                next({path: to.path});
+            } else {
+                next({path: '/login'});
+            }
         });
     }
     next();
@@ -124,6 +118,19 @@ const menuToRoute = (menu) => {
     };
     route.component = () => import('@/views' + menu.path + '.vue');
     return route;
+};
+
+const forEachMenu = (menuList, optionRoutes, pathArr = []) => {
+    for (let menu of menuList) {
+        if (menu.path) {
+            pathArr.push(menu.path);
+            let route = menuToRoute(menu);
+            optionRoutes[0].children.push(route);
+        }
+        if (menu.children && menu.children.length) {
+            forEachMenu(menu.children, optionRoutes, pathArr);
+        }
+    }
 };
 
 export default vueRouter;

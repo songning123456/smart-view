@@ -299,17 +299,13 @@
                 }
                 line += ' ';
                 for (let item of tableData) {
-                    if (item.type !== 2) {
-                        let obj = {
-                            alias: line + item.metaTitle,
-                            label: item.metaTitle,
-                            value: item.id
-                        };
-                        optionArr.push(obj);
-                        this.forEachTree(item.children, optionArr, childDepth + 1);
-                    } else {
-                        return;
-                    }
+                    let obj = {
+                        alias: line + item.metaTitle,
+                        label: item.metaTitle,
+                        value: item.id
+                    };
+                    optionArr.push(obj);
+                    this.forEachTree(item.children, optionArr, childDepth + 1);
                 }
                 childDepth++;
             }

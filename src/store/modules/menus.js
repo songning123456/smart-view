@@ -7,7 +7,7 @@ Vue.use(Vuex);
 export default {
     state: {
         menuList: [],
-        hasRoutes: false,
+        routeFlag: false,
         editableTabId: '',
         editableTabs: []
     },
@@ -15,8 +15,8 @@ export default {
         setMenuList(state, menus) {
             state.menuList = menus;
         },
-        changeRouteStatus(state, hasRoutes) {
-            state.hasRoutes = hasRoutes;
+        changeRouteStatus(state, routeFlag) {
+            state.routeFlag = routeFlag;
         },
         addTab(state, tab) {
             let editableTabs = [], editableTabId = tab.id;
@@ -38,7 +38,7 @@ export default {
         },
         resetState: (state) => {
             state.menuList = [];
-            state.hasRoutes = false;
+            state.routeFlag = false;
             state.editableTabId = '';
             state.editableTabs = [];
             clearStore();
