@@ -54,13 +54,6 @@
                         },
                         {
                             elType: 'el-input',
-                            zhName: '权限编码',
-                            enName: 'permission',
-                            clearable: true,
-                            disabled: true
-                        },
-                        {
-                            elType: 'el-input',
                             zhName: '图标',
                             enName: 'metaIcon',
                             clearable: true,
@@ -117,12 +110,6 @@
                         },
                         {
                             elType: 'el-input',
-                            zhName: '权限编码',
-                            enName: 'permission',
-                            clearable: true
-                        },
-                        {
-                            elType: 'el-input',
                             zhName: '图标',
                             enName: 'metaIcon',
                             clearable: true
@@ -171,12 +158,6 @@
                             elType: 'el-input',
                             zhName: '菜单名称',
                             enName: 'metaTitle',
-                            clearable: true
-                        },
-                        {
-                            elType: 'el-input',
-                            zhName: '权限编码',
-                            enName: 'permission',
                             clearable: true
                         },
                         {
@@ -240,10 +221,6 @@
                             enName: 'metaTitle'
                         },
                         {
-                            zhName: '权限',
-                            enName: 'permission'
-                        },
-                        {
                             zhName: '图标',
                             enName: 'metaIcon'
                         },
@@ -257,8 +234,6 @@
                                     colorVal = '#409eff';
                                 } else if (val === 1) {
                                     colorVal = '#67c23a';
-                                } else if (val === 2) {
-                                    colorVal = '#909399';
                                 }
                                 return prefix + colorVal;
                             },
@@ -267,8 +242,6 @@
                                     return '目录';
                                 } else if (val === 1) {
                                     return '菜单';
-                                } else if (val === 2) {
-                                    return '按钮';
                                 } else {
                                     return val;
                                 }

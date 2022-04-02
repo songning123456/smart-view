@@ -76,18 +76,16 @@ vueRouter.beforeEach((to, from, next) => {
     } else if (!token) {
         next({path: '/login'});
     } else if (token && !hasRoute) {
-        axios.get('/boot/sys/sysMenu/nav', {
+        axios.get('/boot/sys/sysMenu/myMenu', {
             headers: {
                 Authorization: getStore({type: 'local', key: 'token'})
             }
         }).then(res => {
             // 拿到menuList
-            store.commit('setMenuList', res.data.result.navs);
-            // 拿到用户权限
-            store.commit('setPermissionList', res.data.result.authorities);
+            store.commit('setMenuList', res.data.result);
             // 动态绑定路由
             let newRoutes = vueRouter.options.routes;
-            res.data.result.navs.forEach(menu => {
+            res.data.result.forEach(menu => {
                 if (menu.children) {
                     menu.children.forEach(e => {
                         // 转成路由

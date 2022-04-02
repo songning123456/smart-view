@@ -179,7 +179,7 @@
                             zhName: '删除'
                         },
                         {
-                            zhName: '分配权限'
+                            zhName: '分配菜单'
                         }
                     ]
                 ],
@@ -212,7 +212,7 @@
                 } else {
                     if (zhName === '新增') {
                         this.crudForm = {};
-                    } else if (zhName === '分配权限') {
+                    } else if (zhName === '分配菜单') {
                         this.crudForm = row;
                         this.dialog.slot = true;
                         this.getMenuOfRoleFunc(row.id);
@@ -237,8 +237,8 @@
                     this.deleteFunc(this.crudForm.id);
                 } else if (zhName === '批量删除') {
                     this.deleteFunc(this.selectionTableData.map(item => item.id).join(','));
-                } else if (zhName === '分配权限') {
-                    this.addPermissionFunc(this.crudForm.id);
+                } else if (zhName === '分配菜单') {
+                    this.addMenuFunc(this.crudForm.id);
                 }
             },
             currentChangeBtn(currentPage) {
@@ -339,11 +339,11 @@
                     this.$message.error(e);
                 });
             },
-            addPermissionFunc() {
+            addMenuFunc() {
                 this.dialog.show = false;
                 this.loading.show = true;
                 let menuIds = this.$refs['elTree'].getCheckedKeys();
-                this.$axios.post('/boot/sys/sysRole/permission/' + this.crudForm.id, menuIds).then(res => {
+                this.$axios.post('/boot/sys/sysRole/menu/' + this.crudForm.id, menuIds).then(res => {
                     if (res.data.success) {
                         this.$message.success('添加成功');
                         this.searchFunc();
