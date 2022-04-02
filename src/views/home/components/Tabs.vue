@@ -6,18 +6,18 @@
 </template>
 
 <script>
-    import globalMenu from '@/config/globalMenu';
+    import globalRoute from '@/config/globalRoute';
     import {setStore} from '@/utils/store';
 
     export default {
         name: 'Tabs',
         data() {
             return {
-                globalMenu
+                globalRoute
             };
         },
         created() {
-            this.$store.commit('addTab', globalMenu.indexMenu);
+            this.$store.commit('addTab', globalRoute.indexRoute);
         },
         computed: {
             editableTabs: {
@@ -43,7 +43,7 @@
             tabRemoveBtn(targetId) {
                 let tabs = this.editableTabs;
                 let activeId = this.editableTabId;
-                if (activeId === globalMenu.indexMenu.id) {
+                if (activeId === globalRoute.indexRoute.id) {
                     return;
                 }
                 if (activeId === targetId) {

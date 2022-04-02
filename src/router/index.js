@@ -9,6 +9,12 @@ import {getStore} from '@/utils/store';
 
 Vue.use(VueRouter);
 
+const err404Route = {
+    path: '/404',
+    name: '404',
+    component: () => import('@/views/error/Error404.vue')
+};
+
 const routes = [
     {
         path: '/',
@@ -30,7 +36,8 @@ const routes = [
                     title: '个人中心'
                 },
                 component: () => import('@/views/usercenter/UserCenter.vue')
-            }
+            },
+            err404Route
         ]
     },
     {
@@ -48,7 +55,11 @@ const vueRouter = new VueRouter({
 
 const vueRouterPush = VueRouter.prototype.push;
 VueRouter.prototype.push = function push(to) {
-    return vueRouterPush.call(this, to).catch(err => err);
+    return vueRouterPush.call(this, to).catch(e => {
+        if (('' + e).search('Cannot find module') > -1) {
+            return vueRouterPush.call(this, err404Route);
+        }
+    });
 };
 
 // 解决[vue-router] Duplicate named routes definition....
@@ -73,7 +84,7 @@ vueRouter.beforeEach((to, from, next) => {
             // 拿到menuList
             store.commit('setMenuList', res.data.result.navs);
             // 拿到用户权限
-            store.commit('setPermList', res.data.result.authorities);
+            store.commit('setPermissionList', res.data.result.authorities);
             // 动态绑定路由
             let newRoutes = vueRouter.options.routes;
             res.data.result.navs.forEach(menu => {

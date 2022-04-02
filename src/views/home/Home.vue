@@ -34,7 +34,7 @@
 <script>
     import SideMenu from './components/SideMenu';
     import Tabs from './components/Tabs';
-    import globalMenu from '@/config/globalMenu';
+    import globalRoute from '@/config/globalRoute';
 
     export default {
         name: 'Home',
@@ -43,7 +43,7 @@
         },
         data() {
             return {
-                globalMenu,
+                globalRoute,
                 userInfo: {
                     id: '',
                     username: '',
@@ -56,8 +56,8 @@
         },
         methods: {
             userCenterBtn() {
-                this.$store.commit('addTab', globalMenu.userCenterMenu);
-                this.$router.push({path: globalMenu.userCenterMenu.path});
+                this.$store.commit('addTab', globalRoute.userCenterRoute);
+                this.$router.push({path: globalRoute.userCenterRoute.path});
             },
             getUserInfo() {
                 this.$axios.get('/boot/sys/sysUser/myInfo').then(res => {

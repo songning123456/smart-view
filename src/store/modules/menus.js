@@ -7,7 +7,7 @@ Vue.use(Vuex);
 export default {
     state: {
         menuList: [],
-        permList: [],
+        permissionList: [],
         hasRoutes: false,
         editableTabId: '',
         editableTabs: []
@@ -16,8 +16,8 @@ export default {
         setMenuList(state, menus) {
             state.menuList = menus;
         },
-        setPermList(state, perms) {
-            state.permList = perms;
+        setPermissionList(state, permissionList) {
+            state.permissionList = permissionList;
         },
         changeRouteStatus(state, hasRoutes) {
             state.hasRoutes = hasRoutes;
@@ -42,7 +42,7 @@ export default {
         },
         resetState: (state) => {
             state.menuList = [];
-            state.permList = [];
+            state.permissionList = [];
             state.hasRoutes = false;
             state.editableTabId = '';
             state.editableTabs = [];

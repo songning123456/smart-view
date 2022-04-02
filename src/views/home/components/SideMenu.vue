@@ -1,10 +1,10 @@
 <template>
     <el-menu :default-active="this.$store.state.menus.editableTabId" class="el-menu-vertical-demo"
              background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
-        <el-menu-item :index='globalMenu.indexMenu.id' @click="selectMenu(globalMenu.indexMenu)">
+        <el-menu-item :index='globalRoute.indexRoute.id' @click="selectMenu(globalRoute.indexRoute)">
             <template slot="title">
-                <i class="el-icon-s-home"></i>
-                <span slot="title">首页</span>
+                <i :class=globalRoute.indexRoute.metaIcon></i>
+                <span slot="title">{{globalRoute.indexRoute.metaTitle}}</span>
             </template>
         </el-menu-item>
         <el-submenu :index="menu.id" v-for="(menu, index) in menuList" :key='index'>
@@ -24,13 +24,13 @@
 
 <script>
 
-    import globalMenu from '@/config/globalMenu';
+    import globalRoute from '@/config/globalRoute';
 
     export default {
         name: 'SideMenu',
         data() {
             return {
-                globalMenu
+                globalRoute
             };
         },
         computed: {
