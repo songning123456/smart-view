@@ -70,6 +70,8 @@
                             let jwt = res.headers['authorization'];
                             this.$store.commit('setToken', jwt);
                             this.$router.push('/index');
+                        }).catch(e => {
+                            this.$message.error(e);
                         });
                     } else {
                         return false;
@@ -84,6 +86,8 @@
                     this.loginForm.token = res.data.result.token;
                     this.captchaImg = res.data.result.captchaImg;
                     this.loginForm.code = '';
+                }).catch(e => {
+                    this.$message.error(e);
                 });
             }
         }

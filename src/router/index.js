@@ -101,6 +101,8 @@ vueRouter.beforeEach((to, from, next) => {
             } else {
                 next({path: '/login'});
             }
+        }).catch(e => {
+            next({path: '/login'});
         });
     }
     next();

@@ -62,6 +62,8 @@
             getUserInfo() {
                 this.$axios.get('/boot/sys/sysUser/myInfo').then(res => {
                     this.userInfo = res.data.result;
+                }).catch(e => {
+                    this.$message.error(e);
                 });
             },
             logout() {
@@ -70,6 +72,8 @@
                         this.$store.commit('resetState');
                         this.$router.push('/login');
                     }
+                }).catch(e => {
+                    this.$message.error(e);
                 });
             }
         }
