@@ -6,6 +6,7 @@ import Index from '../views/index/Index.vue';
 import axios from '../axios';
 import store from '../store';
 import {getStore} from '@/utils/store';
+import {forEachMenu} from '@/config/globalFunc.js';
 
 Vue.use(VueRouter);
 
@@ -36,15 +37,15 @@ const routes = [
                     title: '个人中心'
                 },
                 component: () => import('@/views/usercenter/UserCenter.vue')
-            },
-            err404Route
+            }
         ]
     },
     {
         path: '/login',
         name: 'Login',
         component: () => import('@/views/login/Login.vue')
-    }
+    },
+    err404Route
 ];
 
 const vueRouter = new VueRouter({
@@ -56,8 +57,11 @@ const vueRouter = new VueRouter({
 const vueRouterPush = VueRouter.prototype.push;
 VueRouter.prototype.push = function push(to) {
     return vueRouterPush.call(this, to).catch(e => {
-        if (('' + e).search('Cannot find module') > -1 || ('' + e).search('/404') > -1) {
+        let errorMessage = '' + e;
+        if (errorMessage.search('Cannot find module') > -1 || errorMessage.search('/404') > -1) {
             return vueRouterPush.call(this, err404Route);
+        } else if (errorMessage.search('Avoided redundant navigation to current location') > -1) {
+            // ...
         } else {
             console.error(e);
         }
@@ -102,36 +106,6 @@ vueRouter.beforeEach((to, from, next) => {
     next();
 });
 
-// 导航转成路由
-const menuToRoute = (menu) => {
-    if (!menu.path) {
-        return null;
-    }
-    let pathArr = menu.path.split('/');
-    let route = {
-        name: pathArr[pathArr.length - 1],
-        path: menu.path,
-        meta: {
-            icon: menu.metaIcon,
-            title: menu.metaTitle
-        }
-    };
-    route.component = () => import('@/views' + menu.path + '.vue');
-    return route;
-};
-
-const forEachMenu = (menuList, optionRoutes, pathArr = []) => {
-    for (let menu of menuList) {
-        if (menu.path) {
-            pathArr.push(menu.path);
-            let route = menuToRoute(menu);
-            optionRoutes[0].children.push(route);
-        }
-        if (menu.children && menu.children.length) {
-            forEachMenu(menu.children, optionRoutes, pathArr);
-        }
-    }
-};
 
 export default vueRouter;
 

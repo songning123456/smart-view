@@ -19,6 +19,9 @@
 </template>
 
 <script>
+
+    import {forEachMenu} from '@/config/globalFunc';
+
     export default {
         name: 'SubSideMenu',
         props: {

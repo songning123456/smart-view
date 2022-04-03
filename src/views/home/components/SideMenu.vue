@@ -1,12 +1,6 @@
 <template>
     <el-menu :default-active='editableTabId' class='el-menu-vertical-demo'
              background-color='#545c64' text-color='#fff' active-text-color='#ffd04b'>
-        <el-menu-item :index='globalRoute.indexRoute.id' @click="selectMenu(globalRoute.indexRoute)">
-            <template slot='title'>
-                <i :class=globalRoute.indexRoute.metaIcon></i>
-                <span slot='title'>{{globalRoute.indexRoute.metaTitle}}</span>
-            </template>
-        </el-menu-item>
         <sub-side-menu :sub-menu-list='menuList'></sub-side-menu>
     </el-menu>
 </template>
@@ -27,19 +21,15 @@
         computed: {
             menuList: {
                 get() {
-                    return this.$store.state.menus.menuList;
+                    let menuList = JSON.parse(JSON.stringify(this.$store.state.menus.menuList));
+                    menuList.unshift(globalRoute.indexRoute);
+                    return menuList;
                 }
             },
             editableTabId: {
                 get() {
                     return this.$store.state.menus.editableTabId;
                 }
-            }
-        },
-        methods: {
-            selectMenu(item) {
-                this.$store.commit('addTab', item);
-                this.$router.push({path: item.path});
             }
         }
     };

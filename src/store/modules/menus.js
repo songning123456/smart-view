@@ -31,10 +31,11 @@ export default {
             let index = editableTabs.findIndex(e => e.id === tab.id);
             if (index === -1) {
                 editableTabs.push(tab);
-                setStore({type: 'session', key: 'editableTabs', val: editableTabs});
             }
             state.editableTabId = editableTabId;
+            setStore({type: 'session', key: 'editableTabs', val: editableTabId});
             state.editableTabs = editableTabs;
+            setStore({type: 'session', key: 'editableTabs', val: editableTabs});
         },
         resetState: (state) => {
             state.menuList = [];
