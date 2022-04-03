@@ -33,7 +33,7 @@
 
 <script>
     import SideMenu from './components/SideMenu';
-    import Tabs from './components/Tabs';
+    import Tabs from './components/TopMenu';
     import globalRoute from '@/config/globalRoute';
 
     export default {
