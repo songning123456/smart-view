@@ -1,5 +1,6 @@
 <template>
     <div class='infos'>
+        <i :class='collapse.flag ? "el-icon-s-unfold" : "el-icon-s-fold"' @click='collapseBtn'></i>
         <div class='user-info'>
             <el-avatar size='medium' :src='userInfo.avatar'></el-avatar>
             <el-dropdown><span class="el-dropdown-link">{{userInfo.username}}<i
@@ -16,6 +17,16 @@
 <script>
     export default {
         name: 'Infos',
+        props: {
+            collapse: {
+                type: Object,
+                default() {
+                    return {
+                        flag: false
+                    };
+                }
+            }
+        },
         data() {
             return {
                 userInfo: {}
@@ -25,6 +36,9 @@
             this.getUserInfoFunc();
         },
         methods: {
+            collapseBtn() {
+                this.collapse.flag = !this.collapse.flag;
+            },
             userCenterBtn() {
                 this.$store.commit('addTab', globalRoute.userCenterRoute);
                 this.$router.push({path: globalRoute.userCenterRoute.path});
@@ -53,9 +67,21 @@
 <style lang='scss' scoped>
 
     .infos {
+        position: relative;
         width: 100%;
         height: 50px;
         background-color: #409eff;
+
+        i {
+            position: absolute;
+            left: 2%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
 
         .user-info {
             height: 100%;

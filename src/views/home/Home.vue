@@ -1,10 +1,10 @@
 <template>
     <div class='home'>
-        <div class='home-frame-lr-menu' :class="{'menu-active':isCollapse, 'menu-not-active': !isCollapse}">
-            <side-menu></side-menu>
+        <div class='home-frame-lr-menu' :class='collapse.flag ? "menu-collapse" : "menu-not-collapse"'>
+            <side-menu :collapse='collapse'></side-menu>
         </div>
-        <div class='home-frame-lr-body' :class="{'body-active':isCollapse, 'body-not-active': !isCollapse}">
-            <infos></infos>
+        <div class='home-frame-lr-body' :class='collapse.flag ? "body-collapse" : "body-not-collapse"'>
+            <infos :collapse='collapse'></infos>
             <tabs></tabs>
             <div class='routers'>
                 <router-view/>
@@ -23,7 +23,9 @@
         components: {Infos, Tabs, SideMenu},
         data() {
             return {
-                isCollapse: true
+                collapse: {
+                    flag: false
+                }
             };
         }
     };
@@ -38,11 +40,11 @@
             float: left;
             height: 100%;
 
-            &.menu-active {
-                width: 200px;
+            &.menu-collapse {
+                width: 64px;
             }
 
-            &.menu-not-active {
+            &.menu-not-collapse {
                 width: 200px;
             }
         }
@@ -51,12 +53,12 @@
             float: left;
             height: 100%;
 
-            &.body-active {
-                width: calc(100% - 200px);
+            &.body-collapse {
+                width: calc(100% - 64px);
             }
 
-            &.body-not-active {
-                width: 200px;
+            &.body-not-collapse {
+                width: calc(100% - 200px);
             }
 
             .routers {

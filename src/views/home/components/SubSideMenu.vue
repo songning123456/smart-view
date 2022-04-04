@@ -1,7 +1,7 @@
 <template>
     <div class='sub-side-menu'>
         <template v-for='(subMenu, index) in subMenuList'>
-            <el-submenu v-if='subMenu.children && subMenu.children.length' :index='subMenu.id' :key='index'>
+            <el-submenu v-if='Array.isArray(subMenu.children) && subMenu.children.length' :index='subMenu.id' :key='index'>
                 <template slot='title'>
                     <i :class="subMenu.metaIcon"></i>
                     <span slot='title'>{{subMenu.metaTitle}}</span>

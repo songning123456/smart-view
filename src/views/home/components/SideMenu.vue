@@ -1,6 +1,7 @@
 <template>
     <el-menu :default-active='editableTabId' :background-color='elMenuStyle.backgroundColor'
-             :text-color='elMenuStyle.textColor' :active-text-color='elMenuStyle.activeTextColor'>
+             :text-color='elMenuStyle.textColor' :active-text-color='elMenuStyle.activeTextColor'
+             :collapse='collapse.flag'>
         <sub-side-menu :sub-menu-list='menuList'></sub-side-menu>
     </el-menu>
 </template>
@@ -13,6 +14,16 @@
     export default {
         name: 'SideMenu',
         components: {SubSideMenu},
+        props: {
+            collapse: {
+                type: Object,
+                default() {
+                    return {
+                        flag: false
+                    };
+                }
+            }
+        },
         data() {
             return {
                 globalRoute,
@@ -40,9 +51,28 @@
     };
 </script>
 
-<style scoped>
+<style lang='scss' scoped>
+
     .el-menu {
         height: 100%;
         border-right: unset;
+    }
+
+    .el-menu--collapse {
+
+        /deep/ .el-submenu__title {
+
+            span {
+                height: 0;
+                width: 0;
+                overflow: hidden;
+                visibility: hidden;
+                display: inline-block;
+            }
+        }
+
+        /deep/ .el-submenu__icon-arrow {
+            visibility: hidden;
+        }
     }
 </style>
