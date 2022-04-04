@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class='sub-side-menu'>
         <template v-for='(subMenu, index) in subMenuList'>
             <el-submenu v-if='subMenu.children && subMenu.children.length' :index='subMenu.id' :key='index'>
                 <template slot='title'>
@@ -19,8 +19,6 @@
 </template>
 
 <script>
-
-    import {forEachMenu} from '@/config/globalFunc';
 
     export default {
         name: 'SubSideMenu',
@@ -42,5 +40,13 @@
 </script>
 
 <style lang='scss' scoped>
+
+    .sub-side-menu {
+        .el-menu {
+            .el-menu-item {
+                min-width: unset;
+            }
+        }
+    }
 
 </style>

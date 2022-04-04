@@ -1,6 +1,6 @@
 <template>
-    <el-menu :default-active='editableTabId' class='el-menu-vertical-demo'
-             background-color='#545c64' text-color='#fff' active-text-color='#ffd04b'>
+    <el-menu :default-active='editableTabId' :background-color='elMenuStyle.backgroundColor'
+             :text-color='elMenuStyle.textColor' :active-text-color='elMenuStyle.activeTextColor'>
         <sub-side-menu :sub-menu-list='menuList'></sub-side-menu>
     </el-menu>
 </template>
@@ -15,7 +15,12 @@
         components: {SubSideMenu},
         data() {
             return {
-                globalRoute
+                globalRoute,
+                elMenuStyle: {
+                    backgroundColor: '#545c64',
+                    textColor: '#fff',
+                    activeTextColor: '#ffd04b'
+                }
             };
         },
         computed: {
@@ -36,7 +41,8 @@
 </script>
 
 <style scoped>
-    .el-menu-vertical-demo {
+    .el-menu {
         height: 100%;
+        border-right: unset;
     }
 </style>

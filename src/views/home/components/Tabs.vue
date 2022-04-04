@@ -10,7 +10,7 @@
     import {setStore} from '@/utils/store';
 
     export default {
-        name: 'TopMenu',
+        name: 'Tabs',
         data() {
             return {
                 globalRoute

@@ -1,124 +1,72 @@
 <template>
-    <el-container>
-        <el-aside width='200px'>
-            <SideMenu></SideMenu>
-        </el-aside>
-        <el-container width='calc(100% - 200px)'>
-            <el-header style='height: 60px'>
-                <strong>VueAdmin后台管理系统</strong>
-                <div class="header-avatar">
-                    <el-avatar size="medium" :src="userInfo.avatar"></el-avatar>
-                    <el-dropdown>
-						<span class="el-dropdown-link">
-						{{userInfo.username}}<i class="el-icon-arrow-down el-icon--right"></i>
-						</span>
-                        <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item @click.native='userCenterBtn'>个人中心</el-dropdown-item>
-                            <el-dropdown-item @click.native="logout">退出</el-dropdown-item>
-                        </el-dropdown-menu>
-                    </el-dropdown>
-                    <el-link href="https://markerhub.com" target="_blank">网站</el-link>
-                    <el-link href="https://space.bilibili.com/13491144" target="_blank">B站</el-link>
-                </div>
-            </el-header>
-            <el-main style='height: calc(100% - 60px)'>
-                <Tabs style='height: 41px'></Tabs>
-                <div style='height: calc(100% - 41px); width: 100%; box-sizing: border-box; padding: 10px'>
-                    <router-view/>
-                </div>
-            </el-main>
-        </el-container>
-    </el-container>
+    <div class='home'>
+        <div class='home-frame-lr-menu' :class="{'menu-active':isCollapse, 'menu-not-active': !isCollapse}">
+            <side-menu></side-menu>
+        </div>
+        <div class='home-frame-lr-body' :class="{'body-active':isCollapse, 'body-not-active': !isCollapse}">
+            <infos></infos>
+            <tabs></tabs>
+            <div class='routers'>
+                <router-view/>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
-    import SideMenu from './components/SideMenu';
-    import Tabs from './components/TopMenu';
-    import globalRoute from '@/config/globalRoute';
+    import SideMenu from '@/views/home/components/SideMenu';
+    import Tabs from '@/views/home/components/Tabs';
+    import Infos from '@/views/home/components/Infos';
 
     export default {
         name: 'Home',
-        components: {
-            SideMenu, Tabs
-        },
+        components: {Infos, Tabs, SideMenu},
         data() {
             return {
-                globalRoute,
-                userInfo: {
-                    id: '',
-                    username: '',
-                    avatar: ''
-                }
+                isCollapse: true
             };
-        },
-        created() {
-            this.getUserInfo();
-        },
-        methods: {
-            userCenterBtn() {
-                this.$store.commit('addTab', globalRoute.userCenterRoute);
-                this.$router.push({path: globalRoute.userCenterRoute.path});
-            },
-            getUserInfo() {
-                this.$axios.get('/boot/sys/sysUser/myInfo').then(res => {
-                    this.userInfo = res.data.result;
-                }).catch(e => {
-                    this.$message.error(e);
-                });
-            },
-            logout() {
-                this.$axios.post('/boot/logout').then(res => {
-                    if (res.data.success) {
-                        this.$store.commit('resetState');
-                        this.$router.push('/login');
-                    }
-                }).catch(e => {
-                    this.$message.error(e);
-                });
-            }
         }
     };
 </script>
 
-<style scoped>
-    .el-container {
-        padding: 0;
-        margin: 0;
-        height: 100%;
+<style lang='scss' scoped>
+    .home {
         width: 100%;
-    }
+        height: 100%;
 
-    .header-avatar {
-        float: right;
-        width: 210px;
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-    }
+        .home-frame-lr-menu {
+            float: left;
+            height: 100%;
 
-    .el-dropdown-link {
-        cursor: pointer;
-    }
+            &.menu-active {
+                width: 200px;
+            }
 
-    .el-header {
-        background-color: #17B3A3;
-        color: #333;
-        text-align: center;
-        line-height: 60px;
-    }
+            &.menu-not-active {
+                width: 200px;
+            }
+        }
 
-    .el-aside {
-        background-color: #D3DCE6;
-        color: #333;
-        line-height: 200px;
-    }
+        .home-frame-lr-body {
+            float: left;
+            height: 100%;
 
-    .el-main {
-        color: #333;
-        padding: 0;
-    }
+            &.body-active {
+                width: calc(100% - 200px);
+            }
 
-    a {
-        text-decoration: none;
+            &.body-not-active {
+                width: 200px;
+            }
+
+            .routers {
+                width: 100%;
+                height: calc(100% - 50px - 41px);
+                box-sizing: border-box;
+                padding: 0 5px;
+            }
+        }
     }
 </style>
+
+
