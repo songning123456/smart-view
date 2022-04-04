@@ -145,13 +145,15 @@
                     [
                         {
                             elType: 'el-button',
+                            noLabel: true,
                             zhName: '查询',
-                            btnType: 'primary'
+                            type: 'primary'
                         },
                         {
                             elType: 'el-button',
+                            noLabel: true,
                             zhName: '新增',
-                            btnType: 'primary',
+                            type: 'primary',
                             plain: true
                         }
                     ]

@@ -126,24 +126,28 @@
                         },
                         {
                             elType: 'el-button',
+                            noLabel: true,
                             zhName: '查询',
-                            btnType: 'primary'
+                            type: 'primary'
                         },
                         {
                             elType: 'el-button',
+                            noLabel: true,
                             zhName: '重置',
-                            btnType: ''
+                            type: ''
                         },
                         {
                             elType: 'el-button',
+                            noLabel: true,
                             zhName: '新增',
-                            btnType: 'primary',
+                            type: 'primary',
                             plain: true
                         },
                         {
                             elType: 'el-button',
+                            noLabel: true,
                             zhName: '批量删除',
-                            btnType: 'danger',
+                            type: 'danger',
                             plain: true
                         }
                     ]

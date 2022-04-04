@@ -87,18 +87,23 @@ vueRouter.beforeEach((to, from, next) => {
                 Authorization: getStore({type: 'local', key: 'token'})
             }
         }).then(res => {
-            // 拿到menuList
-            store.commit('setMenuList', res.data.result);
-            // 动态绑定路由
-            let optionRoutes = vueRouter.options.routes;
-            let pathArr = [];
-            forEachMenu(res.data.result, optionRoutes, pathArr);
-            vueRouter.$addRoutes(optionRoutes);
-            routeFlag = true;
-            store.commit('changeRouteStatus', routeFlag);
-            if (pathArr.indexOf(to.path) > -1) {
-                next({path: to.path});
+            if (res.data.success) {
+                routeFlag = true;
+                store.commit('changeRouteStatus', routeFlag);
+                // 拿到menuList
+                store.commit('setMenuList', res.data.result);
+                // 动态绑定路由
+                let optionRoutes = vueRouter.options.routes;
+                let pathArr = [];
+                forEachMenu(res.data.result, optionRoutes, pathArr);
+                vueRouter.$addRoutes(optionRoutes);
+                if (pathArr.indexOf(to.path) > -1) {
+                    next({path: to.path});
+                } else {
+                    next({path: '/login'});
+                }
             } else {
+                this.$message.error('获取菜单失败');
                 next({path: '/login'});
             }
         }).catch(e => {
