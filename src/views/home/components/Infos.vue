@@ -15,6 +15,9 @@
 </template>
 
 <script>
+
+    import globalRoute from '@/config/globalRoute';
+
     export default {
         name: 'Infos',
         props: {
@@ -29,6 +32,7 @@
         },
         data() {
             return {
+                globalRoute,
                 userInfo: {}
             };
         },
@@ -72,7 +76,7 @@
         height: 50px;
         background-color: #409eff;
 
-        i {
+        .el-icon-s-unfold, .el-icon-s-fold {
             position: absolute;
             left: 2%;
             top: 50%;

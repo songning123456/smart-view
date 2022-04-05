@@ -1,5 +1,7 @@
 <template>
-    <div>main</div>
+    <div class='index'>
+        首页todo
+    </div>
 </template>
 
 <script>

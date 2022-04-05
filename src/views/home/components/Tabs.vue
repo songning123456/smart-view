@@ -57,10 +57,11 @@
         methods: {
             tabRemoveBtn(targetId) {
                 let tabs = this.editableTabs;
-                let activeId = this.editableTabId;
-                if (activeId === this.editableTabs[0].id) {
+                // 首页不能删
+                if (tabs.findIndex(item => item.id === targetId && item.path === '/index') > -1) {
                     return;
                 }
+                let activeId = this.editableTabId;
                 if (activeId === targetId) {
                     tabs.forEach((tab, index) => {
                         if (tab.id === targetId) {
