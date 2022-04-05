@@ -1,14 +1,15 @@
 <template>
     <div class='sub-side-menu'>
         <template v-for='(subMenu, index) in subMenuList'>
-            <el-submenu v-if='Array.isArray(subMenu.children) && subMenu.children.length' :index='subMenu.id' :key='index'>
+            <el-submenu v-if='Array.isArray(subMenu.children) && subMenu.children.length' :index='subMenu.id'
+                        :key='index'>
                 <template slot='title'>
                     <i :class="subMenu.metaIcon"></i>
                     <span slot='title'>{{subMenu.metaTitle}}</span>
                 </template>
                 <sub-side-menu :sub-menu-list='subMenu.children'></sub-side-menu>
             </el-submenu>
-            <el-menu-item v-else :key='index' :index='subMenu.id' @click='selectMenu(subMenu)'>
+            <el-menu-item v-else :key='index' :index='subMenu.id'>
                 <template slot='title'>
                     <i :class="subMenu.metaIcon"></i>
                     <span slot='title'>{{subMenu.metaTitle}}</span>
@@ -28,12 +29,6 @@
                 default() {
                     return [];
                 }
-            }
-        },
-        methods: {
-            selectMenu(item) {
-                this.$store.commit('addTab', item);
-                this.$router.push({path: item.path});
             }
         }
     };

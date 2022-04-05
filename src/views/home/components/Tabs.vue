@@ -6,36 +6,51 @@
 </template>
 
 <script>
-    import globalRoute from '@/config/globalRoute';
-    import {setStore} from '@/utils/store';
+    import {getStore, setStore} from '@/utils/store';
 
     export default {
         name: 'Tabs',
         data() {
-            return {
-                globalRoute
-            };
-        },
-        created() {
-            this.$store.commit('addTab', globalRoute.indexRoute);
+            return {};
         },
         computed: {
             editableTabs: {
                 get() {
-                    return this.$store.state.menus.editableTabs;
+                    let editableTabs = this.$store.state.menus.editableTabs;
+                    let sessionEditableTabs = getStore({type: 'session', key: 'editableTabs'});
+                    if (!editableTabs.length && sessionEditableTabs) {
+                        editableTabs = sessionEditableTabs;
+                    }
+                    if (!editableTabs.length && this.$store.state.menus.menuArr.length) {
+                        editableTabs = this.$store.state.menus.menuArr.slice(0, 1);
+                        this.$store.commit('addTab', editableTabs[0]);
+                    }
+                    return editableTabs;
                 },
                 set(val) {
-                    this.$store.state.menus.editableTabs = val;
-                    setStore({type: 'session', key: 'editableTabs', val: val});
+                    if (Array.isArray(val)) {
+                        this.$store.state.menus.editableTabs = val;
+                        setStore({type: 'session', key: 'editableTabs', val: val});
+                    }
                 }
             },
             editableTabId: {
                 get() {
-                    return this.$store.state.menus.editableTabId;
+                    let editableTabId = this.$store.state.menus.editableTabId;
+                    let sessionEditableTabId = getStore({type: 'session', key: 'editableTabId'});
+                    if (!editableTabId && sessionEditableTabId) {
+                        editableTabId = sessionEditableTabId;
+                    }
+                    if (!editableTabId && this.$store.state.menus.menuArr.length) {
+                        editableTabId = this.$store.state.menus.menuArr[0].id;
+                    }
+                    return editableTabId;
                 },
                 set(val) {
-                    this.$store.state.menus.editableTabId = val;
-                    setStore({type: 'session', key: 'editableTabId', val: val});
+                    if (val) {
+                        this.$store.state.menus.editableTabId = val;
+                        setStore({type: 'session', key: 'editableTabId', val: val});
+                    }
                 }
             }
         },
@@ -43,7 +58,7 @@
             tabRemoveBtn(targetId) {
                 let tabs = this.editableTabs;
                 let activeId = this.editableTabId;
-                if (activeId === globalRoute.indexRoute.id) {
+                if (activeId === this.editableTabs[0].id) {
                     return;
                 }
                 if (activeId === targetId) {

@@ -9,24 +9,34 @@ export default {
         menuList: [],
         routeFlag: false,
         editableTabId: '',
-        editableTabs: []
+        editableTabs: [],
+        pathArr: [],
+        menuArr: []
     },
     mutations: {
         setMenuList(state, menus) {
             state.menuList = menus;
+        },
+        setPathArr(state, pathArr) {
+            state.pathArr = pathArr;
+        },
+        setMenuArr(state, menuArr) {
+            state.menuArr = menuArr;
         },
         changeRouteStatus(state, routeFlag) {
             state.routeFlag = routeFlag;
         },
         addTab(state, tab) {
             let editableTabs = [], editableTabId = tab.id;
+            let sessionEditableTabs = getStore({type: 'session', key: 'editableTabs'});
             if (state.editableTabs.length) {
                 editableTabs = state.editableTabs;
-            } else if (getStore({type: 'session', key: 'editableTabs'})) {
-                editableTabs = getStore({type: 'session', key: 'editableTabs'});
-                if (getStore({type: 'session', key: 'editableTabId'})) {
-                    editableTabId = getStore({type: 'session', key: 'editableTabId'});
-                }
+            } else if (sessionEditableTabs) {
+                editableTabs = sessionEditableTabs;
+            }
+            let sessionEditableTabId = getStore({type: 'session', key: 'editableTabId'});
+            if (!editableTabId && sessionEditableTabId) {
+                editableTabId = sessionEditableTabId;
             }
             let index = editableTabs.findIndex(e => e.id === tab.id);
             if (index === -1) {
@@ -42,6 +52,8 @@ export default {
             state.routeFlag = false;
             state.editableTabId = '';
             state.editableTabs = [];
+            state.pathArr = [];
+            state.menuArr = [];
             clearStore();
         }
     },

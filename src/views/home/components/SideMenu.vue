@@ -1,15 +1,15 @@
 <template>
-    <el-menu :default-active='editableTabId' :background-color='elMenuStyle.backgroundColor'
+    <el-menu ref='elMenu' :default-active='editableTabId' :background-color='elMenuStyle.backgroundColor'
              :text-color='elMenuStyle.textColor' :active-text-color='elMenuStyle.activeTextColor'
-             :collapse='collapse.flag'>
+             :collapse='collapse.flag' @select='selectBtn'>
         <sub-side-menu :sub-menu-list='menuList'></sub-side-menu>
     </el-menu>
 </template>
 
 <script>
 
-    import globalRoute from '@/config/globalRoute';
     import SubSideMenu from '@/views/home/components/SubSideMenu';
+    import {getStore} from '@/utils/store';
 
     export default {
         name: 'SideMenu',
@@ -26,7 +26,6 @@
         },
         data() {
             return {
-                globalRoute,
                 elMenuStyle: {
                     backgroundColor: '#545c64',
                     textColor: '#fff',
@@ -37,15 +36,25 @@
         computed: {
             menuList: {
                 get() {
-                    let menuList = JSON.parse(JSON.stringify(this.$store.state.menus.menuList));
-                    menuList.unshift(globalRoute.indexRoute);
-                    return menuList;
+                    return this.$store.state.menus.menuList;
                 }
             },
             editableTabId: {
                 get() {
-                    return this.$store.state.menus.editableTabId;
+                    let editableTabId = this.$store.state.menus.editableTabId;
+                    let sessionEditableTabId = getStore({type: 'session', key: 'editableTabId'});
+                    if (!editableTabId && sessionEditableTabId) {
+                        editableTabId = sessionEditableTabId;
+                    }
+                    return editableTabId;
                 }
+            }
+        },
+        methods: {
+            selectBtn(index, indexPath) {
+                let targetMenu = this.$store.state.menus.menuArr.find(item => item.id === index);
+                this.$store.commit('addTab', targetMenu);
+                this.$router.push({path: targetMenu.path});
             }
         }
     };

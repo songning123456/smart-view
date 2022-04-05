@@ -94,8 +94,10 @@ vueRouter.beforeEach((to, from, next) => {
                 store.commit('setMenuList', res.data.result);
                 // 动态绑定路由
                 let optionRoutes = vueRouter.options.routes;
-                let pathArr = [];
-                forEachMenu(res.data.result, optionRoutes, pathArr);
+                let pathArr = [], menuArr = [];
+                forEachMenu(res.data.result, optionRoutes, pathArr, menuArr);
+                store.commit('setPathArr', pathArr);
+                store.commit('setMenuArr', menuArr);
                 vueRouter.$addRoutes(optionRoutes);
                 if (pathArr.indexOf(to.path) > -1) {
                     next({path: to.path});

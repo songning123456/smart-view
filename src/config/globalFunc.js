@@ -1,15 +1,16 @@
 // 遍历菜单
-export const forEachMenu = (menuList, optionRoutes = [], pathArr = []) => {
-    for (let menu of menuList) {
+export const forEachMenu = (srcMenuList, optionRoutes = [], targetPathList = [], targetMenuList = []) => {
+    for (let menu of srcMenuList) {
         if (menu.path) {
-            pathArr.push(menu.path);
+            targetPathList.push(menu.path);
+            targetMenuList.push(menu);
             let route = menuToRoute(menu);
             if (Array.isArray(optionRoutes) && optionRoutes.length) {
                 optionRoutes[0].children.push(route);
             }
         }
         if (Array.isArray(menu.children) && menu.children.length) {
-            forEachMenu(menu.children, optionRoutes, pathArr);
+            forEachMenu(menu.children, optionRoutes, targetPathList, targetMenuList);
         }
     }
 };
