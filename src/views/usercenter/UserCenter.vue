@@ -5,7 +5,11 @@
             <el-tab-pane label="修改密码信息" name='password'></el-tab-pane>
         </el-tabs>
         <div class='modify-user-form'>
-            <custom-form></custom-form>
+            <custom-form :ref="formFlag + 'CustomForm'" v-if='formFlag === "base"' :form='baseForm' :form-options='baseFormOptions'
+                         :form-style-options='formStyleOptions' :rule-options='baseRuleOptions'
+                         @crud='crudBtn'></custom-form>
+            <custom-form :ref="formFlag + 'CustomForm'" v-else-if='formFlag === "password"' :form='passwordForm'
+                         :form-options='passwordFormOptions' :form-style-options='formStyleOptions'></custom-form>
         </div>
     </div>
 </template>
@@ -19,8 +23,65 @@
         data() {
             return {
                 formFlag: 'base',
-                userInfoForm: {},
+                baseForm: {
+                    username: '',
+                    avatar: '',
+                    email: '',
+                    address: '',
+                    telephone: ''
+                },
+                baseFormOptions: [
+                    {
+                        elType: 'el-input',
+                        zhName: '用户名',
+                        enName: 'username',
+                        clearable: true
+                    },
+                    {
+                        elType: 'el-avatar',
+                        zhName: '头像',
+                        enName: 'avatar',
+                        clearable: true
+                    },
+                    {
+                        elType: 'el-input',
+                        zhName: '电子邮箱',
+                        enName: 'email',
+                        clearable: true
+                    },
+                    {
+                        elType: 'el-input',
+                        zhName: '住址',
+                        enName: 'address',
+                        clearable: true
+                    },
+                    {
+                        elType: 'el-input',
+                        zhName: '联系方式',
+                        enName: 'telephone',
+                        clearable: true
+                    },
+                    {
+                        elType: 'el-buttons',
+                        options: [
+                            {
+                                zhName: '重置',
+                            },
+                            {
+                                zhName: '确定',
+                                type: 'primary',
+                                valid: true
+                            },
+                        ]
+                    }
+                ],
+                baseRuleOptions: {
+                    username: [
+                        {required: true, message: '请输入用户名', trigger: 'blur'}
+                    ]
+                },
                 passwordForm: {},
+                passwordFormOptions: [],
                 formStyleOptions: {
                     inline: false,
                     labelWidth: '80px'
@@ -31,11 +92,18 @@
             this.getUserInfoFunc();
         },
         methods: {
-            tabClickBtn() {
+            crudBtn(zhName) {
+                if (zhName === '重置') {
+                    this.$refs[this.formFlag + 'CustomForm'].resetFields();
+                }
             },
             getUserInfoFunc() {
                 this.$axios.get('/boot/sys/sysUser/myInfo').then(res => {
-                    this.userInfoForm = res.data.result;
+                    if (res.data.success) {
+                        this.baseForm = res.data.result;
+                    } else {
+                        this.$message.error(res.data.message);
+                    }
                 }).catch(e => {
                     this.$message.error(e);
                 });
@@ -54,6 +122,14 @@
         .modify-user-form {
             width: 100%;
             height: calc(100% - 54px);
+
+            .el-form {
+                width: 400px;
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+            }
         }
     }
 </style>

@@ -6,7 +6,7 @@
             <el-dropdown><span class="el-dropdown-link">{{userInfo.username}}<i
                     class="el-icon-arrow-down el-icon--right"></i></span>
                 <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native='userCenterBtn'>个人中心</el-dropdown-item>
+                    <el-dropdown-item @click.native="userCenterBtn">账户设置</el-dropdown-item>
                     <el-dropdown-item @click.native="logoutBtn">退出</el-dropdown-item>
                 </el-dropdown-menu>
             </el-dropdown>
@@ -15,8 +15,6 @@
 </template>
 
 <script>
-
-    import globalRoute from '@/config/globalRoute';
 
     export default {
         name: 'Infos',
@@ -32,7 +30,6 @@
         },
         data() {
             return {
-                globalRoute,
                 userInfo: {}
             };
         },
@@ -44,8 +41,9 @@
                 this.collapse.flag = !this.collapse.flag;
             },
             userCenterBtn() {
-                this.$store.commit('addTab', globalRoute.userCenterRoute);
-                this.$router.push({path: globalRoute.userCenterRoute.path});
+                let targetMenu = this.$store.state.menus.menuArr.find(item => item.path === '/usercenter/UserCenter');
+                this.$store.commit('addTab', targetMenu);
+                this.$router.push({path: targetMenu.path});
             },
             logoutBtn() {
                 this.$axios.post('/boot/logout').then(res => {

@@ -25,6 +25,11 @@
                        :icon='item.icon' :plain='item.plain' @click.native='crudBtn(item)'>
                 {{item.zhName}}
             </el-button>
+            <template v-else-if='item.elType === "el-buttons"'>
+                <el-button v-for='(it, i) in item.options' :key='i' :type='it.type ? it.type : "default"'
+                           :icon='it.icon' :plain='it.plain' @click.native='crudBtn(it)'>{{it.zhName}}
+                </el-button>
+            </template>
             <el-radio-group v-else-if='item.elType === "el-radio-group"' :disabled='item.disabled'
                             v-model='form[item.enName]'>
                 <el-radio v-for='(it, i) in item.options' :key='i' :label='it.value'>{{it.label}}</el-radio>

@@ -171,6 +171,10 @@
                         {
                             zhName: '菜单URL',
                             enName: 'path'
+                        },
+                        {
+                            zhName: '排序',
+                            enName: 'orderNum'
                         }
                     ],
                     [
