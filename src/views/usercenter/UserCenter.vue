@@ -1,11 +1,12 @@
 <template>
-    <div class='user-center'>
-        <el-tabs v-model='formFlag' @tab-click='tabClickBtn'>
+    <div class='user-center' v-loading='loading.show'>
+        <el-tabs v-model='formFlag'>
             <el-tab-pane label='修改基本信息' name='base'></el-tab-pane>
             <el-tab-pane label="修改密码信息" name='password'></el-tab-pane>
         </el-tabs>
         <div class='modify-user-form'>
-            <custom-form :ref="formFlag + 'CustomForm'" v-if='formFlag === "base"' :form='baseForm' :form-options='baseFormOptions'
+            <custom-form :ref="formFlag + 'CustomForm'" v-if='formFlag === "base"' :form='baseForm'
+                         :form-options='baseFormOptions'
                          :form-style-options='formStyleOptions' :rule-options='baseRuleOptions'
                          @crud='crudBtn'></custom-form>
             <custom-form :ref="formFlag + 'CustomForm'" v-else-if='formFlag === "password"' :form='passwordForm'
@@ -23,18 +24,15 @@
         data() {
             return {
                 formFlag: 'base',
-                baseForm: {
-                    username: '',
-                    avatar: '',
-                    email: '',
-                    address: '',
-                    telephone: ''
+                loading: {
+                    show: false
                 },
+                baseForm: {},
                 baseFormOptions: [
                     {
                         elType: 'el-input',
-                        zhName: '用户名',
-                        enName: 'username',
+                        zhName: '昵称',
+                        enName: 'realname',
                         clearable: true
                     },
                     {
@@ -76,8 +74,8 @@
                     }
                 ],
                 baseRuleOptions: {
-                    username: [
-                        {required: true, message: '请输入用户名', trigger: 'blur'}
+                    realname: [
+                        {required: true, message: '请输入昵称', trigger: 'blur'}
                     ]
                 },
                 passwordForm: {},
@@ -89,23 +87,47 @@
             };
         },
         created() {
-            this.getUserInfoFunc();
+            this.getMyselfFunc();
         },
         methods: {
             crudBtn(zhName) {
                 if (zhName === '重置') {
-                    this.$refs[this.formFlag + 'CustomForm'].resetFields();
+                    if (this.formFlag === 'base') {
+                        this.getMyselfFunc();
+                    }
+                } else if (zhName === '确定') {
+                    if (this.formFlag === 'base') {
+                        this.updateMyselfFunc();
+                    }
                 }
             },
-            getUserInfoFunc() {
+            updateMyselfFunc() {
+                this.loading.show = true;
+                this.$axios.put('/boot/sys/sysUser/updateMyself', this.baseForm).then(res => {
+                    if (res.data.success) {
+                        this.getMyselfFunc();
+                        this.$message.success('修改成功');
+                    } else {
+                        this.loading.show = false;
+                        this.$message.error(res.data.message);
+                    }
+                }).catch(e => {
+                    this.loading.show = false;
+                    this.$message.error(e);
+                });
+            },
+            getMyselfFunc() {
+                this.loading.show = true;
                 this.$axios.get('/boot/sys/sysUser/myInfo').then(res => {
                     if (res.data.success) {
-                        this.baseForm = res.data.result;
+                        this.baseForm = Object.assign({}, res.data.result);
                     } else {
                         this.$message.error(res.data.message);
                     }
                 }).catch(e => {
                     this.$message.error(e);
+                }).finally(() => {
+                    this.loading.show = false;
                 });
             },
         }

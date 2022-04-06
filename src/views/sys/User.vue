@@ -63,6 +63,12 @@
                         },
                         {
                             elType: 'el-input',
+                            zhName: '昵称',
+                            enName: 'realname',
+                            disabled: true
+                        },
+                        {
+                            elType: 'el-input',
                             zhName: '密码',
                             enName: 'password',
                             disabled: true
@@ -101,6 +107,12 @@
                         },
                         {
                             elType: 'el-input',
+                            zhName: '昵称',
+                            enName: 'realname',
+                            clearable: true
+                        },
+                        {
+                            elType: 'el-input',
                             zhName: '密码',
                             enName: 'password',
                             clearable: true
@@ -133,8 +145,8 @@
                     '编辑': [
                         {
                             elType: 'el-input',
-                            zhName: '用户名',
-                            enName: 'username',
+                            zhName: '昵称',
+                            enName: 'realname',
                             clearable: true
                         },
                         {
@@ -169,6 +181,13 @@
                             elType: 'el-input',
                             zhName: '用户名',
                             enName: 'username',
+                            placeholder: '请输入名称',
+                            clearable: true
+                        },
+                        {
+                            elType: 'el-input',
+                            zhName: '昵称',
+                            enName: 'realname',
                             placeholder: '请输入名称',
                             clearable: true
                         },
@@ -210,6 +229,10 @@
                         {
                             zhName: '用户名',
                             enName: 'username'
+                        },
+                        {
+                            zhName: '昵称',
+                            enName: 'realname'
                         },
                         {
                             elType: 'el-avatar',
