@@ -181,6 +181,7 @@
                     if (res.data.success) {
                         this.getMyselfFunc();
                         this.$message.success('修改成功');
+                        this.formFlag = 'base';
                     } else {
                         this.loading.show = false;
                         this.$message.error(res.data.message);
