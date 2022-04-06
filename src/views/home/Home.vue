@@ -39,6 +39,7 @@
         .home-frame-lr-menu {
             float: left;
             height: 100%;
+            transition: ease-in-out;
 
             &.menu-collapse {
                 width: 64px;
@@ -52,6 +53,7 @@
         .home-frame-lr-body {
             float: left;
             height: 100%;
+            transition: ease-in-out;
 
             &.body-collapse {
                 width: calc(100% - 64px);

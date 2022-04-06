@@ -135,6 +135,10 @@
             /deep/ .el-button {
                 width: 220px;
             }
+
+            /deep/ .el-form-item__label::before {
+                content: unset;
+            }
         }
     }
 </style>

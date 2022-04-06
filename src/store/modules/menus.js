@@ -43,7 +43,7 @@ export default {
                 editableTabs.push(tab);
             }
             state.editableTabId = editableTabId;
-            setStore({type: 'session', key: 'editableTabs', val: editableTabId});
+            setStore({type: 'session', key: 'editableTabId', val: editableTabId});
             state.editableTabs = editableTabs;
             setStore({type: 'session', key: 'editableTabs', val: editableTabs});
         },
