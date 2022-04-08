@@ -1,10 +1,22 @@
 <template>
-    <div class='file-upload'></div>
+    <div class='file-upload'>
+        <upload></upload>
+    </div>
 </template>
 
 <script>
+    import Upload from '@/components/upload/Upload';
+
     export default {
-        name: 'FileUpload'
+        name: 'FileUpload',
+        components: {Upload},
+        data() {
+            return {
+                upload: {
+
+                }
+            };
+        }
     };
 </script>
 
