@@ -1,5 +1,6 @@
 import common from '@/utils/common';
 import md5 from 'js-md5';
+import bxios from '@/axios';
 
 let upload = {};
 export const uploadByPieces = ({file, fileType, pieceSize = 10, progress, success, error}) => {
@@ -13,12 +14,17 @@ export const uploadByPieces = ({file, fileType, pieceSize = 10, progress, succes
         fileReader.addEventListener('load', e => {
             let fileBlob = e.target.result;
             upload.md5 = md5(fileBlob);
-            this.$axios.get('', {params: {fileType: fileType, md5: upload.md5, fileName: file.name}}).then(data => {
-                if (data.code === 200) {
-                    if (typeof data.result == 'string' && data.result) {
+            let params = {
+                fileType: fileType,
+                md5: upload.md5,
+                fileName: file.name
+            };
+            bxios.get('/boot/file/fileUpload/isExist', {params: params}).then(res => {
+                if (res.data.success) {
+                    if (typeof res.data.result == 'string' && res.data.result) {
                         // 文件已经上传
                         success && success({isExist: true, md5: upload.md5});
-                    } else if (data.result && data.result.length > 0) {
+                    } else if (Array.isArray(res.data.result) && res.data.result.length) {
                         // 已经上传的部分
                         upload.hasExist = data.result;
                         readChunk();
@@ -36,9 +42,7 @@ export const uploadByPieces = ({file, fileType, pieceSize = 10, progress, succes
         let start = currentChunk * chunkSize;
         let end = Math.min(file.size, start + chunkSize);
         let chunk = file.slice(start, end);
-        return {
-            start, end, chunk
-        };
+        return {start, end, chunk};
     };
     const readChunk = () => {
         let promiseAll = [];
@@ -50,7 +54,7 @@ export const uploadByPieces = ({file, fileType, pieceSize = 10, progress, succes
             }
         }
         // 存在某些分片未上传
-        if (promiseAll.length > 0) {
+        if (promiseAll.length) {
             progress(common.keepDecimal(upload.hasExist * (90 / upload.chunkCount), 2));
             success && success({showProgress: true});
             Promise.all(promiseAll).then(result => {
@@ -68,16 +72,15 @@ export const uploadByPieces = ({file, fileType, pieceSize = 10, progress, succes
     };
     // 合并分片
     const mergeChunk = () => {
-        this.$axios.get('/boot/file/fileUpload/shardMerge', {
-            params: {
-                fileType: fileType,
-                md5: upload.md5,
-                fileName: file.name
-            }
-        }).then(data => {
-            if (data.code === 200) {
+        let params = {
+            fileType: fileType,
+            md5: upload.md5,
+            fileName: file.name
+        };
+        bxios.get('/boot/file/fileUpload/shardMerge', {params: params}).then(res => {
+            if (res.data.success) {
                 progress(100);
-                success && success({shardMerge: true, hideProgress: true, fileName: data.result || ''});
+                success && success({shardMerge: true, hideProgress: true, fileName: res.data.result || ''});
             } else {
                 error && error(data.message);
             }
@@ -87,15 +90,17 @@ export const uploadByPieces = ({file, fileType, pieceSize = 10, progress, succes
     };
     // 上传分片
     const uploadChunk = ({chunk, currentChunk}) => {
+        let params = {
+            file: chunk,
+            fileType: fileType,
+            md5: upload.md5,
+            currentChunk: currentChunk
+        };
         let formData = new FormData();
-        formData.append('file', chunk);
-        formData.append('fileType', fileType);
-        formData.append('md5', upload.md5);
-        formData.append('fileName', file.name);
-        formData.append('currentChunk', currentChunk);
+        Object.keys(params).forEach(key => formData.append(key, params[key]));
         return new Promise((resolve, reject) => {
-            this.$axios.post('/boot/file/fileUpload/shardUpload', formData).then(data => {
-                if (data.code === 200) {
+            bxios.post('/boot/file/fileUpload/shardUpload', formData).then(res => {
+                if (res.data.success) {
                     progress(common.keepDecimal((++upload.progressIndex + upload.hasExist) * (90 / upload.chunkCount), 2));
                     resolve('success');
                 } else {

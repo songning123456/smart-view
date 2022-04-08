@@ -1,12 +1,15 @@
 <template>
-    <el-upload :action='upload.action ? upload.action : ""'
-               :drag='!!upload.drag'
-               :show-file-list='!!upload.showUploadList'
-               :disabled='disabled'
-               :http-request='httpRequest'>
-        <i class='el-icon-upload'></i>
-        <div class='el-upload__text'>将文件拖到此处，或<em>点击上传</em></div>
-    </el-upload>
+    <div class='upload'>
+        <el-upload :action='upload.action ? upload.action : ""'
+                   :drag='!!upload.drag'
+                   :show-file-list='!!upload.showUploadList'
+                   :disabled='disabled'
+                   :http-request='httpRequest'>
+            <i class='el-icon-upload'></i>
+            <div class='el-upload__text'>将文件拖到此处，或<em>点击上传</em></div>
+        </el-upload>
+        <el-progress v-show='progress.show' type="circle" :percentage='progress.percentage'></el-progress>
+    </div>
 </template>
 
 <script>
@@ -40,8 +43,11 @@
                 this.disabled = true;
                 uploadByPieces({
                     file: file.file,
-                    fileType: 'music',
-                    pieceSize: 5,
+                    fileType: 'file',
+                    pieceSize: 10,
+                    progress: data => {
+                        this.progress.percentage = data;
+                    },
                     success: data => {
                         if (data.isExist) {
                             this.$message.warning('文件已经上传');
@@ -66,9 +72,6 @@
                     error: e => {
                         this.$message.error('分片上传视频失败 ' + e);
                         this.disabled = false;
-                    },
-                    progress: data => {
-                        this.progress.percentage = data;
                     }
                 });
             }
@@ -77,5 +80,15 @@
 </script>
 
 <style lang='scss' scoped>
+
+    .upload {
+        .el-progress {
+            width: 160px;
+            position: absolute;
+            top: 50%;
+            left: 88%;
+            transform: translate(-50%, -50%);
+        }
+    }
 
 </style>

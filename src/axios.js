@@ -16,12 +16,7 @@ request.interceptors.request.use(config => {
 });
 
 request.interceptors.response.use(response => {
-        let res = response.data;
-        if (res.code === 200) {
-            return response;
-        } else {
-            return Promise.reject(res.message);
-        }
+        return response;
     },
     error => {
         if (error.response.status === 401) {
