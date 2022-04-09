@@ -18,7 +18,7 @@
         </el-table-column>
         <el-table-column v-if='Array.isArray(columnOptions[1])' label="操作" width="200" align='center'>
             <template slot-scope='scope'>
-                <el-button v-for='(item, index) in columnOptions[1]' :key='index'
+                <el-button v-for='(item, index) in columnOptions[1]' :key='index' :disabled='typeof item.disabled === "function" ? item.disabled(item.zhName, scope.row) : false'
                            @click="crudBtn(item.zhName, scope.row)" type="text" size="small">{{item.zhName}}
                 </el-button>
             </template>

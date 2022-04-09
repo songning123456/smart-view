@@ -63,6 +63,12 @@
                     [
                         {
                             zhName: '删除'
+                        },
+                        {
+                            zhName: '下载',
+                            disabled(zhName, row) {
+                                return zhName === '下载' && row.fileType !== 'file';
+                            }
                         }
                     ]
                 ],
@@ -87,6 +93,8 @@
                 } else if (zhName === '删除') {
                     this.crudForm = row;
                     (this.dialog.show = true) && (this.dialog.zhName = zhName);
+                } else if (zhName === '下载') {
+                    this.$message.warning('待做: 下载!')
                 }
             },
             dialogBtn(zhName) {
