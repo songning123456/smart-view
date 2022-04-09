@@ -230,7 +230,7 @@
             searchFunc() {
                 !this.loading.show && (this.loading.show = true);
                 let params = Object.assign({}, this.searchForm);
-                this.$axios.get('/boot/sys/sysMenu/list', params).then(res => {
+                this.$axios.get('/boot/sys/sysMenu/list', {params: params}).then(res => {
                     if (res.data.success) {
                         this.tableData = res.data.result;
                         let optionArr = [];

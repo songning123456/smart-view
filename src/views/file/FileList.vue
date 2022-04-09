@@ -4,7 +4,6 @@
                     :search-form-options='searchFormOptions'
                     :table-data='tableData'
                     :crud-form='crudForm'
-                    :crud-form-options='crudFormOptions'
                     :column-options='columnOptions'
                     :table-style-options='tableStyleOptions'
                     :dialog='dialog'
@@ -23,11 +22,39 @@
                 loading: {
                     show: false
                 },
-                searchForm: {},
+                searchForm: {
+                    fileType: 'file'
+                },
+                crudForm: {},
                 tableData: [],
-                crudFormOptions: {},
-                searchFormOptions: [],
-                columnOptions: [],
+                searchFormOptions: [
+                    [
+                        {
+                            elType: 'el-button',
+                            noLabel: true,
+                            zhName: '查询',
+                            type: 'primary'
+                        }
+                    ]
+                ],
+                columnOptions: [
+                    [
+                        {
+                            zhName: '文件名称',
+                            enName: 'fileName',
+                            showOverflowTooltip: true
+                        },
+                        {
+                            zhName: '修改时间',
+                            enName: 'updateTime'
+                        },
+                    ],
+                    [
+                        {
+                            zhName: '删除'
+                        }
+                    ]
+                ],
                 tableStyleOptions: {
                     rowKey: 'id',
                     defaultExpandAll: true,
@@ -39,10 +66,53 @@
                 }
             };
         },
+        created() {
+            this.searchFunc();
+        },
         methods: {
             crudBtn(zhName, row) {
+                if (zhName === '查询') {
+                    this.searchFunc();
+                } else if (zhName === '删除') {
+                    this.crudForm = row;
+                    (this.dialog.show = true) && (this.dialog.zhName = zhName);
+                }
             },
             dialogBtn(zhName) {
+                if (zhName === '删除') {
+                    this.deleteFunc();
+                }
+            },
+            searchFunc() {
+                this.loading.show = true;
+                let params = Object.assign({}, this.searchForm);
+                this.$axios.get('/boot/file/fileList/list', {params: params}).then(res => {
+                    if (res.data.success) {
+                        this.tableData = res.data.result;
+                    } else {
+                        this.$message.error(res.data.message);
+                    }
+                }).catch(e => {
+                    this.$message.error(e);
+                }).finally(() => {
+                    this.loading.show = false;
+                });
+            },
+            deleteFunc() {
+                this.dialog.show = false;
+                this.loading.show = true;
+                this.$axios.delete('/boot/file/fileList/delete/' + this.crudForm.id).then(res => {
+                    if (res.data.success) {
+                        this.$message.success('删除成功');
+                        this.searchFunc();
+                    } else {
+                        this.loading.show = false;
+                        this.$message.error(res.data.message);
+                    }
+                }).catch(e => {
+                    this.loading.show = false;
+                    this.$message.error(e);
+                });
             }
         }
     };
