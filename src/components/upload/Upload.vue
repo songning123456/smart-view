@@ -44,7 +44,7 @@
                 type: Object,
                 default() {
                     return {
-                        fileType: 'file',
+                        uploadPath: 'file',
                         pieceSize: 5
                     };
                 }
@@ -65,7 +65,7 @@
                 this.disabled = true;
                 uploadByPieces({
                     file: file.file,
-                    fileType: this.fileParams.fileType ? this.fileParams.fileType : 'file',
+                    uploadPath: this.fileParams.uploadPath ? this.fileParams.uploadPath : 'file',
                     pieceSize: this.fileParams.pieceSize ? this.fileParams.pieceSize : 5,
                     progress: data => {
                         if (data === 'show') {

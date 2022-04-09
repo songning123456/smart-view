@@ -3,7 +3,7 @@ import md5 from 'js-md5';
 import bxios from '@/axios';
 
 let upload = {};
-export const uploadByPieces = ({file, fileType, pieceSize = 10, progress, success, error}) => {
+export const uploadByPieces = ({file, uploadPath, pieceSize = 10, progress, success, error}) => {
     upload.shardSize = pieceSize * 1024 * 1024; // 10MB/片
     upload.shardCount = Math.ceil(file.size / upload.shardSize); // 总片数
     upload.hasExist = []; // 某个文件已经上传的部分
@@ -15,7 +15,7 @@ export const uploadByPieces = ({file, fileType, pieceSize = 10, progress, succes
             let fileBlob = e.target.result;
             upload.md5 = md5(fileBlob) + md5(file.name); // 根据文件内容和文件名合成唯一md5值
             let params = {
-                fileType: fileType,
+                uploadPath: uploadPath,
                 md5: upload.md5,
                 fileName: file.name
             };
@@ -79,7 +79,7 @@ export const uploadByPieces = ({file, fileType, pieceSize = 10, progress, succes
     // 合并分片
     const mergeShard = () => {
         let params = {
-            fileType: fileType,
+            uploadPath: uploadPath,
             md5: upload.md5,
             fileName: file.name
         };
@@ -98,7 +98,7 @@ export const uploadByPieces = ({file, fileType, pieceSize = 10, progress, succes
     const uploadShard = ({shard, currentShard}) => {
         let params = {
             file: shard,
-            fileType: fileType,
+            uploadPath: uploadPath,
             md5: upload.md5,
             fileName: file.name,
             currentShard: currentShard

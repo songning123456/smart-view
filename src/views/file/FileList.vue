@@ -23,7 +23,7 @@
                     show: false
                 },
                 searchForm: {
-                    fileType: 'file'
+                    uploadPath: 'file'
                 },
                 crudForm: {},
                 tableData: [],
@@ -47,6 +47,17 @@
                         {
                             zhName: '修改时间',
                             enName: 'updateTime'
+                        },
+                        {
+                            zhName: '文件类型',
+                            enName: 'fileType',
+                            style(val) {
+                                let color = '#409eff';
+                                if (val === 'file') {
+                                    color = '#67c23a';
+                                }
+                                return 'color: ' + color;
+                            }
                         },
                     ],
                     [
@@ -101,7 +112,7 @@
             deleteFunc() {
                 this.dialog.show = false;
                 this.loading.show = true;
-                this.$axios.delete('/boot/file/fileList/delete/' + this.crudForm.id).then(res => {
+                this.$axios.delete('/boot/file/fileList/delete/' + this.crudForm.encryptionId).then(res => {
                     if (res.data.success) {
                         this.$message.success('删除成功');
                         this.searchFunc();
