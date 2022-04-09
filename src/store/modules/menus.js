@@ -44,7 +44,7 @@ export default {
             }
             state.editableTabId = editableTabId;
             setStore({type: 'session', key: 'editableTabId', val: editableTabId});
-            state.editableTabs = editableTabs;
+            state.editableTabs = editableTabs.slice();
             setStore({type: 'session', key: 'editableTabs', val: editableTabs});
         },
         resetState: (state) => {
