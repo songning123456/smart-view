@@ -1,6 +1,6 @@
 <template>
     <div class='file-upload'>
-        <upload></upload>
+        <upload v-model='fileUrl'></upload>
     </div>
 </template>
 
@@ -12,9 +12,7 @@
         components: {Upload},
         data() {
             return {
-                upload: {
-
-                }
+                fileUrl: ''
             };
         }
     };
@@ -25,6 +23,10 @@
         position: relative;
         width: 100%;
         height: 100%;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
 </style>

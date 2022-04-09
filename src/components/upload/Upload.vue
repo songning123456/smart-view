@@ -1,14 +1,17 @@
 <template>
     <div class='upload'>
-        <el-upload :action='upload.action ? upload.action : ""'
-                   :drag='!!upload.drag'
-                   :show-file-list='!!upload.showUploadList'
+        <el-upload :action='elUpload.action ? elUpload.action : ""'
+                   :drag='!!elUpload.drag'
+                   :show-file-list='!!elUpload.showUploadList'
                    :disabled='disabled'
                    :http-request='httpRequest'>
             <i class='el-icon-upload'></i>
             <div class='el-upload__text'>将文件拖到此处，或<em>点击上传</em></div>
+            <div class='el-upload__tip' slot='tip'>
+                <el-progress v-show='progress.show' :type='elProgress.type'
+                             :percentage='progress.percentage'></el-progress>
+            </div>
         </el-upload>
-        <el-progress v-show='progress.show' type="circle" :percentage='progress.percentage'></el-progress>
     </div>
 </template>
 
@@ -18,13 +21,31 @@
     export default {
         name: 'Upload',
         props: {
-            upload: {
+            value: String,
+            elUpload: {
                 type: Object,
                 default() {
                     return {
                         action: '',
                         drag: true,
                         showUploadList: false
+                    };
+                }
+            },
+            elProgress: {
+                type: Object,
+                default() {
+                    return {
+                        type: 'line'
+                    };
+                }
+            },
+            fileParams: {
+                type: Object,
+                default() {
+                    return {
+                        fileType: 'file',
+                        pieceSize: 5
                     };
                 }
             }
@@ -35,7 +56,8 @@
                 progress: {
                     percentage: 0,
                     show: false
-                },
+                }
+
             };
         },
         methods: {
@@ -43,35 +65,37 @@
                 this.disabled = true;
                 uploadByPieces({
                     file: file.file,
-                    fileType: 'file',
-                    pieceSize: 10,
+                    fileType: this.fileParams.fileType ? this.fileParams.fileType : 'file',
+                    pieceSize: this.fileParams.pieceSize ? this.fileParams.pieceSize : 5,
                     progress: data => {
-                        this.progress.percentage = data;
+                        if (data === 'show') {
+                            this.progress.show = true;
+                        } else {
+                            this.progress.percentage = data;
+                        }
                     },
                     success: data => {
                         if (data.isExist) {
-                            this.$message.warning('文件已经上传');
-                            this.disabled = false;
+                            this.$message.success('文件已经上传');
                         }
-                        // 合并分片成功后重新查询一次数据
+                        // 合并分片成功
                         if (data.shardMerge) {
-                            // this.queryData();
-                        }
-                        // 显示 上传进度条
-                        if (data.showProgress) {
-                            this.progress.show = true;
-                        }
-                        // 隐藏 上传进度条
-                        if (data.hideProgress) {
+                            this.$message.success('文件上传成功');
                             setTimeout(() => {
-                                this.progress.show = false;
                                 this.progress.percentage = 0;
+                                this.progress.show = false;
                             }, 1000);
                         }
+                        this.disabled = false;
+                        this.$emit('input', window.location.origin + data.suffixUrl);
                     },
                     error: e => {
                         this.$message.error('分片上传视频失败 ' + e);
                         this.disabled = false;
+                        setTimeout(() => {
+                            this.progress.percentage = 0;
+                            this.progress.show = false;
+                        }, 1000);
                     }
                 });
             }
@@ -82,12 +106,11 @@
 <style lang='scss' scoped>
 
     .upload {
-        .el-progress {
-            width: 160px;
-            position: absolute;
-            top: 50%;
-            left: 88%;
-            transform: translate(-50%, -50%);
+        width: 360px;
+        float: left;
+
+        /deep/ .el-upload__tip {
+            margin-top: unset;
         }
     }
 
