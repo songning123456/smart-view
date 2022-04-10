@@ -23,6 +23,7 @@
                 <slot></slot>
             </template>
         </crud-dialog>
+        <slot name='custom'></slot>
     </div>
 </template>
 

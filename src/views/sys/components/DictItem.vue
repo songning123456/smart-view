@@ -1,46 +1,41 @@
 <template>
-    <crud-container :loading='loading'
-                    :rule-options='ruleOptions'
-                    :search-form='searchForm'
-                    :search-form-options='searchFormOptions'
-                    :table-data='tableData'
-                    :crud-form='crudForm'
-                    :crud-form-options='crudFormOptions'
-                    :column-options='columnOptions'
-                    :table-style-options='tableStyleOptions'
-                    :dialog='dialog'
-                    :page='page'
-                    @crud='crudBtn'
-                    @dialog='dialogBtn'
-                    @current-change='currentChangeBtn'
-                    @selection-change='selectionChangeBtn'>
-        <template slot='custom'>
-            <el-drawer title='字典列表' :visible.sync='drawer.show' size='40%'>
-                <dict-item ref='dictItemRef'></dict-item>
-            </el-drawer>
-        </template>
-    </crud-container>
+    <div class='dict-item'>
+        <crud-container :loading='loading'
+                        :rule-options='ruleOptions'
+                        :search-form='searchForm'
+                        :search-form-options='searchFormOptions'
+                        :table-data='tableData'
+                        :crud-form='crudForm'
+                        :crud-form-options='crudFormOptions'
+                        :column-options='columnOptions'
+                        :table-style-options='tableStyleOptions'
+                        :dialog='dialog'
+                        :page='page'
+                        @crud='crudBtn'
+                        @dialog='dialogBtn'
+                        @current-change='currentChangeBtn'
+                        @selection-change='selectionChangeBtn'>
+        </crud-container>
+    </div>
 </template>
 
 <script>
-
     import CrudContainer from '@/components/crud/CrudContainer';
-    import DictItem from '@/views/sys/components/DictItem';
 
     export default {
-        name: 'Dict',
-        components: {DictItem, CrudContainer},
+        name: 'DictItem',
+        components: {CrudContainer},
         data() {
             return {
                 loading: {
                     show: false
                 },
                 ruleOptions: {
-                    dictName: [
-                        {required: true, message: '请输入字典名称', trigger: 'blur'}
+                    itemText: [
+                        {required: true, message: '请输入名称', trigger: 'blur'}
                     ],
-                    dictCode: [
-                        {required: true, message: '请输入字典编码', trigger: 'blur'}
+                    itemValue: [
+                        {required: true, message: '请输入数据值', trigger: 'blur'}
                     ]
                 },
                 page: {
@@ -48,6 +43,7 @@
                     currentPage: 1,
                     total: 0
                 },
+                sysDictId: '', // SysDict的ID，必传
                 searchForm: {},
                 tableData: [],
                 selectionTableData: [],
@@ -56,40 +52,52 @@
                     '新增': [
                         {
                             elType: 'el-input',
-                            zhName: '字典名称',
-                            enName: 'dictName',
+                            zhName: '名称',
+                            enName: 'itemText',
                             clearable: true
                         },
                         {
                             elType: 'el-input',
-                            zhName: '字典编码',
-                            enName: 'dictCode',
+                            zhName: '数据值',
+                            enName: 'itemValue',
                             clearable: true
                         },
                         {
                             elType: 'el-input',
                             zhName: '描述',
                             enName: 'description',
+                            clearable: true
+                        },
+                        {
+                            elType: 'el-input',
+                            zhName: '排序',
+                            enName: 'orderNum',
                             clearable: true
                         }
                     ],
                     '编辑': [
                         {
                             elType: 'el-input',
-                            zhName: '字典名称',
-                            enName: 'dictName',
+                            zhName: '名称',
+                            enName: 'itemText',
                             clearable: true
                         },
                         {
                             elType: 'el-input',
-                            zhName: '字典编码',
-                            enName: 'dictCode',
+                            zhName: '数据值',
+                            enName: 'itemValue',
                             clearable: true
                         },
                         {
                             elType: 'el-input',
                             zhName: '描述',
                             enName: 'description',
+                            clearable: true
+                        },
+                        {
+                            elType: 'el-input',
+                            zhName: '排序',
+                            enName: 'orderNum',
                             clearable: true
                         }
                     ]
@@ -98,24 +106,32 @@
                     [
                         {
                             elType: 'el-input',
-                            zhName: '字典名称',
-                            enName: 'dictName',
-                            placeholder: '请输入字典名称',
-                            clearable: true
+                            zhName: '名称',
+                            enName: 'itemText',
+                            placeholder: '请输入名称',
+                            clearable: true,
+                            style(enName) {
+                                return 'width: 130px';
+                            }
                         },
                         {
                             elType: 'el-input',
-                            zhName: '字典编码',
-                            enName: 'dictCode',
-                            placeholder: '请输入字典编码',
-                            clearable: true
+                            zhName: '数据值',
+                            enName: 'itemValue',
+                            placeholder: '请输入数据值',
+                            clearable: true,
+                            style(enName) {
+                                return 'width: 130px';
+                            }
                         },
                         {
                             elType: 'el-button',
                             noLabel: true,
                             zhName: '查询',
                             type: 'primary'
-                        },
+                        }
+                    ],
+                    [
                         {
                             elType: 'el-button',
                             noLabel: true,
@@ -141,21 +157,12 @@
                 columnOptions: [
                     [
                         {
-                            zhName: '序号',
-                            enName: 'index',
-                            width: '70px'
+                            zhName: '名称',
+                            enName: 'itemText',
                         },
                         {
-                            zhName: '字典名称',
-                            enName: 'dictName',
-                        },
-                        {
-                            zhName: '字典编码',
-                            enName: 'dictCode',
-                        },
-                        {
-                            zhName: '描述',
-                            enName: 'description',
+                            zhName: '数据值',
+                            enName: 'itemValue',
                         }
                     ],
                     [
@@ -164,9 +171,6 @@
                         },
                         {
                             zhName: '删除'
-                        },
-                        {
-                            zhName: '字典配置'
                         }
                     ]
                 ],
@@ -176,14 +180,8 @@
                 dialog: {
                     zhName: '',
                     show: false
-                },
-                drawer: {
-                    show: false
                 }
             };
-        },
-        created() {
-            this.searchFunc();
         },
         methods: {
             crudBtn(zhName, row) {
@@ -197,11 +195,6 @@
                         total: 0
                     };
                     this.searchFunc();
-                } else if (zhName === '字典配置') {
-                    this.drawer.show = true;
-                    this.$nextTick(() => {
-                        this.$refs['dictItemRef'].searchFunc(row.id);
-                    });
                 } else {
                     if (zhName === '新增') {
                         this.crudForm = {};
@@ -235,12 +228,14 @@
             selectionChangeBtn(val) {
                 this.selectionTableData = val;
             },
-            searchFunc() {
+            searchFunc(sysDictId) {
+                sysDictId && (this.sysDictId = sysDictId);
                 !this.loading.show && (this.loading.show = true);
                 let params = Object.assign({}, this.searchForm);
                 params.currentPage = this.page.currentPage;
                 params.pageSize = this.page.pageSize;
-                this.$axios.get('/boot/sys/sysDict/page', {params: params}).then(res => {
+                params.sysDictId = this.sysDictId;
+                this.$axios.get('/boot/sys/sysDictItem/page', {params: params}).then(res => {
                     if (res.data.success) {
                         this.tableData = res.data.result.records;
                         this.page.total = res.data.result.total;
@@ -256,7 +251,9 @@
             addFunc() {
                 this.dialog.show = false;
                 this.loading.show = true;
-                this.$axios.post('/boot/sys/sysDict/save', this.crudForm).then(res => {
+                let params = Object.assign({}, this.crudForm);
+                params.sysDictId = this.sysDictId;
+                this.$axios.post('/boot/sys/sysDictItem/save', params).then(res => {
                     if (res.data.success) {
                         this.$message.success('添加成功');
                         this.searchFunc();
@@ -272,7 +269,9 @@
             editFunc() {
                 this.dialog.show = false;
                 this.loading.show = true;
-                this.$axios.put('/boot/sys/sysDict/update', this.crudForm).then(res => {
+                let params = Object.assign({}, this.crudForm);
+                params.sysDictId = this.sysDictId;
+                this.$axios.put('/boot/sys/sysDictItem/update', params).then(res => {
                     if (res.data.success) {
                         this.$message.success('修改成功');
                         this.searchFunc();
@@ -288,7 +287,7 @@
             deleteFunc(param) {
                 this.dialog.show = false;
                 this.loading.show = true;
-                this.$axios.delete('/boot/sys/sysDict/delete', {params: {ids: param}}).then(res => {
+                this.$axios.delete('/boot/sys/sysDictItem/delete', {params: {ids: param}}).then(res => {
                     if (res.data.success) {
                         this.$message.success('删除成功');
                         this.searchFunc();
@@ -305,8 +304,14 @@
     };
 </script>
 
-<style lang='scss'>
-    .v-modal {
-        z-index: 2000 !important;
+<style lang='scss' scoped>
+
+    .dict-item {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        padding: 0 5px;
+        box-sizing: border-box;
     }
+
 </style>
