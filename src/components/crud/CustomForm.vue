@@ -65,7 +65,10 @@
             formStyleOptions: {
                 type: Object,
                 default() {
-                    return {};
+                    return {
+                        inline: true,
+                        size: 'small'
+                    };
                 }
             },
             ruleOptions: {

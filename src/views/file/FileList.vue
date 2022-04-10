@@ -23,12 +23,19 @@
                     show: false
                 },
                 searchForm: {
-                    uploadPath: 'file'
+                    uploadPath: ''
                 },
                 crudForm: {},
                 tableData: [],
                 searchFormOptions: [
                     [
+                        {
+                            elType: 'el-select',
+                            zhName: '文件上传路径',
+                            enName: 'uploadPath',
+                            clearable: true,
+                            options: []
+                        },
                         {
                             elType: 'el-button',
                             noLabel: true,
@@ -85,6 +92,7 @@
         },
         created() {
             this.searchFunc();
+            this.getDictItemFunc('FileUploadPath');
         },
         methods: {
             crudBtn(zhName, row) {
@@ -94,7 +102,7 @@
                     this.crudForm = row;
                     (this.dialog.show = true) && (this.dialog.zhName = zhName);
                 } else if (zhName === '下载') {
-                    this.$message.warning('待做: 下载!')
+                    this.$message.warning('待做: 下载!');
                 }
             },
             dialogBtn(zhName) {
@@ -130,6 +138,24 @@
                     }
                 }).catch(e => {
                     this.loading.show = false;
+                    this.$message.error(e);
+                });
+            },
+            getDictItemFunc(dictCode) {
+                this.$axios.get('/boot/sys/sysDictItem/dictItem/' + dictCode).then(res => {
+                    if (res.data.success) {
+                        let options = res.data.result;
+                        this.searchFormOptions[0][0].options = options.map(option => {
+                            return {
+                                label: option.itemText,
+                                value: option.itemValue
+                            };
+                        });
+                        this.searchForm.uploadPath = this.searchFormOptions[0][0].options[0].value;
+                    } else {
+                        this.$message.error(res.data.message);
+                    }
+                }).catch(e => {
                     this.$message.error(e);
                 });
             }
