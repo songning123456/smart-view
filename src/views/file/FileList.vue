@@ -13,6 +13,7 @@
 
 <script>
     import CrudContainer from '@/components/crud/CrudContainer';
+    import common from '@/utils/common';
 
     export default {
         name: 'FileList',
@@ -91,7 +92,6 @@
             };
         },
         created() {
-            this.searchFunc();
             this.getDictItemFunc('FileUploadPath');
         },
         methods: {
@@ -102,7 +102,7 @@
                     this.crudForm = row;
                     (this.dialog.show = true) && (this.dialog.zhName = zhName);
                 } else if (zhName === '下载') {
-                    this.$message.warning('待做: 下载!');
+                    common.downloadByA(window.location.origin + row.suffixUrl);
                 }
             },
             dialogBtn(zhName) {
@@ -152,6 +152,7 @@
                             };
                         });
                         this.searchForm.uploadPath = this.searchFormOptions[0][0].options[0].value;
+                        this.searchFunc();
                     } else {
                         this.$message.error(res.data.message);
                     }

@@ -53,7 +53,8 @@
                         noLabel: true,
                         zhName: '登录',
                         type: 'primary',
-                        valid: true
+                        valid: true,
+                        disabled: false
                     }
                 ],
                 formStyleOptions: {
@@ -92,12 +93,15 @@
                     token: this.form.token,
                     code: this.form.code
                 };
+                this.formOptions[4].disabled = true;
                 this.$axios.post('/boot/login?' + qs.stringify(params)).then(res => {
                     let jwt = res.headers['authorization'];
                     this.$store.commit('setToken', jwt);
                     this.$router.push('/index');
                 }).catch(e => {
                     this.$message.error(e);
+                }).finally(() => {
+                    this.formOptions[4].disabled = false;
                 });
             },
             getCaptchaFunc() {
