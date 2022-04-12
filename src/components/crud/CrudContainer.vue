@@ -1,5 +1,5 @@
 <template>
-    <div class='crud-container' v-loading='loading.show'>
+    <div class='crud-container'>
         <div class='crud-container-frame-ud-form' v-for='(searchFormOption, index) in searchFormOptions' :key='index'>
             <custom-form :form='searchForm' :form-options='searchFormOption'
                          :form-style-options='customFormStyleOptions[true]'
@@ -24,6 +24,7 @@
             </template>
         </crud-dialog>
         <slot name='custom'></slot>
+        <loading :loading='loading.show'></loading>
     </div>
 </template>
 
@@ -31,10 +32,11 @@
     import CustomForm from '@/components/crud/CustomForm';
     import CustomTable from '@/components/crud/CustomTable';
     import CrudDialog from '@/components/crud/CrudDialog';
+    import Loading from '@/components/load/Loading';
 
     export default {
         name: 'CrudContainer',
-        components: {CrudDialog, CustomTable, CustomForm},
+        components: {Loading, CrudDialog, CustomTable, CustomForm},
         props: {
             loading: {
                 type: Object,
