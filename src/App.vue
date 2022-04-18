@@ -5,8 +5,15 @@
 </template>
 
 <script>
+    import appWebsocket from '@/utils/appWebsocket';
+
     export default {
-        name: 'App'
+        name: 'App',
+        created() {
+            appWebsocket.message((data) => {
+                console.log(data);
+            });
+        }
     };
 
 </script>
