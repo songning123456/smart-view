@@ -15,10 +15,15 @@
             };
         },
         created() {
-            if (typeof appWebsocket.message === 'function') {
-                appWebsocket.message((data) => {
-                    console.log(data);
-                });
+            appWebsocket.message = this.message;
+        },
+        methods: {
+            message(data) {
+                let wsData = JSON.parse(data);
+                // 测试使用，后续修改
+                if (wsData.component === 'test') {
+                    console.error(wsData.data);
+                }
             }
         }
     };

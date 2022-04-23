@@ -3,7 +3,8 @@ import {getStore} from '@/utils/store';
 
 // 创建全局websocket
 let appWebsocket = {
-    uuid: uuid()
+    uuid: uuid(),
+    time: new Date().getTime()
 };
 
 // websocket对象
@@ -13,6 +14,7 @@ appWebsocket.lockReConnect = false;
 // 打开时发送消息通知后台登陆成功
 appWebsocket.send = function (message = {}) {
     message.uuid = appWebsocket.uuid;
+    message.time = appWebsocket.time;
     message.token = getStore({type: 'local', key: 'token'});
     appWebsocket.websocket.send(JSON.stringify(message));
 };
