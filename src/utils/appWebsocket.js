@@ -35,7 +35,8 @@ appWebsocket.heartCheck = {
 // 创建websocket对象
 appWebsocket.createWebsocket = function () {
     try {
-        appWebsocket.websocket = new WebSocket('ws://localhost:8081/websocket/app');
+        let wsUrl = location.origin.replace('http://', 'ws://').replace('https://', 'wss://');
+        appWebsocket.websocket = new WebSocket(wsUrl + '/boot/websocket/app');
         appWebsocket.initWebsocket();
     } catch (e) {
         appWebsocket.reconnect();

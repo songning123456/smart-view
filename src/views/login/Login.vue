@@ -28,20 +28,23 @@
                         elType: 'el-input',
                         zhName: '用户名',
                         enName: 'username',
-                        clearable: true
+                        clearable: true,
+                        placeholder: '请输入用户名'
                     },
                     {
                         elType: 'el-input',
                         zhName: '密码',
                         enName: 'password',
                         clearable: true,
-                        type: 'password'
+                        type: 'password',
+                        placeholder: '请输入密码'
                     },
                     {
                         elType: 'el-input',
                         zhName: '验证码',
                         enName: 'code',
-                        clearable: true
+                        clearable: true,
+                        placeholder: '请输入验证码'
                     },
                     {
                         elType: 'el-image',

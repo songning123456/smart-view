@@ -9,10 +9,17 @@
 
     export default {
         name: 'App',
+        data() {
+            return {
+                appWebsocket
+            };
+        },
         created() {
-            appWebsocket.message((data) => {
-                console.log(data);
-            });
+            if (typeof appWebsocket.message === 'function') {
+                appWebsocket.message((data) => {
+                    console.log(data);
+                });
+            }
         }
     };
 
