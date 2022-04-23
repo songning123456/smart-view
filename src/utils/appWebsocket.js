@@ -1,12 +1,21 @@
+import uuid from 'uuid';
+import {getStore} from '@/utils/store';
+
 // 创建全局websocket
-let appWebsocket = {};
+let appWebsocket = {
+    uuid: uuid()
+};
 
 // websocket对象
 appWebsocket.websocket = null;
 // 避免websocket重复连接
 appWebsocket.lockReConnect = false;
-// 打开时发送消息通知后台登陆成功并且发布
-appWebsocket.open = null;
+// 打开时发送消息通知后台登陆成功
+appWebsocket.send = function (message = {}) {
+    message.uuid = appWebsocket.uuid;
+    message.token = getStore({type: 'local', key: 'token'});
+    appWebsocket.websocket.send(JSON.stringify(message));
+};
 // 接收消息的方法集合
 appWebsocket.message = null;
 // 心跳
@@ -58,7 +67,7 @@ appWebsocket.reconnect = function () {
 appWebsocket.initWebsocket = function () {
     appWebsocket.websocket.onopen = (message) => {
         appWebsocket.heartCheck.reset().start();
-        appWebsocket.open();
+        appWebsocket.send();
     };
     appWebsocket.websocket.onerror = (message) => {
         appWebsocket.reconnect();

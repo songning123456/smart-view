@@ -36,7 +36,7 @@ const routes = [
                 meta: {
                     title: '个人中心'
                 },
-                component: () => import('@/views/usercenter/UserCenter.vue')
+                component: () => import('@/views/information/UserCenter.vue')
             }
         ]
     },

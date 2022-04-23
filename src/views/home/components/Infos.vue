@@ -41,7 +41,7 @@
                 this.collapse.flag = !this.collapse.flag;
             },
             userCenterBtn() {
-                let targetMenu = this.$store.state.menus.menuArr.find(item => item.path === '/usercenter/UserCenter');
+                let targetMenu = this.$store.state.menus.menuArr.find(item => item.path === '/information/UserCenter');
                 this.$store.commit('addTab', targetMenu);
                 this.$router.push({path: targetMenu.path});
             },
