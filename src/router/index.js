@@ -6,7 +6,7 @@ import Index from '../views/index/Index.vue';
 import axios from '../axios';
 import store from '../store';
 import {getStore} from '@/utils/store';
-import {forEachMenu} from '@/utils/globalFunc.js';
+import {forEachMenu} from '@/utils/menu.js';
 
 Vue.use(VueRouter);
 

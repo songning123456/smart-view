@@ -1,4 +1,4 @@
-import common from '@/utils/common';
+import digital from '@/utils/digital';
 import md5 from 'js-md5';
 import bxios from '@/axios';
 
@@ -60,7 +60,7 @@ export const uploadByPieces = ({file, uploadPath, pieceSize = 10, progress, succ
         // 存在某些分片未上传
         if (promiseAll.length) {
             progress('show');
-            progress(common.keepDecimal(upload.hasExist.length * (90 / upload.shardCount), 2));
+            progress(digital.keepDecimal(upload.hasExist.length * (90 / upload.shardCount), 2));
             Promise.all(promiseAll).then(result => {
                 if (!result.includes('fail')) {
                     // 所有分片都已经上传成功，准备合并
@@ -108,7 +108,7 @@ export const uploadByPieces = ({file, uploadPath, pieceSize = 10, progress, succ
         return new Promise((resolve, reject) => {
             bxios.post('/boot/file/fileUpload/shardUpload', formData).then(res => {
                 if (res.data.success) {
-                    progress(common.keepDecimal((++upload.progressIndex + upload.hasExist.length) * (90 / upload.shardCount), 2));
+                    progress(digital.keepDecimal((++upload.progressIndex + upload.hasExist.length) * (90 / upload.shardCount), 2));
                     resolve('success');
                 } else {
                     reject('fail');

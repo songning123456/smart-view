@@ -13,7 +13,7 @@
 
 <script>
     import CrudContainer from '@/components/crud/CrudContainer';
-    import common from '@/utils/common';
+    import label from '@/utils/label';
 
     export default {
         name: 'FileList',
@@ -102,7 +102,7 @@
                     this.crudForm = row;
                     (this.dialog.show = true) && (this.dialog.zhName = zhName);
                 } else if (zhName === '下载') {
-                    common.downloadByA(window.location.origin + row.suffixUrl);
+                    label.downloadByA(window.location.origin + row.suffixUrl);
                 }
             },
             dialogBtn(zhName) {
