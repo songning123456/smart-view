@@ -230,7 +230,7 @@
                 if (zhName === '查询') {
                     this.searchFunc();
                 } else if (zhName === 'DFS') {
-                    this.DFSBtn();
+                    this.DFSFunc();
                 } else {
                     if (zhName === '新增') {
                         this.crudForm = {
@@ -339,7 +339,7 @@
                 }
                 childDepth++;
             },
-            DFSBtn() {
+            DFSFunc() {
                 this.dialog.show = false;
                 this.loading.show = true;
                 this.$axios.get('/boot/sys/sysMenu/dfs', {params: {}}).then(res => {

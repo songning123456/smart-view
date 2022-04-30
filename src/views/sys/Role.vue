@@ -149,6 +149,29 @@
                             type: 'danger',
                             plain: true
                         }
+                    ],
+                    [
+                        {
+                            elType: 'el-button',
+                            noLabel: true,
+                            zhName: '导入',
+                            type: 'info',
+                            plain: true
+                        },
+                        {
+                            elType: 'el-button',
+                            noLabel: true,
+                            zhName: '导出',
+                            type: 'info',
+                            plain: true
+                        },
+                        {
+                            elType: 'el-button',
+                            noLabel: true,
+                            zhName: '下载模板',
+                            type: 'info',
+                            plain: true
+                        },
                     ]
                 ],
                 columnOptions: [
@@ -213,6 +236,11 @@
                         total: 0
                     };
                     this.searchFunc();
+                } else if (['导入', '导出', '下载模板'].includes(zhName)) {
+                    let params = {
+                        component: 'sysUser'
+                    };
+                    this.excelFunc(params);
                 } else {
                     if (zhName === '新增') {
                         this.crudForm = {};
@@ -357,6 +385,21 @@
                     }
                 }).catch(e => {
                     this.loading.show = false;
+                    this.$message.error(e);
+                });
+            },
+            excelFunc(zhName, params) {
+                let suffixMap = {
+                    '导入': 'import',
+                    '导出': 'export',
+                    '下载模板': 'template'
+                };
+                let url = '/boot/file/excel/' + suffixMap[zhName];
+                this.$axios.get(url, {params: params}).then(res => {
+                    if (res.data.success) {
+                        // ...
+                    }
+                }).catch(e => {
                     this.$message.error(e);
                 });
             }
