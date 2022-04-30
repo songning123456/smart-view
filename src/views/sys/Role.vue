@@ -15,7 +15,7 @@
                     @current-change='currentChangeBtn'
                     @selection-change='selectionChangeBtn'>
         <template v-slot>
-            <el-tree ref='elTree' :data='menuData' show-checkbox :default-expand-all=true
+            <el-tree ref='elTree' :data='dialog.data' show-checkbox :default-expand-all=true
                      node-key='id' :check-strictly=true :props="{children: 'children', label: 'metaTitle'}">
             </el-tree>
         </template>
@@ -50,7 +50,6 @@
                 searchForm: {},
                 tableData: [],
                 selectedMenuDataIds: [],
-                menuData: [],
                 selectionTableData: [],
                 crudForm: {},
                 crudFormOptions: {
@@ -193,7 +192,8 @@
                 dialog: {
                     zhName: '',
                     slot: false,
-                    show: false
+                    show: false,
+                    data: []
                 }
             };
         },
@@ -321,7 +321,7 @@
             getAllMenuFunc() {
                 this.$axios.get('/boot/sys/sysMenu/list', {}).then(res => {
                     if (res.data.success) {
-                        this.menuData = res.data.result;
+                        this.dialog.data = res.data.result;
                     } else {
                         this.$message.error(res.data.message);
                     }

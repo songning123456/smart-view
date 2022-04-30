@@ -9,7 +9,7 @@
                          :form-style-options='formStyleOptions' ref='customForm'></custom-form>
         </template>
         <template v-else>
-            <i class="el-icon-info crud-warning"></i>确定要<strong>{{dialog.zhName}}</strong>吗?
+            <i class='el-icon-info crud-warning'></i>确定要<strong>{{dialog.zhName}}</strong>吗?
         </template>
         <div slot='footer'>
             <el-button @click='dialog.show = false'>取消</el-button>
@@ -32,6 +32,7 @@
                 type: Object,
                 default() {
                     return {
+                        slot: null,
                         zhName: '未知',
                         show: false
                     };
@@ -78,6 +79,9 @@
         },
         computed: {
             dialogStyle() {
+                if (this.dialog.style && typeof this.dialog.style === 'object') {
+                    return this.dialog.style;
+                }
                 let baseStyle = {
                     width: '30%',
                     top: '15vh'

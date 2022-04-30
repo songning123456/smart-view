@@ -10,7 +10,16 @@
                     :table-style-options='tableStyleOptions'
                     :dialog='dialog'
                     @crud='crudBtn'
-                    @dialog='dialogBtn'></crud-container>
+                    @dialog='dialogBtn'>
+        <template v-slot>
+            <div style='height: 350px; overflow-y: auto'>
+                <el-steps v-for='(item, index) in dialog.data' :key='index' :space='200' :active='item.length'
+                          finish-status='success'>
+                    <el-step v-for='(it, i) in item' :key='i' :title='it.metaTitle'></el-step>
+                </el-steps>
+            </div>
+        </template>
+    </crud-container>
 </template>
 
 <script>
@@ -155,6 +164,13 @@
                             zhName: '新增',
                             type: 'primary',
                             plain: true
+                        },
+                        {
+                            elType: 'el-button',
+                            noLabel: true,
+                            zhName: 'DFS',
+                            type: 'success',
+                            plain: true
                         }
                     ]
                 ],
@@ -195,8 +211,14 @@
                     selection: false
                 },
                 dialog: {
+                    slot: false,
                     zhName: '',
-                    show: false
+                    show: false,
+                    data: null,
+                    style: {
+                        width: '50%',
+                        top: '15vh'
+                    }
                 }
             };
         },
@@ -207,6 +229,8 @@
             crudBtn(zhName, row) {
                 if (zhName === '查询') {
                     this.searchFunc();
+                } else if (zhName === 'DFS') {
+                    this.DFSBtn();
                 } else {
                     if (zhName === '新增') {
                         this.crudForm = {
@@ -314,6 +338,25 @@
                     this.forEachTree(item.children, optionArr, childDepth + 1);
                 }
                 childDepth++;
+            },
+            DFSBtn() {
+                this.dialog.show = false;
+                this.loading.show = true;
+                this.$axios.get('/boot/sys/sysMenu/dfs', {params: {}}).then(res => {
+                    this.loading.show = false;
+                    if (res.data.success) {
+                        this.dialog.slot = true;
+                        this.dialog.zhName = 'DFS链路';
+                        this.dialog.show = true;
+                        this.dialog.data = res.data.result;
+
+                    } else {
+                        this.$message.error(res.data.message);
+                    }
+                }).catch(e => {
+                    this.loading.show = false;
+                    this.$message.error(e);
+                });
             }
         }
     };
