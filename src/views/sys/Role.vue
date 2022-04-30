@@ -237,10 +237,12 @@
                     };
                     this.searchFunc();
                 } else if (['导入', '导出', '下载模板'].includes(zhName)) {
-                    let params = {
-                        component: 'sysUser'
+                    let excelNameMap = {
+                        '导入': '123',
+                        '导出': '用户角色信息',
+                        '下载模板': '用户角色模板',
                     };
-                    this.excelFunc(params);
+                    this.excelFunc(zhName, {component: 'sysRole'}, excelNameMap[zhName]);
                 } else {
                     if (zhName === '新增') {
                         this.crudForm = {};
@@ -388,16 +390,26 @@
                     this.$message.error(e);
                 });
             },
-            excelFunc(zhName, params) {
+            excelFunc(zhName, params, excelName) {
                 let suffixMap = {
                     '导入': 'import',
                     '导出': 'export',
                     '下载模板': 'template'
                 };
                 let url = '/boot/file/excel/' + suffixMap[zhName];
-                this.$axios.get(url, {params: params}).then(res => {
-                    if (res.data.success) {
-                        // ...
+                this.$axios.get(url, {params: params, responseType: 'blob'}).then(res => {
+                    if (typeof window.navigator.msSaveBlob !== 'undefined') {
+                        window.navigator.msSaveBlob(new Blob([res.data]), excelName + '.xls');
+                    } else {
+                        let url = window.URL.createObjectURL(new Blob([res.data], {type: 'application/vnd.ms-excel'}));
+                        let link = document.createElement('a');
+                        link.style.display = 'none';
+                        link.href = url;
+                        link.setAttribute('download', excelName + '.xls');
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link); // 下载完成移除元素
+                        window.URL.revokeObjectURL(url); // 释放掉blob对象
                     }
                 }).catch(e => {
                     this.$message.error(e);
