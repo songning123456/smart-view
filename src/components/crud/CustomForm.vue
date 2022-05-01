@@ -44,6 +44,13 @@
             <el-avatar v-else-if='item.elType === "el-avatar"' size='small' :src='form[item.enName]'></el-avatar>
             <el-image v-else-if='item.elType === "el-image"' :src='form[item.enName]'
                       @click.native='crudBtn(item)'></el-image>
+            <el-upload v-else-if='item.elType === "el-upload"' action=''
+                       :show-file-list='!!item.showFileList' :multiple='!!item.multiple' :http-request='httpRequestBtn'>
+                <el-button :type='item.type ? item.type : "default"'
+                           :disabled='!!item.disabled' :icon='item.icon'
+                           :plain='item.plain'>{{item.zhName}}
+                </el-button>
+            </el-upload>
         </el-form-item>
     </el-form>
 </template>
@@ -96,6 +103,9 @@
             },
             selectChangeBtn(key, val) {
                 this.$emit('select-change', key, val);
+            },
+            httpRequestBtn(file) {
+                this.$emit('http-request', file);
             }
         }
     };

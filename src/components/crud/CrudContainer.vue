@@ -3,7 +3,7 @@
         <div class='crud-container-frame-ud-form' v-for='(searchFormOption, index) in searchFormOptions' :key='index'>
             <custom-form :form='searchForm' :form-options='searchFormOption'
                          :form-style-options='customFormStyleOptions[true]'
-                         @crud='crudBtn'></custom-form>
+                         @crud='crudBtn' @http-request='httpRequestBtn'></custom-form>
         </div>
         <div class='crud-container-frame-ud-table'
              :style="'height: calc((100% - ' + (searchFormOptions.length + (Object.keys(page).length ? 1 : 0)) * 50 + 'px))'">
@@ -161,6 +161,9 @@
             },
             selectionChangeBtn(val) {
                 this.$emit('selection-change', val);
+            },
+            httpRequestBtn(file) {
+                this.$emit('http-request', file);
             }
         }
     };

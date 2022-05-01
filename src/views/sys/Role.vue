@@ -13,10 +13,12 @@
                     @crud='crudBtn'
                     @dialog='dialogBtn'
                     @current-change='currentChangeBtn'
-                    @selection-change='selectionChangeBtn'>
+                    @selection-change='selectionChangeBtn'
+                    @http-request='httpRequestBtn'>
         <template v-slot>
-            <el-tree ref='elTree' :data='dialog.data' show-checkbox :default-expand-all=true
-                     node-key='id' :check-strictly=true :props="{children: 'children', label: 'metaTitle'}">
+            <el-tree ref='elTree' :data='dialog.data'
+                     show-checkbox :default-expand-all=true node-key='id'
+                     :check-strictly=true :props="{children: 'children', label: 'metaTitle'}">
             </el-tree>
         </template>
     </crud-container>
@@ -25,6 +27,7 @@
 <script>
 
     import CrudContainer from '@/components/crud/CrudContainer';
+    import excel from '@/utils/excel';
 
     export default {
         name: 'Role',
@@ -152,7 +155,7 @@
                     ],
                     [
                         {
-                            elType: 'el-button',
+                            elType: 'el-upload',
                             noLabel: true,
                             zhName: '导入',
                             type: 'info',
@@ -236,13 +239,12 @@
                         total: 0
                     };
                     this.searchFunc();
-                } else if (['导入', '导出', '下载模板'].includes(zhName)) {
+                } else if (['导出', '下载模板'].includes(zhName)) {
                     let excelNameMap = {
-                        '导入': '123',
                         '导出': '用户角色信息',
                         '下载模板': '用户角色模板',
                     };
-                    this.excelFunc(zhName, {component: 'sysRole'}, excelNameMap[zhName]);
+                    excel.export(zhName, {component: 'sysRole'}, excelNameMap[zhName]);
                 } else {
                     if (zhName === '新增') {
                         this.crudForm = {};
@@ -281,6 +283,9 @@
             },
             selectionChangeBtn(val) {
                 this.selectionTableData = val;
+            },
+            httpRequestBtn(file) {
+                excel.import(file);
             },
             searchFunc() {
                 !this.loading.show && (this.loading.show = true);
@@ -387,31 +392,6 @@
                     }
                 }).catch(e => {
                     this.loading.show = false;
-                    this.$message.error(e);
-                });
-            },
-            excelFunc(zhName, params, excelName) {
-                let suffixMap = {
-                    '导入': 'import',
-                    '导出': 'export',
-                    '下载模板': 'template'
-                };
-                let url = '/boot/file/excel/' + suffixMap[zhName];
-                this.$axios.get(url, {params: params, responseType: 'blob'}).then(res => {
-                    if (typeof window.navigator.msSaveBlob !== 'undefined') {
-                        window.navigator.msSaveBlob(new Blob([res.data]), excelName + '.xls');
-                    } else {
-                        let url = window.URL.createObjectURL(new Blob([res.data], {type: 'application/vnd.ms-excel'}));
-                        let link = document.createElement('a');
-                        link.style.display = 'none';
-                        link.href = url;
-                        link.setAttribute('download', excelName + '.xls');
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link); // 下载完成移除元素
-                        window.URL.revokeObjectURL(url); // 释放掉blob对象
-                    }
-                }).catch(e => {
                     this.$message.error(e);
                 });
             }

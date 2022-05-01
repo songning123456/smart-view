@@ -1,6 +1,6 @@
+import mvue from '@/main';
 import digital from '@/utils/digital';
 import md5 from 'js-md5';
-import bxios from '@/axios';
 
 let upload = {};
 export const uploadByPieces = ({file, uploadPath, pieceSize = 10, progress, success, error}) => {
@@ -19,7 +19,7 @@ export const uploadByPieces = ({file, uploadPath, pieceSize = 10, progress, succ
                 md5: upload.md5,
                 fileName: file.name
             };
-            bxios.get('/boot/file/fileUpload/isExist', {params: params}).then(res => {
+            mvue.$axios.get('/boot/file/fileUpload/isExist', {params: params}).then(res => {
                 if (res.data.success) {
                     if (typeof res.data.result == 'string') {
                         // 文件已经上传
@@ -83,7 +83,7 @@ export const uploadByPieces = ({file, uploadPath, pieceSize = 10, progress, succ
             md5: upload.md5,
             fileName: file.name
         };
-        bxios.get('/boot/file/fileUpload/shardMerge', {params: params}).then(res => {
+        mvue.$axios.get('/boot/file/fileUpload/shardMerge', {params: params}).then(res => {
             if (res.data.success) {
                 progress(100);
                 success && success({shardMerge: true, suffixUrl: res.data.result || ''});
@@ -106,7 +106,7 @@ export const uploadByPieces = ({file, uploadPath, pieceSize = 10, progress, succ
         let formData = new FormData();
         Object.keys(params).forEach(key => formData.append(key, params[key]));
         return new Promise((resolve, reject) => {
-            bxios.post('/boot/file/fileUpload/shardUpload', formData).then(res => {
+            mvue.$axios.post('/boot/file/fileUpload/shardUpload', formData).then(res => {
                 if (res.data.success) {
                     progress(digital.keepDecimal((++upload.progressIndex + upload.hasExist.length) * (90 / upload.shardCount), 2));
                     resolve('success');
