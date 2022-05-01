@@ -285,7 +285,12 @@
                 this.selectionTableData = val;
             },
             httpRequestBtn(file) {
-                excel.import(file);
+                let params = {
+                    component: 'sysRole'
+                };
+                excel.import(file, params).then(() => {
+                    this.searchFunc();
+                });
             },
             searchFunc() {
                 !this.loading.show && (this.loading.show = true);

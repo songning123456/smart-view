@@ -2,16 +2,21 @@ import mvue from '@/main';
 
 let excel = {};
 
-excel.import = (file) => {
+excel.import = (file, params) => {
     let formData = new FormData();
     formData.append('file', file.file);
-    formData.append('component', 'sysRole');
-    mvue.$axios.post('/boot/file/excel/import', formData).then(res => {
-        if (res.data.success) {
-            mvue.$message.success('导入成功');
-        }
-    }).catch(e => {
-        mvue.$message.error(e);
+    Object.keys(params).forEach(key => formData.append(key, params[key]));
+    return new Promise((resolve) => {
+        mvue.$axios.post('/boot/file/excel/import', formData).then(res => {
+            if (res.data.success) {
+                mvue.$message.success('导入成功');
+                resolve();
+            } else {
+                mvue.$message.error('导入失败');
+            }
+        }).catch(e => {
+            mvue.$message.error(e);
+        });
     });
 };
 
