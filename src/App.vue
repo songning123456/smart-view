@@ -6,6 +6,7 @@
 
 <script>
     import appWebsocket from '@/utils/appWebsocket';
+    import pubsub from 'pubsub.js';
 
     export default {
         name: 'App',
@@ -20,10 +21,7 @@
         methods: {
             message(data) {
                 let wsData = JSON.parse(data);
-                // 测试使用，后续修改
-                if (wsData.component === 'test') {
-                    console.error(wsData.data);
-                }
+                pubsub.publish(wsData.component, 'wsData');
             }
         }
     };

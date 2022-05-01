@@ -12,6 +12,7 @@
         "classlist-polyfill": "^1.2.0",
         "core-js": "^3.6.5",
         "element-ui": "^2.15.7",
+        "pubsub.js": "^1.5.2",
         "qs": "^6.10.1",
         "vue": "^2.6.11",
         "vue-router": "^3.2.0",
