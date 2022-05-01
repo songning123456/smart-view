@@ -13,9 +13,15 @@ appWebsocket.websocket = null;
 appWebsocket.lockReConnect = false;
 // 打开时发送消息通知后台登陆成功
 appWebsocket.send = function (message = {}) {
+    if (message === null || message === undefined) {
+        message = {};
+    }
+    message.token = getStore({type: 'local', key: 'token'});
+    if (!message.token) {
+        return;
+    }
     message.uuid = appWebsocket.uuid;
     message.time = appWebsocket.time;
-    message.token = getStore({type: 'local', key: 'token'});
     appWebsocket.websocket.send(JSON.stringify(message));
 };
 // 接收消息的方法集合

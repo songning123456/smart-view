@@ -5,7 +5,7 @@ import Index from '../views/index/Index.vue';
 
 import axios from '../axios';
 import store from '../store';
-import {getStore} from '@/utils/store';
+import {removeStore, getStore} from '@/utils/store';
 import {forEachMenu} from '@/utils/menu.js';
 
 Vue.use(VueRouter);
@@ -78,6 +78,8 @@ vueRouter.beforeEach((to, from, next) => {
     let routeFlag = store.state.menus.routeFlag;
     let token = getStore({type: 'local', key: 'token'});
     if (to.path === '/login') {
+        // 跳转到登录页，需要清空原来的token
+        removeStore({type: 'local', key: 'token'});
         next();
     } else if (!token) {
         next({path: '/login'});

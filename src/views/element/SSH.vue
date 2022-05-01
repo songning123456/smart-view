@@ -10,6 +10,7 @@
 
 <script>
     import CustomForm from '@/components/crud/CustomForm';
+    import appWebsocket from '@/utils/appWebsocket';
 
     export default {
         name: 'SSH',
@@ -92,6 +93,7 @@
             crudBtn(zhName) {
                 if (zhName === 'send') {
                     this.$message.success('send');
+                    appWebsocket.send({component: 'SSH'});
                 }
             }
         }
