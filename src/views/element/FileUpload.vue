@@ -24,7 +24,6 @@
                     uploadPath: ''
                 },
                 searchFormOptions: [
-
                     {
                         elType: 'el-select',
                         zhName: '文件上传路径',
@@ -32,7 +31,6 @@
                         clearable: true,
                         options: []
                     },
-
                 ],
                 searchFormStyleOptions: {
                     inline: true,

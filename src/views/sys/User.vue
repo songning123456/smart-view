@@ -77,6 +77,7 @@
                             elType: 'el-avatar',
                             zhName: '头像',
                             enName: 'avatar',
+                            size: 'small',
                             disabled: true
                         },
                         {
@@ -237,7 +238,8 @@
                         {
                             elType: 'el-avatar',
                             zhName: '头像',
-                            enName: 'avatar'
+                            enName: 'avatar',
+                            size: 'small',
                         },
                         {
                             zhName: '电子邮箱',

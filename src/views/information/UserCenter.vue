@@ -55,6 +55,7 @@
                         elType: 'el-avatar',
                         zhName: '头像',
                         enName: 'avatar',
+                        size: 'small',
                         clearable: true
                     },
                     {
