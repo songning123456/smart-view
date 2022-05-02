@@ -11,7 +11,7 @@ export default {
     mutations: {
         setToken: (state, token) => {
             state.token = token;
-            setStore({type: 'local', key: 'token', val: token});
+            setStore({type: 'local', key: 'smart-token', val: token});
         },
     },
 };

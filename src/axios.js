@@ -11,7 +11,7 @@ const request = axios.create({
 });
 
 request.interceptors.request.use(config => {
-    config.headers['Authorization'] = getStore({type: 'local', key: 'token'});
+    config.headers['Authorization'] = getStore({type: 'local', key: 'smart-token'});
     return config;
 });
 

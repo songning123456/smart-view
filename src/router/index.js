@@ -76,17 +76,17 @@ vueRouter.$addRoutes = (params) => {
 
 vueRouter.beforeEach((to, from, next) => {
     let routeFlag = store.state.menus.routeFlag;
-    let token = getStore({type: 'local', key: 'token'});
+    let token = getStore({type: 'local', key: 'smart-token'});
     if (to.path === '/login') {
         // 跳转到登录页，需要清空原来的token
-        removeStore({type: 'local', key: 'token'});
+        removeStore({type: 'local', key: 'smart-token'});
         next();
     } else if (!token) {
         next({path: '/login'});
     } else if (token && !routeFlag) {
         axios.get('/boot/sys/sysMenu/myMenu', {
             headers: {
-                Authorization: getStore({type: 'local', key: 'token'})
+                Authorization: getStore({type: 'local', key: 'smart-token'})
             }
         }).then(res => {
             if (res.data.success) {

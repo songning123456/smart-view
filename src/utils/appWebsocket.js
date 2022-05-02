@@ -16,7 +16,7 @@ appWebsocket.send = function (message = {}) {
     if (message === null || message === undefined) {
         message = {};
     }
-    message.token = getStore({type: 'local', key: 'token'});
+    message.token = getStore({type: 'local', key: 'smart-token'});
     if (!message.token) {
         return;
     }
