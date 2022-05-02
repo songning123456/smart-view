@@ -1,10 +1,19 @@
 <template>
     <div class='ssh'>
         <div class='ssh-frame-ud-form'>
-            <custom-form :form='sendForm' :form-options='sendFormOptions' :form-style-options='sendFormStyleOptions'
-                         :rule-options='sendFormRuleOptions' @crud='crudBtn'></custom-form>
+            <custom-form :form='searchForm' :form-options='searchFormOptions'
+                         :form-style-options='searchFormStyleOptions'
+                         :rule-options='searchRuleOptions' @crud='crudBtn'></custom-form>
         </div>
-        <div class='ssh-frame-ud-content'></div>
+        <div class='ssh-frame-ud-form'>
+            <custom-form :form='searchForm' :form-options='searchForm2Options'
+                         :form-style-options='searchFormStyleOptions'
+                         :rule-options='searchRule2Options' @crud='crudBtn'></custom-form>
+        </div>
+        <div class='ssh-frame-ud-content'>
+            <custom-form :form='resForm' :form-options='resFormOptions'
+                         :form-style-options='searchFormStyleOptions' @crud='crudBtn'></custom-form>
+        </div>
     </div>
 </template>
 
@@ -17,17 +26,21 @@
         components: {CustomForm},
         data() {
             return {
-                sendForm: {
-                    ip: '',
-                    port: 22,
-                    username: '',
-                    password: ''
+                searchForm: {
+                    remoteIp: '',
+                    remotePort: 22,
+                    remoteUsername: '',
+                    remotePassword: '',
+                    command: ''
                 },
-                sendFormOptions: [
+                resForm: {
+                    resData: ''
+                },
+                searchFormOptions: [
                     {
                         elType: 'el-input',
                         zhName: 'IP地址',
-                        enName: 'ip',
+                        enName: 'remoteIp',
                         clearable: true,
                         placeholder: 'e.g: 127.0.0.1',
                         style() {
@@ -37,14 +50,14 @@
                     {
                         elType: 'el-input-number',
                         zhName: '端口号',
-                        enName: 'port',
+                        enName: 'remotePort',
                         min: 1,
                         max: 65535,
                     },
                     {
                         elType: 'el-input',
                         zhName: '用户名',
-                        enName: 'username',
+                        enName: 'remoteUsername',
                         clearable: true,
                         placeholder: '请输入用户名',
                         style() {
@@ -54,51 +67,93 @@
                     {
                         elType: 'el-input',
                         zhName: '密码',
-                        enName: 'password',
+                        enName: 'remotePassword',
                         showPassword: true,
                         clearable: true,
                         placeholder: '请输入密码',
                         style() {
                             return 'width: 150px';
                         }
+                    }
+                ],
+                searchForm2Options: [
+                    {
+                        elType: 'el-input',
+                        zhName: '命令',
+                        enName: 'command',
+                        clearable: true,
+                        placeholder: '请输入命令',
+                        style() {
+                            return 'width: 400px';
+                        }
                     },
                     {
                         elType: 'el-button',
                         noLabel: true,
-                        zhName: 'send',
+                        zhName: '发送',
                         type: 'primary'
                     },
                 ],
-                sendFormStyleOptions: {
+                resFormOptions: [
+                    {
+                        elType: 'el-input',
+                        zhName: '响应结果',
+                        enName: 'resData',
+                        type: 'textarea',
+                        readonly: true,
+                        rows: 15,
+                        style() {
+                            return 'width: 900px';
+                        }
+                    },
+                    {
+                        elType: 'el-button',
+                        zhName: '清空',
+                        noLabel: true,
+                        type: 'primary',
+                        plain: true
+                    }
+                ],
+                searchFormStyleOptions: {
                     inline: true,
-                    size: 'small'
+                    size: 'small',
+                    labelWidth: '80px'
                 },
-                sendFormRuleOptions: {
-                    ip: [
+                searchRuleOptions: {
+                    remoteIp: [
                         {required: true, message: '请输入IP', trigger: 'blur'}
                     ],
-                    port: [
+                    remotePort: [
                         {required: true, message: '请输入端口号', trigger: 'blur'}
                     ],
-                    username: [
+                    remoteUsername: [
                         {required: true, message: '请输入用户名', trigger: 'blur'}
                     ],
-                    password: [
+                    remotePassword: [
                         {required: true, message: '请输入密码', trigger: 'blur'}
                     ],
-                }
+                },
+                searchRule2Options: {
+                    command: [
+                        {required: true, message: '请输入命令', trigger: 'blur'}
+                    ]
+                },
             };
         },
         mounted() {
             // 订阅事件
             this.$bus.$on('SSH', (data) => {
-                this.$message.success(data);
+                this.resForm.resData = data;
             });
         },
         methods: {
             crudBtn(zhName) {
-                if (zhName === 'send') {
-                    appWebsocket.send({component: 'SSH'});
+                if (zhName === '发送') {
+                    let params = Object.assign({}, this.searchForm);
+                    params.component = 'SSH';
+                    appWebsocket.send(params);
+                } else if (zhName === '清空') {
+                    this.resForm.resData = '';
                 }
             }
         }
@@ -119,11 +174,9 @@
 
         .ssh-frame-ud-content {
             width: 100%;
-            height: calc(100% - 50px);
-
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            height: calc(100% - 100px);
+            padding-top: 20px;
+            box-sizing: border-box;
         }
     }
 
