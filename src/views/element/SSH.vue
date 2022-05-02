@@ -21,6 +21,7 @@
     import CustomForm from '@/components/crud/CustomForm';
     import appWebsocket from '@/utils/appWebsocket';
     import crypto from '@/utils/crypto';
+    import {isIP} from '@/utils/validate';
 
     export default {
         name: 'SSH',
@@ -150,6 +151,16 @@
         methods: {
             crudBtn(zhName) {
                 if (zhName === '发送') {
+                    for (let key in this.searchForm) {
+                        if (!this.searchForm[key]) {
+                            this.$message.warning('请按照格式输入请求参数！');
+                            return;
+                        }
+                    }
+                    if (this.searchForm.remoteIp && !isIP(this.searchForm.remoteIp)) {
+                        this.$message.warning('请输入合法的IP！');
+                        return;
+                    }
                     let params = Object.assign({}, this.searchForm);
                     // 密码加密
                     params.remotePassword = crypto.aesEncrypt(this.searchForm.remotePassword, 'aaaabbbbccccdddd');
