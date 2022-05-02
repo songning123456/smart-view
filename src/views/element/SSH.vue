@@ -11,14 +11,12 @@
 <script>
     import CustomForm from '@/components/crud/CustomForm';
     import appWebsocket from '@/utils/appWebsocket';
-    import pubsub from 'pubsub.js';
 
     export default {
         name: 'SSH',
         components: {CustomForm},
         data() {
             return {
-                pubId: '',
                 sendForm: {
                     ip: '',
                     port: 22,
@@ -92,24 +90,18 @@
             };
         },
         mounted() {
-            // this.pubId = pubsub.subscribe('SSH', (msgName, data) => {
-            //     console.log(msgName, data);
-            // });
-            pubsub.subscribe('SSH', (msgName, data) => {
-                console.log(msgName, data);
+            // 订阅事件
+            this.$bus.$on('SSH', (data) => {
+                this.$message.success(data);
             });
         },
         methods: {
             crudBtn(zhName) {
                 if (zhName === 'send') {
-                    this.$message.success('send');
                     appWebsocket.send({component: 'SSH'});
                 }
             }
-        },
-        // beforeDestroy() {
-        //     this.unsubscribe(this.pubId);
-        // }
+        }
     };
 </script>
 

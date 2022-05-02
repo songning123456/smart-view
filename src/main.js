@@ -11,6 +11,9 @@ import axios from './axios';
 Vue.prototype.$axios = axios;
 Vue.config.productionTip = false;
 
+// 注册监听事件
+Vue.prototype.$bus = new Vue();
+
 Vue.use(Element);
 
 let vue = new Vue({
