@@ -20,6 +20,7 @@
 <script>
     import CustomForm from '@/components/crud/CustomForm';
     import appWebsocket from '@/utils/appWebsocket';
+    import crypto from '@/utils/crypto';
 
     export default {
         name: 'SSH',
@@ -150,6 +151,8 @@
             crudBtn(zhName) {
                 if (zhName === '发送') {
                     let params = Object.assign({}, this.searchForm);
+                    // 密码加密
+                    params.remotePassword = crypto.aesEncrypt(this.searchForm.remotePassword, 'aaaabbbbccccdddd');
                     params.component = 'SSH';
                     appWebsocket.send(params);
                 } else if (zhName === '清空') {
