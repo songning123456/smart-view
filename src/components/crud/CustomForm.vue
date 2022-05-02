@@ -11,9 +11,9 @@
                       :rows='item.rows'
                       :style='typeof item.style === "function" ? item.style(item.enName) : ""'></el-input>
             <el-select v-else-if='item.elType === "el-select"' v-model='form[item.enName]'
-                       :placeholder='item.placeholder'
+                       :placeholder='item.placeholder' :multiple='!!item.multiple'
                        :clearable='!!item.clearable' :disabled='!!item.disabled'
-                       @change='selectChangeBtn(form[item.enName], form[item.enName])'>
+                       @change='elSelectChangeBtn(item.enName, form[item.enName])'>
                 <el-option v-for='(it, i) in item.options' :key='i' :label='it.label' :value='it.value'>
                     <span v-if='it.alias'>{{it.alias}}</span>
                 </el-option>
@@ -102,8 +102,8 @@
                     this.$emit('crud', item.zhName ? item.zhName : item.enName);
                 }
             },
-            selectChangeBtn(key, val) {
-                this.$emit('select-change', key, val);
+            elSelectChangeBtn(key, val) {
+                this.$emit('el-select-change', key, val);
             },
             httpRequestBtn(file) {
                 this.$emit('http-request', file);

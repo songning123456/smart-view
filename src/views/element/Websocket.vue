@@ -2,7 +2,8 @@
     <div class='websocket'>
         <div class='websocket-frame-ud-form'>
             <custom-form :form='searchForm' :form-options='searchFormOptions'
-                         :form-style-options='searchFormStyleOptions'></custom-form>
+                         :form-style-options='searchFormStyleOptions'
+                         @el-select-change='elSelectChangeBtn'></custom-form>
         </div>
         <div class='websocket-frame-ud-form'>
             <custom-form :form='searchForm' :form-options='searchForm2Options'
@@ -11,7 +12,7 @@
         </div>
         <div class='websocket-frame-ud-content'>
             <custom-form :form='resForm' :form-options='resFormOptions'
-                         :form-style-options='searchFormStyleOptions'></custom-form>
+                         :form-style-options='searchFormStyleOptions' @crud='crudBtn'></custom-form>
         </div>
     </div>
 </template>
@@ -30,7 +31,8 @@
                 appWebsocket,
                 searchForm: {
                     pushType: '',
-                    reqData: ''
+                    reqData: '',
+                    username: null
                 },
                 resForm: {
                     resData: ''
@@ -73,6 +75,13 @@
                             return 'width: 400px';
                         }
                     },
+                    {
+                        elType: 'el-button',
+                        zhName: '清空',
+                        noLabel: true,
+                        type: 'primary',
+                        plain: true
+                    }
                 ],
                 searchFormStyleOptions: {
                     inline: true,
@@ -113,6 +122,9 @@
                         pushType: this.searchForm.pushType,
                         component: 'websocket'
                     };
+                    if (this.searchForm.pushType === 'some') {
+                        params.username = this.searchForm.username.join(',');
+                    }
                     this.$axios.get('/boot/websocket/send', {params: params}).then(res => {
                         if (res.data.success) {
                             // 这里使用websocket接收，所以忽略此处结果
@@ -124,6 +136,38 @@
                     }).catch(e => {
                         this.$message.error(e);
                     });
+                } else if (zhName === '清空') {
+                    this.resForm.resData = '';
+                }
+            },
+            elSelectChangeBtn(key, val) {
+                if (key === 'pushType') {
+                    if (val === 'some') {
+                        this.searchFormOptions.length === 1 && this.searchFormOptions.push({
+                            elType: 'el-select',
+                            zhName: '用户',
+                            enName: 'username',
+                            multiple: true,
+                            options: []
+                        });
+                        this.$axios.get('/boot/sys/sysUser/list', {params: {}}).then(res => {
+                            if (res.data.success) {
+                                this.searchFormOptions[1].options = res.data.result.map(item => {
+                                    return {
+                                        label: item.realname,
+                                        value: item.username
+                                    };
+                                });
+                            } else {
+                                this.$message.error(res.data.message);
+                            }
+                        }).catch(e => {
+                            this.$message.error(e);
+                        });
+                    } else {
+                        this.searchFormOptions.length === 2 && this.searchFormOptions.pop();
+                        this.searchForm.username = null;
+                    }
                 }
             }
         }
@@ -150,6 +194,7 @@
             padding-top: 20px;
             box-sizing: border-box;
         }
+
     }
 
 </style>
