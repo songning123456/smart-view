@@ -7,7 +7,8 @@
             <el-input v-if='item.elType === "el-input"' v-model='form[item.enName]'
                       :type='item.type ? item.type : "text"' :placeholder='item.placeholder'
                       :clearable='item.clearable' :disabled='!!item.disabled'
-                      :show-password='!!item.showPassword'
+                      :show-password='!!item.showPassword' :readonly='!!item.readonly'
+                      :rows='item.rows'
                       :style='typeof item.style === "function" ? item.style(item.enName) : ""'></el-input>
             <el-select v-else-if='item.elType === "el-select"' v-model='form[item.enName]'
                        :placeholder='item.placeholder'

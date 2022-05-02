@@ -21,7 +21,7 @@
             message(data) {
                 let wsData = JSON.parse(data);
                 // 发布事件
-                this.$bus.$emit(wsData.component, wsData.data);
+                this.$bus.$emit(wsData.component, wsData.resData);
             }
         }
     };
