@@ -14,6 +14,7 @@
 <script>
     import CrudContainer from '@/components/crud/CrudContainer';
     import label from '@/utils/label';
+    import {dictItem} from '@/utils/sysDict';
 
     export default {
         name: 'FileList',
@@ -92,7 +93,16 @@
             };
         },
         created() {
-            this.getDictItemFunc('FileUploadPath');
+            dictItem('FileUploadPath').then(result => {
+                this.searchFormOptions[0][0].options = result.map(option => {
+                    return {
+                        label: option.itemText,
+                        value: option.itemValue
+                    };
+                });
+                this.searchForm.uploadPath = this.searchFormOptions[0][0].options[0].value;
+                this.searchFunc();
+            });
         },
         methods: {
             crudBtn(zhName, row) {
@@ -138,25 +148,6 @@
                     }
                 }).catch(e => {
                     this.loading.show = false;
-                    this.$message.error(e);
-                });
-            },
-            getDictItemFunc(dictCode) {
-                this.$axios.get('/boot/sys/sysDictItem/dictItem/' + dictCode).then(res => {
-                    if (res.data.success) {
-                        let options = res.data.result;
-                        this.searchFormOptions[0][0].options = options.map(option => {
-                            return {
-                                label: option.itemText,
-                                value: option.itemValue
-                            };
-                        });
-                        this.searchForm.uploadPath = this.searchFormOptions[0][0].options[0].value;
-                        this.searchFunc();
-                    } else {
-                        this.$message.error(res.data.message);
-                    }
-                }).catch(e => {
                     this.$message.error(e);
                 });
             }

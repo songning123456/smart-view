@@ -4,7 +4,7 @@
             <custom-form :form='searchForm' :form-options='searchFormOptions'
                          :form-style-options='searchFormStyleOptions'></custom-form>
         </div>
-        <div class='file-upload-frame-ud-upload'>
+        <div class='file-upload-frame-ud-content'>
             <upload v-model='fileUrl' :file-params='{uploadPath: searchForm.uploadPath, pieceSize: 5}'></upload>
         </div>
     </div>
@@ -13,6 +13,7 @@
 <script>
     import Upload from '@/components/upload/Upload';
     import CustomForm from '@/components/crud/CustomForm';
+    import {dictItem} from '@/utils/sysDict';
 
     export default {
         name: 'FileUpload',
@@ -39,27 +40,15 @@
             };
         },
         created() {
-            this.getDictItemFunc('FileUploadPath');
-        },
-        methods: {
-            getDictItemFunc(dictCode) {
-                this.$axios.get('/boot/sys/sysDictItem/dictItem/' + dictCode).then(res => {
-                    if (res.data.success) {
-                        let options = res.data.result;
-                        this.searchFormOptions[0].options = options.map(option => {
-                            return {
-                                label: option.itemText,
-                                value: option.itemValue
-                            };
-                        });
-                        this.searchForm.uploadPath = this.searchFormOptions[0].options[0].value;
-                    } else {
-                        this.$message.error(res.data.message);
-                    }
-                }).catch(e => {
-                    this.$message.error(e);
+            dictItem('FileUploadPath').then(result => {
+                this.searchFormOptions[0].options = result.map(option => {
+                    return {
+                        label: option.itemText,
+                        value: option.itemValue
+                    };
                 });
-            }
+                this.searchForm.uploadPath = this.searchFormOptions[0].options[0].value;
+            });
         }
     };
 </script>
@@ -77,7 +66,7 @@
             align-items: center;
         }
 
-        .file-upload-frame-ud-upload {
+        .file-upload-frame-ud-content {
             width: 100%;
             height: calc(100% - 50px);
 
