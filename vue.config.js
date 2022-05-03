@@ -25,7 +25,10 @@ module.exports = {
         // 反向代理配置
         proxy: {
             '/boot': {
-                target: 'http://127.0.0.1:8081',
+                // biz服务
+                // target: 'http://127.0.0.1:8081',
+                // third服务
+                target: 'http://127.0.0.1:8082',
                 // target: 'http://192.168.2.124:8080',
                 ws: true,
                 changeOrigin: true

@@ -1,5 +1,5 @@
 <template>
-    <div class='error' :style="{'background-image': `url(${require('@/assets/error404.jpg')})`}">
+    <div class='error' :style="{'background-image': `url(${require('@/assets/background/error404.jpg')})`}">
         <el-button plain @click='clickBtn'>返回</el-button>
     </div>
 </template>

@@ -1,5 +1,5 @@
 <template>
-    <div class='login' :style="{'background-image': `url(${require('@/assets/login.jpg')})`}">
+    <div class='login' :style="{'background-image': `url(${require('@/assets/background/login.jpg')})`}">
         <div class='login-form'>
             <custom-form :form='form' :form-options='formOptions' :form-style-options='formStyleOptions'
                          :rule-options='ruleOptions' @crud='crudBtn'></custom-form>
