@@ -40,6 +40,23 @@
             float: left;
             height: 100%;
             transition: ease-in-out;
+            overflow-y: auto;
+
+            &::-webkit-scrollbar {
+                width: 4px;
+            }
+
+            &::-webkit-scrollbar-thumb {
+                border-radius: 10px;
+                -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+                background: rgba(0, 0, 0, 0.2);
+            }
+
+            &::-webkit-scrollbar-track {
+                -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+                border-radius: 0;
+                background: rgba(0, 0, 0, 0.1);
+            }
 
             &.menu-collapse {
                 width: 64px;
