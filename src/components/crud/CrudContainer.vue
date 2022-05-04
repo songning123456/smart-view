@@ -131,7 +131,6 @@
                 if (this.formStyleOptions.horizontal) {
                     resOptions.horizontal = this.formStyleOptions.horizontal;
                 }
-                (!resOptions.horizontal.labelWidth) && (resOptions.horizontal.labelWidth = '80px');
                 (!resOptions.horizontal.size) && (resOptions.horizontal.size = 'small');
                 resOptions.horizontal.inline = true;
                 // 设置 “垂直” 表单样式

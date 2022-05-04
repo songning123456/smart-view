@@ -52,35 +52,50 @@
                             enName: 'parentId',
                             clearable: true,
                             disabled: true,
-                            options: []
+                            options: [],
+                            style: () => {
+                                return 'width: 205px'
+                            }
                         },
                         {
                             elType: 'el-input',
                             zhName: '菜单名称',
                             enName: 'metaTitle',
                             clearable: true,
-                            disabled: true
+                            disabled: true,
+                            style: () => {
+                                return 'width: 205px'
+                            }
                         },
                         {
                             elType: 'el-input',
                             zhName: '图标',
                             enName: 'metaIcon',
                             clearable: true,
-                            disabled: true
+                            disabled: true,
+                            style: () => {
+                                return 'width: 205px'
+                            }
                         },
                         {
                             elType: 'el-input',
                             zhName: '菜单URL',
                             enName: 'path',
                             clearable: true,
-                            disabled: true
+                            disabled: true,
+                            style: () => {
+                                return 'width: 205px'
+                            }
                         },
                         {
                             elType: 'el-input-number',
                             zhName: '排序号',
                             enName: 'orderNum',
                             min: 0,
-                            disabled: true
+                            disabled: true,
+                            style: () => {
+                                return 'width: 205px'
+                            }
                         }
                     ],
                     '新增': [
@@ -89,31 +104,46 @@
                             zhName: '父级菜单',
                             enName: 'parentId',
                             clearable: true,
-                            options: []
+                            options: [],
+                            style: () => {
+                                return 'width: 205px'
+                            }
                         },
                         {
                             elType: 'el-input',
                             zhName: '菜单名称',
                             enName: 'metaTitle',
-                            clearable: true
+                            clearable: true,
+                            style: () => {
+                                return 'width: 205px'
+                            }
                         },
                         {
                             elType: 'el-input',
                             zhName: '图标',
                             enName: 'metaIcon',
-                            clearable: true
+                            clearable: true,
+                            style: () => {
+                                return 'width: 205px'
+                            }
                         },
                         {
                             elType: 'el-input',
                             zhName: '菜单URL',
                             enName: 'path',
-                            clearable: true
+                            clearable: true,
+                            style: () => {
+                                return 'width: 205px'
+                            }
                         },
                         {
                             elType: 'el-input-number',
                             zhName: '排序号',
                             enName: 'orderNum',
-                            min: 0
+                            min: 0,
+                            style: () => {
+                                return 'width: 205px'
+                            }
                         }
                     ],
                     '编辑': [
@@ -122,31 +152,46 @@
                             zhName: '父级菜单',
                             enName: 'parentId',
                             clearable: true,
-                            options: []
+                            options: [],
+                            style: () => {
+                                return 'width: 205px'
+                            }
                         },
                         {
                             elType: 'el-input',
                             zhName: '菜单名称',
                             enName: 'metaTitle',
-                            clearable: true
+                            clearable: true,
+                            style: () => {
+                                return 'width: 205px'
+                            }
                         },
                         {
                             elType: 'el-input',
                             zhName: '图标',
                             enName: 'metaIcon',
-                            clearable: true
+                            clearable: true,
+                            style: () => {
+                                return 'width: 205px'
+                            }
                         },
                         {
                             elType: 'el-input',
                             zhName: '菜单URL',
                             enName: 'path',
-                            clearable: true
+                            clearable: true,
+                            style: () => {
+                                return 'width: 205px'
+                            }
                         },
                         {
                             elType: 'el-input-number',
                             zhName: '排序号',
                             enName: 'orderNum',
-                            min: 0
+                            min: 0,
+                            style: () => {
+                                return 'width: 205px'
+                            }
                         }
                     ]
                 },
@@ -216,7 +261,7 @@
                     show: false,
                     data: null,
                     style: {
-                        width: '50%',
+                        width: '30%',
                         top: '15vh'
                     }
                 }
@@ -230,8 +275,10 @@
                 if (zhName === '查询') {
                     this.searchFunc();
                 } else if (zhName === 'DFS') {
+                    this.dialog.style.width = '50%';
                     this.DFSFunc();
                 } else {
+                    this.dialog.style.width = '30%';
                     if (zhName === '新增') {
                         this.crudForm = {
                             type: 0
