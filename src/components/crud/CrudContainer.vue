@@ -2,7 +2,7 @@
     <div class='crud-container'>
         <div class='crud-container-frame-ud-form' v-for='(searchFormOption, index) in searchFormOptions' :key='index'>
             <custom-form :form='searchForm' :form-options='searchFormOption'
-                         :form-style-options='customFormStyleOptions[true]'
+                         :form-style-options='customFormStyleOptions.horizontal'
                          @crud='crudBtn' @http-request='httpRequestBtn'></custom-form>
         </div>
         <div class='crud-container-frame-ud-table'
@@ -17,7 +17,8 @@
                            @current-change="currentChangeBtn"></el-pagination>
         </div>
         <crud-dialog :dialog='dialog' :rule-options='ruleOptions' :form='crudForm'
-                     :form-options='crudFormOptions[dialog.zhName]' :form-style-options='customFormStyleOptions[false]'
+                     :form-options='crudFormOptions[dialog.zhName]'
+                     :form-style-options='customFormStyleOptions.vertical'
                      @dialog='dialogBtn'>
             <template v-slot>
                 <slot></slot>
@@ -84,15 +85,8 @@
                 type: Object,
                 default() {
                     return {
-                        true: {
-                            inline: true,
-                            size: 'small'
-                        },
-                        false: {
-                            inline: false,
-                            size: 'small',
-                            labelWidth: '100px'
-                        }
+                        horizontal: {},
+                        vertical: {}
                     };
                 }
             },
@@ -130,22 +124,23 @@
         computed: {
             customFormStyleOptions() {
                 let resOptions = {
-                    true: {
-                        inline: true,
-                        size: 'small'
-                    },
-                    false: {
-                        inline: false,
-                        size: 'small',
-                        labelWidth: '100px'
-                    }
+                    horizontal: {},
+                    vertical: {}
                 };
-                if (this.formStyleOptions[true]) {
-                    resOptions[true] = this.formStyleOptions[true];
+                // 设置 “水平” 表单样式
+                if (this.formStyleOptions.horizontal) {
+                    resOptions.horizontal = this.formStyleOptions.horizontal;
                 }
-                if (this.formStyleOptions[false]) {
-                    resOptions[false] = this.formStyleOptions[false];
+                (!resOptions.horizontal.labelWidth) && (resOptions.horizontal.labelWidth = '80px');
+                (!resOptions.horizontal.size) && (resOptions.horizontal.size = 'small');
+                resOptions.horizontal.inline = true;
+                // 设置 “垂直” 表单样式
+                if (this.formStyleOptions.vertical) {
+                    resOptions.vertical = this.formStyleOptions.vertical;
                 }
+                (!resOptions.vertical.labelWidth) && (resOptions.vertical.labelWidth = '100px');
+                (!resOptions.vertical.size) && (resOptions.vertical.size = 'small');
+                resOptions.vertical.inline = false;
                 return resOptions;
             }
         },
