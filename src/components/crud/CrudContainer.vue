@@ -21,7 +21,7 @@
                            :current-page.sync='page.currentPage'
                            :page-size="page.pageSize"
                            :total='page.total'
-                           @current-change="currentChangeBtn"></el-pagination>
+                           @current-change='currentChangeBtn'></el-pagination>
         </div>
         <crud-dialog :dialog='dialog' :rule-options='ruleOptions' :form='crudForm'
                      :form-options='crudFormOptions[dialog.zhName]'
