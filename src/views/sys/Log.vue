@@ -51,7 +51,7 @@
                             elType: 'el-input',
                             zhName: '线程名称',
                             enName: 'threadName',
-                            disabled: true,
+                            readonly: true,
                             style: () => {
                                 return 'width: 400px';
                             }
@@ -60,7 +60,7 @@
                             elType: 'el-input',
                             zhName: '类路径名称',
                             enName: 'logName',
-                            disabled: true,
+                            readonly: true,
                             style: () => {
                                 return 'width: 400px';
                             }
@@ -70,7 +70,7 @@
                             type: 'textarea',
                             zhName: '日志内容',
                             enName: 'message',
-                            disabled: true,
+                            readonly: true,
                             style: () => {
                                 return 'width: 400px';
                             },

@@ -86,13 +86,15 @@
         },
         computed: {
             dialogStyle() {
-                if (this.dialog.style && typeof this.dialog.style === 'object') {
-                    return this.dialog.style;
-                }
                 let baseStyle = {
                     width: '30%',
                     top: '15vh'
                 };
+                if (this.dialog.style && typeof this.dialog.style === 'object') {
+                    Object.keys(this.dialog.style).forEach(key => {
+                        baseStyle[key] = this.dialog.style[key];
+                    });
+                }
                 if (this.dialog.slot) {
                     // ...
                 } else if (Array.isArray(this.formOptions) && !this.formOptions.length) {
