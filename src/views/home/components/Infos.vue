@@ -2,7 +2,7 @@
     <div class='infos'>
         <i :class='collapse.flag ? "el-icon-s-unfold" : "el-icon-s-fold"' @click='collapseBtn'></i>
         <div class='user-info'>
-            <el-avatar size='medium' :src='userInfo.avatar'></el-avatar>
+            <el-avatar size='medium' :src='avatarFunc(userInfo.avatar)'></el-avatar>
             <el-dropdown><span class="el-dropdown-link">{{userInfo.realname}}<i
                     class="el-icon-arrow-down el-icon--right"></i></span>
                 <el-dropdown-menu slot="dropdown">
@@ -15,6 +15,7 @@
 </template>
 
 <script>
+    import {dictItem} from '@/utils/sysDict';
 
     export default {
         name: 'Infos',
@@ -30,11 +31,15 @@
         },
         data() {
             return {
+                fileServerPrefix: '',
                 userInfo: {}
             };
         },
         created() {
             this.getUserInfoFunc();
+            dictItem('FileServer').then(result => {
+                this.fileServerPrefix = result[0].itemValue;
+            });
         },
         methods: {
             collapseBtn() {
@@ -61,6 +66,12 @@
                 }).catch(e => {
                     this.$message.error(e);
                 });
+            },
+            avatarFunc(avatar) {
+                if (typeof avatar === 'string' && !avatar.startsWith('http://') && !avatar.startsWith('https://')) {
+                    avatar = this.fileServerPrefix + avatar;
+                }
+                return avatar;
             },
         }
     };
