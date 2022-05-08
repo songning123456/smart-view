@@ -1,19 +1,26 @@
 <template>
     <div class='crud-container'>
         <div class='crud-container-frame-ud-form' v-for='(searchFormOption, index) in searchFormOptions' :key='index'>
-            <custom-form :form='searchForm' :form-options='searchFormOption'
+            <custom-form :form='searchForm'
+                         :form-options='searchFormOption'
                          :form-style-options='customFormStyleOptions.horizontal'
-                         @crud='crudBtn' @http-request='httpRequestBtn'></custom-form>
+                         @crud='crudBtn'
+                         @http-request='httpRequestBtn'></custom-form>
         </div>
         <div class='crud-container-frame-ud-table'
              :style="'height: calc((100% - ' + (searchFormOptions.length + (Object.keys(page).length ? 1 : 0)) * 50 + 'px))'">
-            <custom-table ref='customTable' :table-data='tableData' :column-options='columnOptions'
+            <custom-table ref='customTable'
+                          :table-data='tableData'
+                          :column-options='columnOptions'
                           :table-style-options='tableStyleOptions'
-                          @crud='crudBtn' @selection-change='selectionChangeBtn'></custom-table>
+                          @crud='crudBtn'
+                          @selection-change='selectionChangeBtn'></custom-table>
         </div>
         <div class='crud-container-frame-ud-pagination' v-if='Object.keys(page).length'>
-            <el-pagination background layout='total,prev,pager,next' :current-page.sync='page.currentPage'
-                           :page-size="page.pageSize" :total='page.total'
+            <el-pagination background layout='total,prev,pager,next'
+                           :current-page.sync='page.currentPage'
+                           :page-size="page.pageSize"
+                           :total='page.total'
                            @current-change="currentChangeBtn"></el-pagination>
         </div>
         <crud-dialog :dialog='dialog' :rule-options='ruleOptions' :form='crudForm'

@@ -1,54 +1,98 @@
 <template>
-    <el-form :inline='formStyleOptions.inline' :model='form' :size='formStyleOptions.size'
-             :label-width='formStyleOptions.labelWidth' :rules='ruleOptions' ref='elForm'>
-        <el-form-item v-for='(item, index) in formOptions' :key='index' :prop='item.enName'
+    <el-form :inline='formStyleOptions.inline'
+             :model='form'
+             :size='formStyleOptions.size'
+             :label-width='formStyleOptions.labelWidth'
+             :rules='ruleOptions'
+             ref='elForm'>
+        <el-form-item v-for='(item, index) in formOptions'
+                      :key='index'
+                      :prop='item.enName'
                       :label='!item.noLabel ? item.zhName : ""'
                       :class='{"custom-form-item": !formStyleOptions.inline}'>
-            <el-input v-if='item.elType === "el-input"' v-model='form[item.enName]'
-                      :type='item.type ? item.type : "text"' :placeholder='item.placeholder'
-                      :clearable='item.clearable' :disabled='!!item.disabled'
-                      :show-password='!!item.showPassword' :readonly='!!item.readonly'
+            <el-input v-if='item.elType === "el-input"'
+                      v-model='form[item.enName]'
+                      :type='item.type ? item.type : "text"'
+                      :placeholder='item.placeholder'
+                      :clearable='item.clearable'
+                      :disabled='!!item.disabled'
+                      :show-password='!!item.showPassword'
+                      :readonly='!!item.readonly'
                       :rows='item.rows'
                       :style='typeof item.style === "function" ? item.style(item.enName) : ""'></el-input>
-            <el-select v-else-if='item.elType === "el-select"' v-model='form[item.enName]'
-                       :placeholder='item.placeholder' :multiple='!!item.multiple'
-                       :clearable='!!item.clearable' :disabled='!!item.disabled'
-                       @change='elSelectChangeBtn(item.enName, form[item.enName])'>
-                <el-option v-for='(it, i) in item.options' :key='i' :label='it.label' :value='it.value'>
+            <el-select v-else-if='item.elType === "el-select"'
+                       v-model='form[item.enName]'
+                       :placeholder='item.placeholder'
+                       :multiple='!!item.multiple'
+                       :clearable='!!item.clearable'
+                       :disabled='!!item.disabled'
+                       @change='elSelectChangeBtn(item.enName, form[item.enName])'
+                       :style='typeof item.style === "function" ? item.style(item.enName) : ""'>
+                <el-option v-for='(it, i) in item.options'
+                           :key='i'
+                           :label='it.label'
+                           :value='it.value'>
                     <span v-if='it.alias'>{{it.alias}}</span>
                 </el-option>
             </el-select>
-            <el-date-picker v-else-if='item.elType === "el-date-picker"' v-model="form[item.enName]"
+            <el-date-picker v-else-if='item.elType === "el-date-picker"'
+                            v-model="form[item.enName]"
                             :type='item.type ? item.type : "date"'
-                            :picker-options="item.pickerOptions" range-separator="至" start-placeholder="开始日期"
-                            end-placeholder="结束日期" align="right" :clearable='!!item.clearable'
-                            :disabled='!!item.disabled'></el-date-picker>
-            <el-button v-else-if='item.elType === "el-button"' :type='item.type ? item.type : "default"'
-                       :disabled='!!item.disabled' :icon='item.icon'
-                       :plain='!!item.plain' @click.native='crudBtn(item)'>
-                {{item.zhName}}
+                            :disabled='!!item.disabled'
+                            :picker-options="item.pickerOptions"
+                            :range-separator='item.rangeSeparator ? item.rangeSeparator : "至"'
+                            :start-placeholder='item.startPlaceholder ? item.startPlaceholder : "开始时间"'
+                            :end-placeholder='item.endPlaceholder ? item.endPlaceholder : "结束时间"'
+                            :align='item.align ? item.align : "right"'
+                            :clearable='!!item.clearable'
+                            :value-format='item.valueFormat ? item.valueFormat : "yyyy-MM-dd HH:mm:ss"'
+                            :style='typeof item.style === "function" ? item.style(item.enName) : ""'></el-date-picker>
+            <el-button v-else-if='item.elType === "el-button"'
+                       :type='item.type ? item.type : "default"'
+                       :disabled='!!item.disabled'
+                       :icon='item.icon'
+                       :plain='!!item.plain'
+                       @click.native='crudBtn(item)'>{{item.zhName}}
             </el-button>
             <template v-else-if='item.elType === "el-buttons"'>
-                <el-button v-for='(it, i) in item.options' :key='i' :type='it.type ? it.type : "default"'
-                           :disabled='!!item.disabled' :icon='it.icon'
-                           :plain='!!it.plain' @click.native='crudBtn(it)'>{{it.zhName}}
+                <el-button v-for='(it, i) in item.options'
+                           :key='i'
+                           :type='it.type ? it.type : "default"'
+                           :disabled='!!item.disabled'
+                           :icon='it.icon'
+                           :plain='!!it.plain'
+                           @click.native='crudBtn(it)'>{{it.zhName}}
                 </el-button>
             </template>
-            <el-radio-group v-else-if='item.elType === "el-radio-group"' :disabled='!!item.disabled'
+            <el-radio-group v-else-if='item.elType === "el-radio-group"'
+                            :disabled='!!item.disabled'
                             v-model='form[item.enName]'>
-                <el-radio v-for='(it, i) in item.options' :key='i' :label='it.value'>{{it.label}}</el-radio>
+                <el-radio v-for='(it, i) in item.options'
+                          :key='i'
+                          :label='it.value'>{{it.label}}
+                </el-radio>
             </el-radio-group>
-            <el-input-number v-else-if='item.elType === "el-input-number"' v-model='form[item.enName]'
-                             :label='item.zhName' :disabled='!!item.disabled'
+            <el-input-number v-else-if='item.elType === "el-input-number"'
+                             v-model='form[item.enName]'
+                             :label='item.zhName'
+                             :disabled='!!item.disabled'
                              :min='typeof item.min === "number" ? item.min : -Infinity'
-                             :max='typeof item.max === "number" ? item.max : Infinity'></el-input-number>
-            <el-avatar v-else-if='item.elType === "el-avatar"' :size='item.size' :src='form[item.enName]'></el-avatar>
-            <el-image v-else-if='item.elType === "el-image"' :src='form[item.enName]'
+                             :max='typeof item.max === "number" ? item.max : Infinity'
+                             :placeholder='item.placeholder'></el-input-number>
+            <el-avatar v-else-if='item.elType === "el-avatar"'
+                       :size='item.size'
+                       :src='form[item.enName]'></el-avatar>
+            <el-image v-else-if='item.elType === "el-image"'
+                      :src='form[item.enName]'
                       @click.native='crudBtn(item)'></el-image>
-            <el-upload v-else-if='item.elType === "el-upload"' action=''
-                       :show-file-list='!!item.showFileList' :multiple='!!item.multiple' :http-request='httpRequestBtn'>
+            <el-upload v-else-if='item.elType === "el-upload"'
+                       action=''
+                       :show-file-list='!!item.showFileList'
+                       :multiple='!!item.multiple'
+                       :http-request='httpRequestBtn'>
                 <el-button :type='item.type ? item.type : "default"'
-                           :disabled='!!item.disabled' :icon='item.icon'
+                           :disabled='!!item.disabled'
+                           :icon='item.icon'
                            :plain='!!item.plain'>{{item.zhName}}
                 </el-button>
             </el-upload>

@@ -1,11 +1,17 @@
 <template>
-    <el-table ref='elTable' :data='tableData' border
+    <el-table ref='elTable'
+              :data='tableData'
+              border
               :header-cell-style="{background: '#fafafa',color: 'rgba(0, 0, 0, .85)'}"
-              @selection-change="selectionChangeBtn" :row-key='tableStyleOptions.rowKey'
+              @selection-change='selectionChangeBtn'
+              :row-key='tableStyleOptions.rowKey'
               :default-expand-all='tableStyleOptions.defaultExpandAll'>
-        <el-table-column v-if='tableStyleOptions.selection' type="selection" width="55"></el-table-column>
-        <el-table-column v-for='(item, index) in columnOptions[0]' :key='index' :width='item.width'
-                         :show-overflow-tooltip='item.showOverflowTooltip' :align='item.align ? item.align : "center"'
+        <el-table-column v-if='tableStyleOptions.selection' type='selection' width='55'></el-table-column>
+        <el-table-column v-for='(item, index) in columnOptions[0]'
+                         :key='index'
+                         :width='item.width'
+                         :show-overflow-tooltip='item.showOverflowTooltip'
+                         :align='item.align ? item.align : "center"'
                          :label='item.zhName'>
             <template slot-scope='scope'>
                 <template v-if='item.elType === "el-avatar"'>
@@ -18,8 +24,12 @@
         </el-table-column>
         <el-table-column v-if='Array.isArray(columnOptions[1])' label="操作" width="200" align='center'>
             <template slot-scope='scope'>
-                <el-button v-for='(item, index) in columnOptions[1]' :key='index' :disabled='typeof item.disabled === "function" ? item.disabled(item.zhName, scope.row) : false'
-                           @click="crudBtn(item.zhName, scope.row)" type="text" size="small">{{item.zhName}}
+                <el-button v-for='(item, index) in columnOptions[1]'
+                           :key='index'
+                           :disabled='typeof item.disabled === "function" ? item.disabled(item.zhName, scope.row) : false'
+                           @click="crudBtn(item.zhName, scope.row)"
+                           type='text'
+                           size='small'>{{item.zhName}}
                 </el-button>
             </template>
         </el-table-column>

@@ -1,12 +1,19 @@
 <template>
-    <el-dialog class='crud-dialog' :title='dialog.zhName' :visible.sync='dialog.show' :close-on-click-modal='false'
-               :width='dialogStyle.width' :top='dialogStyle.top'>
+    <el-dialog class='crud-dialog'
+               :title='dialog.zhName'
+               :visible.sync='dialog.show'
+               :close-on-click-modal='false'
+               :width='dialogStyle.width'
+               :top='dialogStyle.top'>
         <template v-if='dialog.slot'>
             <slot></slot>
         </template>
         <template v-else-if='Array.isArray(formOptions) && formOptions.length'>
-            <custom-form :form='form' :form-options='formOptions' :rule-options='ruleOptions'
-                         :form-style-options='formStyleOptions' ref='customForm'></custom-form>
+            <custom-form :form='form'
+                         :form-options='formOptions'
+                         :rule-options='ruleOptions'
+                         :form-style-options='formStyleOptions'
+                         ref='customForm'></custom-form>
         </template>
         <template v-else>
             <i class='el-icon-info crud-warning'></i>确定要<strong>{{dialog.zhName}}</strong>吗?
