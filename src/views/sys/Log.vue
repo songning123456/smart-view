@@ -45,7 +45,39 @@
                     selection: false
                 },
                 crudForm: {},
-                crudFormOptions: {},
+                crudFormOptions: {
+                    '详情': [
+                        {
+                            elType: 'el-input',
+                            zhName: '线程名称',
+                            enName: 'threadName',
+                            disabled: true,
+                            style: () => {
+                                return 'width: 400px';
+                            }
+                        },
+                        {
+                            elType: 'el-input',
+                            zhName: '类路径名称',
+                            enName: 'logName',
+                            disabled: true,
+                            style: () => {
+                                return 'width: 400px';
+                            }
+                        },
+                        {
+                            elType: 'el-input',
+                            type: 'textarea',
+                            zhName: '日志内容',
+                            enName: 'message',
+                            disabled: true,
+                            style: () => {
+                                return 'width: 400px';
+                            },
+                            rows: 10
+                        }
+                    ]
+                },
                 searchFormOptions: [
                     [
                         {
@@ -145,7 +177,7 @@
                         {
                             elType: 'el-button',
                             noLabel: true,
-                            zhName: '批量删除',
+                            zhName: '清空',
                             type: 'danger',
                             plain: true
                         }]
@@ -240,7 +272,10 @@
                 ],
                 dialog: {
                     zhName: '',
-                    show: false
+                    show: false,
+                    style: {
+                        width: '50%',
+                    }
                 },
             };
         },
@@ -274,10 +309,29 @@
                         total: 0
                     };
                     this.searchFunc();
+                } else if (zhName === '详情') {
+                    this.dialog.style.width = '50%';
+                    this.dialog.show = true;
+                    this.dialog.zhName = zhName;
+                    this.crudForm = row;
+                } else if (zhName === '删除') {
+                    this.dialog.style.width = '30%';
+                    this.dialog.show = true;
+                    this.dialog.zhName = zhName;
+                    this.crudForm = row;
+                } else if (zhName === '清空') {
+                    this.dialog.style.width = '30%';
+                    this.dialog.show = true;
+                    this.dialog.zhName = zhName;
+                    this.crudForm = {};
                 }
             },
             dialogBtn(zhName) {
-
+                if (zhName === '删除') {
+                    this.deleteFunc(this.crudForm.id);
+                } else if (zhName === '清空') {
+                    this.deleteFunc('');
+                }
             },
             currentChangeBtn(currentPage) {
                 this.page.currentPage = currentPage;
@@ -308,7 +362,21 @@
                     this.loading.show && (this.loading.show = false);
                 });
             },
-            deleteFunc() {
+            deleteFunc(param) {
+                this.dialog.show = false;
+                this.loading.show = true;
+                this.$axios.delete('/boot/sys/sysLog/delete', {params: {ids: param}}).then(res => {
+                    if (res.data.success) {
+                        this.$message.success('删除成功');
+                        this.searchFunc();
+                    } else {
+                        this.loading.show = false;
+                        this.$message.error(res.data.message);
+                    }
+                }).catch(e => {
+                    this.loading.show = false;
+                    this.$message.error(e);
+                });
             }
         }
     };
