@@ -23,14 +23,15 @@
 </template>
 
 <script>
-
     import CrudContainer from '@/components/crud/CrudContainer';
+    import {dictItem} from '@/utils/sysDict';
 
     export default {
         name: 'User',
         components: {CrudContainer},
         data() {
             return {
+                fileServerPrefix: '',
                 loading: {
                     show: false
                 },
@@ -239,6 +240,13 @@
                             zhName: '批量删除',
                             type: 'danger',
                             plain: true
+                        },
+                        {
+                            elType: 'el-button',
+                            noLabel: true,
+                            zhName: '路径转换',
+                            type: 'primary',
+                            plain: true
                         }
                     ]
                 ],
@@ -304,6 +312,9 @@
         created() {
             this.searchFunc();
             this.getAllRoleFunc();
+            dictItem('FileServer').then(result => {
+                this.fileServerPrefix = result[0].itemValue;
+            });
         },
         methods: {
             crudBtn(zhName, row) {
@@ -330,6 +341,8 @@
                             this.$message.warning('请先选择数据');
                             return;
                         }
+                    } else if (zhName === '路径转换') {
+                        this.crudForm = {};
                     } else {
                         this.crudForm = row;
                     }
@@ -348,6 +361,8 @@
                     this.deleteFunc(this.selectionTableData.map(item => item.id).join(','));
                 } else if (zhName === '分配角色') {
                     this.addRoleFunc(this.crudForm.id);
+                } else if (zhName === '路径转换') {
+                    this.win2linuxFunc();
                 }
             },
             currentChangeBtn(currentPage) {
@@ -364,7 +379,12 @@
                 params.pageSize = this.page.pageSize;
                 this.$axios.get('/boot/sys/sysUser/page', {params: params}).then(res => {
                     if (res.data.success) {
-                        this.tableData = res.data.result.records;
+                        this.tableData = res.data.result.records.map(item => {
+                            if (!item.avatar.startsWith('http://') && !item.avatar.startsWith('https://')) {
+                                item.avatar = this.fileServerPrefix + item.avatar;
+                            }
+                            return item;
+                        });
                         this.page.total = res.data.result.total;
                     } else {
                         this.$message.error(res.data.message);
@@ -465,6 +485,22 @@
                     this.$message.error(e);
                 });
             },
+            win2linuxFunc() {
+                this.dialog.show = false;
+                this.loading.show = true;
+                this.$axios.get('/boot/sys/sysUser/win2linux', {params: {}}).then(res => {
+                    if (res.data.success) {
+                        this.$message.success('转换成功');
+                        this.searchFunc();
+                    } else {
+                        this.loading.show = false;
+                        this.$message.error(res.data.message);
+                    }
+                }).catch(e => {
+                    this.loading.show = false;
+                    this.$message.error(e);
+                });
+            }
         }
     };
 </script>
