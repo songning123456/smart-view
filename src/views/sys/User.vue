@@ -119,10 +119,21 @@
                             clearable: true
                         },
                         {
-                            elType: 'el-input',
+                            elType: 'custom-upload',
                             zhName: '头像',
                             enName: 'avatar',
-                            clearable: true
+                            type: 'primary',
+                            elButton: {
+                                zhName: '上传',
+                                type: 'primary',
+                                style: () => {
+                                    return 'width: 250px';
+                                }
+                            },
+                            fileParams: {
+                                uploadPath: 'image',
+                                pieceSize: 5
+                            }
                         },
                         {
                             elType: 'el-input',
@@ -151,10 +162,21 @@
                             clearable: true
                         },
                         {
-                            elType: 'el-input',
+                            elType: 'custom-upload',
                             zhName: '头像',
                             enName: 'avatar',
-                            clearable: true
+                            type: 'primary',
+                            elButton: {
+                                zhName: '上传',
+                                type: 'primary',
+                                style: () => {
+                                    return 'width: 250px';
+                                }
+                            },
+                            fileParams: {
+                                uploadPath: 'image',
+                                pieceSize: 5
+                            }
                         },
                         {
                             elType: 'el-input',
@@ -285,6 +307,7 @@
         },
         methods: {
             crudBtn(zhName, row) {
+                this.dialog.slot = false;
                 if (zhName === '查询') {
                     this.searchFunc();
                 } else if (zhName === '重置') {

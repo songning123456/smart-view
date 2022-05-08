@@ -96,13 +96,20 @@
                            :plain='!!item.plain'>{{item.zhName}}
                 </el-button>
             </el-upload>
+            <upload v-else-if='item.elType === "custom-upload"'
+                    v-model='form[item.enName]'
+                    :el-button='item.elButton'
+                    :file-params='uploadFileParams(item.fileParams)'></upload>
         </el-form-item>
     </el-form>
 </template>
 
 <script>
+    import Upload from '@/components/upload/Upload';
+
     export default {
         name: 'CustomForm',
+        components: {Upload},
         props: {
             form: {
                 type: Object,
@@ -133,6 +140,18 @@
             }
         },
         methods: {
+            uploadFileParams(fileParams) {
+                let baseFileParams = {
+                    uploadPath: 'default',
+                    pieceSize: 5
+                };
+                if (typeof fileParams === 'object' && Object.keys(fileParams).length !== 0) {
+                    Object.keys(fileParams).forEach(key => {
+                        baseFileParams[key] = fileParams[key];
+                    })
+                }
+                return baseFileParams;
+            },
             crudBtn(item) {
                 if (item.valid && Object.keys(this.ruleOptions)) {
                     this.$refs['elForm'].validate((valid) => {

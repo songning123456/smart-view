@@ -1,16 +1,29 @@
 <template>
     <div class='upload'>
         <el-upload :action='elUpload.action ? elUpload.action : ""'
-                   :drag='!!elUpload.drag'
+                   :drag='Object.keys(elButton).length === 0 && !!elUpload.drag'
                    :show-file-list='!!elUpload.showUploadList'
-                   :disabled='disabled'
+                   :disabled='!!disabled'
                    :http-request='httpRequest'>
-            <i class='el-icon-upload'></i>
-            <div class='el-upload__text'>将文件拖到此处，或<em>点击上传</em></div>
-            <div class='el-upload__tip' slot='tip'>
-                <el-progress v-show='progress.show' :type='elProgress.type'
-                             :percentage='progress.percentage'></el-progress>
-            </div>
+            <template v-if='Object.keys(elButton).length !== 0'>
+                <el-button :type='elButton.type ? elButton.type : "default"'
+                           :disabled='!!elButton.disabled'
+                           :icon='elButton.icon'
+                           :plain='!!elButton.plain'>{{elButton.zhName}}
+                </el-button>
+                <div slot='tip' class='el-upload__tip el-upload__tip-button'
+                     :style='typeof elButton.style === "function" ? elButton.style(elButton.enName) : ""'
+                     :title='value'>{{value}}
+                </div>
+            </template>
+            <template v-else>
+                <i class='el-icon-upload'></i>
+                <div class='el-upload__text'>将文件拖到此处，或<em>点击上传</em></div>
+                <div class='el-upload__tip' slot='tip'>
+                    <el-progress v-show='progress.show' :type='elProgress.type'
+                                 :percentage='progress.percentage'></el-progress>
+                </div>
+            </template>
         </el-upload>
     </div>
 </template>
@@ -30,6 +43,12 @@
                         drag: true,
                         showUploadList: false
                     };
+                }
+            },
+            elButton: {
+                type: Object,
+                default() {
+                    return {};
                 }
             },
             elProgress: {
@@ -87,7 +106,7 @@
                             }, 1000);
                         }
                         this.disabled = false;
-                        this.$emit('input', window.location.origin + data.suffixUrl);
+                        this.$emit('input', data.suffixUrl);
                     },
                     error: e => {
                         this.$message.error('分片上传视频失败 ' + e);
@@ -112,6 +131,13 @@
         /deep/ .el-upload__tip {
             margin-top: unset;
         }
+
+        /deep/ .el-upload__tip-button {
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+
     }
 
 </style>
