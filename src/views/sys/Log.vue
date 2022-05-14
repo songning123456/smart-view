@@ -296,6 +296,10 @@
                     };
                 });
             });
+            this.loading.show = true;
+            setTimeout(() => {
+                this.searchFunc();
+            }, 2000);
         },
         methods: {
             crudBtn(zhName, row) {
