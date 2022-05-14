@@ -10,7 +10,11 @@
                 <sub-side-menu :sub-menu-list='subMenu.children'></sub-side-menu>
             </el-submenu>
             <el-menu-item v-else :key='index' :index='subMenu.id'>
-                <template slot='title'>
+                <template v-if='Array.isArray(subMenu.children) && subMenu.children.length' slot='title'>
+                    <i :class="subMenu.metaIcon"></i>
+                    <span slot='title'>{{subMenu.metaTitle}}</span>
+                </template>
+                <template v-else>
                     <i :class="subMenu.metaIcon"></i>
                     <span slot='title'>{{subMenu.metaTitle}}</span>
                 </template>

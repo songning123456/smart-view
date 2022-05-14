@@ -89,6 +89,7 @@
             position: absolute;
             left: 2%;
             top: 50%;
+            font-size: 25px;
             transform: translate(-50%, -50%);
 
             &:hover {
