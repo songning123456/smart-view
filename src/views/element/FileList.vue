@@ -8,22 +8,37 @@
                     :table-style-options='tableStyleOptions'
                     :dialog='dialog'
                     @crud='crudBtn'
-                    @dialog='dialogBtn'></crud-container>
+                    @dialog='dialogBtn'>
+        <template v-slot>
+            <div style='height: 350px; overflow-y: auto'>
+                <element-video v-if='searchForm.uploadPath === "video"'
+                               :source='{src: fileServerPrefix + crudForm.suffixUrl, type: "video/mp4"}'></element-video>
+                <element-audio v-if='searchForm.uploadPath === "music"'
+                               :source='{src: fileServerPrefix + crudForm.suffixUrl, type: "audio/mpeg"}'></element-audio>
+                <element-image v-else-if='searchForm.uploadPath === "image"'
+                               :source='fileServerPrefix + crudForm.suffixUrl'></element-image>
+            </div>
+        </template>
+    </crud-container>
 </template>
 
 <script>
     import CrudContainer from '@/components/crud/CrudContainer';
     import label from '@/utils/label';
     import {dictItem} from '@/utils/sysDict';
+    import ElementVideo from '@/views/element/components/ElementVideo';
+    import ElementAudio from '@/views/element/components/ElementAudio';
+    import ElementImage from '@/views/element/components/ElementImage';
 
     export default {
         name: 'FileList',
-        components: {CrudContainer},
+        components: {ElementImage, ElementAudio, ElementVideo, CrudContainer},
         data() {
             return {
                 loading: {
                     show: false
                 },
+                fileServerPrefix: '',
                 searchForm: {
                     uploadPath: ''
                 },
@@ -78,6 +93,12 @@
                             disabled(zhName, row) {
                                 return zhName === '下载' && row.fileType !== 'file';
                             }
+                        },
+                        {
+                            zhName: '预览',
+                            disabled(zhName, row) {
+                                return zhName === '预览' && row.fileType !== 'file';
+                            }
                         }
                     ]
                 ],
@@ -87,7 +108,9 @@
                     selection: false
                 },
                 dialog: {
+                    style: {},
                     zhName: '',
+                    slot: false,
                     show: false
                 }
             };
@@ -100,12 +123,17 @@
                         value: option.itemValue
                     };
                 });
+                dictItem('FileServer').then(result => {
+                    this.fileServerPrefix = result[0].itemValue;
+                });
                 this.searchForm.uploadPath = this.searchFormOptions[0][0].options[0].value;
                 this.searchFunc();
             });
         },
         methods: {
             crudBtn(zhName, row) {
+                this.dialog.slot = false;
+                this.dialog.style = {};
                 if (zhName === '查询') {
                     this.searchFunc();
                 } else if (zhName === '删除') {
@@ -113,6 +141,12 @@
                     (this.dialog.show = true) && (this.dialog.zhName = zhName);
                 } else if (zhName === '下载') {
                     label.downloadByA(window.location.origin + row.suffixUrl);
+                } else if (zhName === '预览') {
+                    this.dialog.slot = true;
+                    this.dialog.show = true;
+                    this.dialog.zhName = row.fileName;
+                    this.dialog.style.width = '1000px';
+                    this.crudForm = row;
                 }
             },
             dialogBtn(zhName) {
@@ -155,6 +189,6 @@
     };
 </script>
 
-<style scoped>
+<style lang='scss' scoped>
 
 </style>
